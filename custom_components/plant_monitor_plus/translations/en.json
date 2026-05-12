@@ -7,7 +7,8 @@
                     "name": "Name",
                     "manufacturer": "Manufacturer",
                     "model": "Model",
-                    "serial_number": "Serial number"
+                    "serial_number": "Serial number",
+                    "moisture": "Moisture"
                 } },
             "reconfigure": {
                 "title": "Reconfigure Plant Monitor",
@@ -15,7 +16,8 @@
                     "name": "Name",
                     "manufacturer": "Manufacturer",
                     "model": "Model",
-                    "serial_number": "Serial number"
+                    "serial_number": "Serial number",
+                    "moisture": "Moisture"
                 } }
         },
         "error": {

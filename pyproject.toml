@@ -42,7 +42,7 @@ dev = [
     "ha-ffmpeg",
     "hassil",
     "home-assistant-intents",
-    "homeassistant==2026.4.2",
+    "homeassistant==2026.5.1",
     "infrared-protocols",
     "mutagen",
     "mypy",

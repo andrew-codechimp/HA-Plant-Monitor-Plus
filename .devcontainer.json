@@ -1,13 +1,13 @@
 {
   "name": "andrew-codechimp/plantmonitorplus",
-  "build": {"dockerfile": "Dockerfile"},
+  "build": { "dockerfile": "Dockerfile" },
   "remoteUser": "vscode",
   "features": {
-    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/git:1": { },
     "ghcr.io/devcontainers/features/node:1": {
-    "version": "lts"
-  },
-  "ghcr.io/devcontainers-extra/features/apt-packages:1": {
+      "version": "lts"
+    },
+    "ghcr.io/devcontainers-extra/features/apt-packages:1": {
       "packages": [
         "build-essential",
         "ffmpeg",
@@ -17,8 +17,8 @@
     }
   },
   "postCreateCommand": "scripts/setup",
-  "runArgs": ["--network=host"],
-  "forwardPorts": [8123],
+  "runArgs": [ "--network=host" ],
+  "forwardPorts": [ 8123 ],
   "portsAttributes": {
     "8123": {
       "label": "Home Assistant",
@@ -37,6 +37,7 @@
       "settings": {
         "files.eol": "\n",
         "editor.tabSize": 4,
+        "editor.semanticHighlighting.enabled": true,
         "python.analysis.autoSearchPaths": false,
         "editor.formatOnPaste": false,
         "editor.formatOnSave": true,

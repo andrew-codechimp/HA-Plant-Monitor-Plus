@@ -5,12 +5,15 @@ from __future__ import annotations
 from typing import Any
 
 import voluptuous as vol
+from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_NAME
+from homeassistant.helpers import selector
 
 from .const import (
     CONF_MANUFACTURER,
     CONF_MODEL,
+    CONF_MOISTURE_ENTITY_ID,
     CONF_SERIAL_NUMBER,
     DOMAIN,
 )
@@ -21,6 +24,13 @@ USER_SCHEMA = vol.Schema(
         vol.Optional(CONF_MANUFACTURER): str,
         vol.Optional(CONF_MODEL): str,
         vol.Optional(CONF_SERIAL_NUMBER): str,
+        vol.Optional(CONF_MOISTURE_ENTITY_ID, default=[]): selector.EntitySelector(
+            selector.EntitySelectorConfig(
+                selector.EntitySelectorConfig(
+                    domain="sensor", device_class=SensorDeviceClass.MOISTURE
+                )
+            )
+        ),
     }
 )
 
@@ -62,6 +72,7 @@ class PlantMonitorPlusFlowHandler(ConfigFlow, domain=DOMAIN):
                     CONF_MANUFACTURER: user_input.get(CONF_MANUFACTURER),
                     CONF_MODEL: user_input.get(CONF_MODEL),
                     CONF_SERIAL_NUMBER: user_input.get(CONF_SERIAL_NUMBER),
+                    CONF_MOISTURE_ENTITY_ID: user_input.get(CONF_MOISTURE_ENTITY_ID),
                 },
             )
             await self.hass.config_entries.async_reload(config_entry.entry_id)

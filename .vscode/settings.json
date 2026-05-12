@@ -3,7 +3,8 @@
     "python.createEnvironment.trigger": "off",
     "editor.formatOnSave": true,
     "editor.formatOnSaveMode": "file",
-    "editor.codeActionsOnSave": {},
+    "editor.codeActionsOnSave": { },
+    "editor.semanticHighlighting.enabled": true,
     "[python]": {
         "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.formatOnSave": true,
