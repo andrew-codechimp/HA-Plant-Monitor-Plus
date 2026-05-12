@@ -1,7 +1,7 @@
 [project]
-name = "ha-fake-device"
+name = "ha-plant-monitor-plus"
 version = "0.0.0"
-description = "HA-Plant-Monitor-Plus - A Home Assistant integration to create fake devices"
+description = "HA-Plant-Monitor-Plus - A Home Assistant integration to create plant monitors"
 authors = [{ email = "Andrew Jackson <andrew@codechimp.org>" }]
 maintainers = [{ email = "Andrew Jackson <andrew@codechimp.org>" }]
 
@@ -23,7 +23,7 @@ documentation = "https://github.com/andrew-codechimp/HA-Plant-Monitor-Plus"
 homepage = "https://github.com/andrew-codechimp/HA-Plant-Monitor-Plus"
 repository = "https://github.com/andrew-codechimp/HA-Plant-Monitor-Plus"
 "Bug Tracker" = "https://github.com/andrew-codechimp/HA-Plant-Monitor-Plus/issues"
-Changelog = "https://github.com/andrew-codechimp/HA-Fake-Device/releases"
+Changelog = "https://github.com/andrew-codechimp/HA-Plant-Monitor-Plus/releases"
 
 [dependency-groups]
 dev = [

@@ -1,5 +1,5 @@
 """
-Custom integration to create fake devices in Home Assistant.
+Custom integration to create plant monitors in Home Assistant.
 
 For more details about this integration, please refer to
 https://github.com/andrew-codechimp/ha-plant-monitor-plus

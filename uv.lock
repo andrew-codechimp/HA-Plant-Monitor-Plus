@@ -1115,7 +1115,7 @@ wheels = [
 ]
 
 [[package]]
-name = "ha-fake-device"
+name = "ha-plant-monitor-plus"
 version = "0.0.0"
 source = { virtual = "." }
 
