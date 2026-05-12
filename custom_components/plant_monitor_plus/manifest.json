@@ -1,0 +1,13 @@
+{
+  "domain": "plant_monitor_plus",
+  "name": "Plant Monitor Plus",
+  "codeowners": [
+    "@andrew-codechimp"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/andrew-codechimp/ha-fake-devices",
+  "integration_type": "device",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/andrew-codechimp/ha-fake-devices/issues",
+  "version": "0.1.0"
+}

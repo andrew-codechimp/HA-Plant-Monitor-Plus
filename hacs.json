@@ -1,0 +1,7 @@
+{
+    "name": "Plant Monitor Plus",
+    "filename": "plant_monitor_plus.zip",
+    "hide_default_branch": true,
+    "homeassistant": "2026.4.2",
+    "zip_release": true
+}

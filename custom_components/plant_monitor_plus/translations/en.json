@@ -1,0 +1,28 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Add Plant Monitor",
+                "data": {
+                    "name": "Name",
+                    "manufacturer": "Manufacturer",
+                    "model": "Model",
+                    "serial_number": "Serial number"
+                } },
+            "reconfigure": {
+                "title": "Reconfigure Plant Monitor",
+                "data": {
+                    "name": "Name",
+                    "manufacturer": "Manufacturer",
+                    "model": "Model",
+                    "serial_number": "Serial number"
+                } }
+        },
+        "error": {
+            "unknown": "Unknown error."
+        },
+        "abort": {
+            "reconfigure_successful": "Reconfiguration was successful"
+        }
+    }
+}
