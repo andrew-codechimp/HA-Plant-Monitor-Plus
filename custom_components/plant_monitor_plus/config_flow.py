@@ -11,23 +11,49 @@ from homeassistant.const import CONF_NAME
 from homeassistant.helpers import selector
 
 from .const import (
-    CONF_MANUFACTURER,
-    CONF_MODEL,
+    CONF_CONDUCTIVITY_ENTITY_ID,
+    CONF_HUMIDITY_ENTITY_ID,
+    CONF_ILLUMINANCE_ENTITY_ID,
     CONF_MOISTURE_ENTITY_ID,
-    CONF_SERIAL_NUMBER,
+    CONF_TEMPERATURE_ENTITY_ID,
     DOMAIN,
 )
 
 USER_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_NAME): str,
-        vol.Optional(CONF_MANUFACTURER): str,
-        vol.Optional(CONF_MODEL): str,
-        vol.Optional(CONF_SERIAL_NUMBER): str,
         vol.Optional(CONF_MOISTURE_ENTITY_ID, default=[]): selector.EntitySelector(
             selector.EntitySelectorConfig(
                 selector.EntitySelectorConfig(
                     domain="sensor", device_class=SensorDeviceClass.MOISTURE
+                )
+            )
+        ),
+        vol.Optional(CONF_CONDUCTIVITY_ENTITY_ID, default=[]): selector.EntitySelector(
+            selector.EntitySelectorConfig(
+                selector.EntitySelectorConfig(
+                    domain="sensor", device_class=SensorDeviceClass.CONDUCTIVITY
+                )
+            )
+        ),
+        vol.Optional(CONF_HUMIDITY_ENTITY_ID, default=[]): selector.EntitySelector(
+            selector.EntitySelectorConfig(
+                selector.EntitySelectorConfig(
+                    domain="sensor", device_class=SensorDeviceClass.HUMIDITY
+                )
+            )
+        ),
+        vol.Optional(CONF_TEMPERATURE_ENTITY_ID, default=[]): selector.EntitySelector(
+            selector.EntitySelectorConfig(
+                selector.EntitySelectorConfig(
+                    domain="sensor", device_class=SensorDeviceClass.TEMPERATURE
+                )
+            )
+        ),
+        vol.Optional(CONF_ILLUMINANCE_ENTITY_ID, default=[]): selector.EntitySelector(
+            selector.EntitySelectorConfig(
+                selector.EntitySelectorConfig(
+                    domain="sensor", device_class=SensorDeviceClass.ILLUMINANCE
                 )
             )
         ),
@@ -69,9 +95,6 @@ class PlantMonitorPlusFlowHandler(ConfigFlow, domain=DOMAIN):
                 title=user_input[CONF_NAME],
                 data={
                     CONF_NAME: user_input[CONF_NAME],
-                    CONF_MANUFACTURER: user_input.get(CONF_MANUFACTURER),
-                    CONF_MODEL: user_input.get(CONF_MODEL),
-                    CONF_SERIAL_NUMBER: user_input.get(CONF_SERIAL_NUMBER),
                     CONF_MOISTURE_ENTITY_ID: user_input.get(CONF_MOISTURE_ENTITY_ID),
                 },
             )

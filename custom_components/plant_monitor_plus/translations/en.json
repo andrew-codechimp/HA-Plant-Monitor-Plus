@@ -5,20 +5,40 @@
                 "title": "Add Plant Monitor",
                 "data": {
                     "name": "Name",
-                    "manufacturer": "Manufacturer",
-                    "model": "Model",
-                    "serial_number": "Serial number",
-                    "moisture": "Moisture"
-                } },
+                    "conductivity_entity_id": "Conductivity sensor",
+                    "humidity_entity_id": "Humidity sensor",
+                    "illuminance_entity_id": "Illuminance sensor",
+                    "moisture_entity_id": "Moisture sensor",
+                    "temperature_entity_id": "Temperature sensor"
+                },
+                "data_description": {
+                    "name": "Name of the plant.",
+                    "conductivity_entity_id": "The sensor that provides the conductivity level of the soil.",
+                    "humidity_entity_id": "The sensor that provides the humidity level around the plant.",
+                    "illuminance_entity_id": "The sensor that provides the illuminance level around the plant.",
+                    "moisture_entity_id": "The sensor that provides the moisture level of the plant.",
+                    "temperature_entity_id": "The sensor that provides the temperature around the plant."
+                }
+            },
             "reconfigure": {
                 "title": "Reconfigure Plant Monitor",
                 "data": {
                     "name": "Name",
-                    "manufacturer": "Manufacturer",
-                    "model": "Model",
-                    "serial_number": "Serial number",
-                    "moisture": "Moisture"
-                } }
+                    "conductivity_entity_id": "Conductivity sensor",
+                    "humidity_entity_id": "Humidity sensor",
+                    "illuminance_entity_id": "Illuminance sensor",
+                    "moisture_entity_id": "Moisture sensor",
+                    "temperature_entity_id": "Temperature sensor"
+                },
+                "data_description": {
+                    "name": "Name of the plant.",
+                    "conductivity_entity_id": "The sensor that provides the conductivity level of the soil.",
+                    "humidity_entity_id": "The sensor that provides the humidity level around the plant.",
+                    "illuminance_entity_id": "The sensor that provides the illuminance level around the plant.",
+                    "moisture_entity_id": "The sensor that provides the moisture level of the plant.",
+                    "temperature_entity_id": "The sensor that provides the temperature around the plant."
+                }
+            }
         },
         "error": {
             "unknown": "Unknown error."

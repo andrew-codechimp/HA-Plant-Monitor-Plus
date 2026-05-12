@@ -19,9 +19,6 @@ from homeassistant.const import __version__ as HA_VERSION  # noqa: N812
 from homeassistant.helpers import device_registry as dr
 
 from .const import (
-    CONF_MANUFACTURER,
-    CONF_MODEL,
-    CONF_SERIAL_NUMBER,
     DOMAIN,
     MIN_HA_VERSION,
 )
@@ -60,9 +57,6 @@ async def async_setup_entry(
         config_entry_id=entry.entry_id,
         identifiers={(DOMAIN, entry.entry_id)},
         name=entry.data[CONF_NAME],
-        manufacturer=entry.data.get(CONF_MANUFACTURER),
-        model=entry.data.get(CONF_MODEL),
-        serial_number=entry.data.get(CONF_SERIAL_NUMBER),
     )
 
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
