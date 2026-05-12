@@ -5,9 +5,9 @@
     "@andrew-codechimp"
   ],
   "config_flow": true,
-  "documentation": "https://github.com/andrew-codechimp/ha-fake-devices",
+  "documentation": "https://github.com/andrew-codechimp/ha-plant-monitor-plus",
   "integration_type": "device",
   "iot_class": "calculated",
-  "issue_tracker": "https://github.com/andrew-codechimp/ha-fake-devices/issues",
+  "issue_tracker": "https://github.com/andrew-codechimp/ha-plant-monitor-plus/issues",
   "version": "0.1.0"
 }

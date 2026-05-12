@@ -2,7 +2,7 @@
 Custom integration to create fake devices in Home Assistant.
 
 For more details about this integration, please refer to
-https://github.com/andrew-codechimp/ha-fake-devices
+https://github.com/andrew-codechimp/ha-plant-monitor-plus
 """
 
 from __future__ import annotations
