@@ -156,13 +156,16 @@ class PlantMonitorRuntime:
         if value is None:
             return
 
+        threshold = float(self.entry.options[CONF_MOISTURE_WATERING_INCREASE])
+        if threshold == 0:
+            return
+
         previous_value = self._previous_moisture_value
         self._previous_moisture_value = value
 
         if previous_value is None:
             return
 
-        threshold = float(self.entry.options[CONF_MOISTURE_WATERING_INCREASE])
         if previous_value <= 0:
             increased_significantly = value > previous_value
         else:

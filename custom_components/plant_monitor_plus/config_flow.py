@@ -57,7 +57,7 @@ THRESHOLD_SCHEMA = {
         default=DEFAULT_MOISTURE_WATERING_INCREASE,
     ): selector.NumberSelector(
         selector.NumberSelectorConfig(
-            min=1, max=100, mode=selector.NumberSelectorMode.SLIDER
+            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
         )
     ),
 }
