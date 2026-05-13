@@ -12,7 +12,8 @@ from .const import (
     CONF_MOISTURE_ENTITY_ID,
     CONF_MOISTURE_MAX,
     CONF_MOISTURE_MIN,
-    MOISTURE_WATERING_INCREASE_PERCENT,
+    CONF_MOISTURE_WATERING_INCREASE,
+    DEFAULT_MOISTURE_WATERING_INCREASE,
     REASON_DRY,
     REASON_ENTITY_NOT_CONFIGURED,
     REASON_ENTITY_STATE_MISSING,
@@ -72,20 +73,14 @@ class PlantMonitorRuntime:
     @property
     def moisture_entity_id(self) -> str | None:
         """Return the configured moisture sensor entity_id."""
-        entity_id = self.entry.data.get(CONF_MOISTURE_ENTITY_ID)
+        entity_id = self.entry.data[CONF_MOISTURE_ENTITY_ID]
         return str(entity_id) if entity_id else None
 
     @property
     def moisture_thresholds(self) -> tuple[float, float]:
         """Return (min, max) moisture thresholds."""
-        min_value = self.entry.options.get(
-            CONF_MOISTURE_MIN,
-            self.entry.data.get(CONF_MOISTURE_MIN, 0),
-        )
-        max_value = self.entry.options.get(
-            CONF_MOISTURE_MAX,
-            self.entry.data.get(CONF_MOISTURE_MAX, 0),
-        )
+        min_value = self.entry.options[CONF_MOISTURE_MIN]
+        max_value = self.entry.options[CONF_MOISTURE_MAX]
         return float(min_value), float(max_value)
 
     def evaluate_moisture(
@@ -166,11 +161,12 @@ class PlantMonitorRuntime:
         if previous_value is None:
             return
 
+        threshold = float(self.entry.options[CONF_MOISTURE_WATERING_INCREASE])
         if previous_value <= 0:
             increased_significantly = value > previous_value
         else:
             increased_significantly = (value - previous_value) >= previous_value * (
-                MOISTURE_WATERING_INCREASE_PERCENT / 100.0
+                threshold / 100.0
             )
 
         if not increased_significantly:

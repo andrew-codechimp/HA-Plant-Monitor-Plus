@@ -20,6 +20,8 @@ from .const import (
     CONF_MOISTURE_ENTITY_ID,
     CONF_MOISTURE_MAX,
     CONF_MOISTURE_MIN,
+    CONF_MOISTURE_WATERING_INCREASE,
+    DEFAULT_MOISTURE_WATERING_INCREASE,
     DOMAIN,
 )
 
@@ -28,10 +30,11 @@ ENTITY_KEYS = (CONF_MOISTURE_ENTITY_ID,)
 THRESHOLD_KEYS = (
     CONF_MOISTURE_MIN,
     CONF_MOISTURE_MAX,
+    CONF_MOISTURE_WATERING_INCREASE,
 )
 
 ENTITY_SCHEMA = {
-    vol.Optional(CONF_MOISTURE_ENTITY_ID): selector.EntitySelector(
+    vol.Required(CONF_MOISTURE_ENTITY_ID): selector.EntitySelector(
         selector.EntitySelectorConfig(
             domain="sensor", device_class=SensorDeviceClass.MOISTURE
         )
@@ -47,6 +50,14 @@ THRESHOLD_SCHEMA = {
     vol.Required(CONF_MOISTURE_MAX, default=0): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
+        )
+    ),
+    vol.Required(
+        CONF_MOISTURE_WATERING_INCREASE,
+        default=DEFAULT_MOISTURE_WATERING_INCREASE,
+    ): selector.NumberSelector(
+        selector.NumberSelectorConfig(
+            min=1, max=100, mode=selector.NumberSelectorMode.SLIDER
         )
     ),
 }

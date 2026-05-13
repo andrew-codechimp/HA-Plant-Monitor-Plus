@@ -7,13 +7,15 @@
                     "name": "Name",
                     "moisture_entity_id": "Moisture sensor",
                     "moisture_min": "Minimum moisture",
-                    "moisture_max": "Maximum moisture"
+                    "moisture_max": "Maximum moisture",
+                    "moisture_watering_increase": "Watering increase"
                 },
                 "data_description": {
                     "name": "Name of the plant.",
                     "moisture_entity_id": "The sensor that provides the moisture level of the plant.",
                     "moisture_min": "Lower moisture threshold, if either the min or max is 0 this disables checking moisture.",
-                    "moisture_max": "Upper moisture threshold, if either the min or max is 0 this disables checking moisture."
+                    "moisture_max": "Upper moisture threshold, if either the min or max is 0 this disables checking moisture.",
+                    "moisture_watering_increase": "Percentage increase in moisture that indicates the plant has been watered."
                 }
             },
             "reconfigure": {
@@ -82,11 +84,13 @@
                 "description": "Configured sensor entity:\n- Moisture: {moisture_entity_id}",
                 "data": {
                     "moisture_min": "Minimum moisture",
-                    "moisture_max": "Maximum moisture"
+                    "moisture_max": "Maximum moisture",
+                    "moisture_watering_increase": "Watering increase"
                 },
                 "data_description": {
                     "moisture_min": "Lower moisture threshold, if either the min or max is 0 this disables checking moisture.",
-                    "moisture_max": "Upper moisture threshold, if either the min or max is 0 this disables checking moisture."
+                    "moisture_max": "Upper moisture threshold, if either the min or max is 0 this disables checking moisture.",
+                    "moisture_watering_increase": "Percentage increase in moisture that indicates the plant has been watered."
                 }
             }
         }
