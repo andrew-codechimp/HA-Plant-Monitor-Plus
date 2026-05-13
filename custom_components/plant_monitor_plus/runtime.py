@@ -173,10 +173,16 @@ class PlantMonitorRuntime:
         if not increased_significantly:
             return
 
-        if self._store is not None:
-            self._store.async_update_last_watered(self.entry.entry_id, dt_util.utcnow())
-            for callback in tuple(self._last_watered_callbacks):
-                callback()
+        self.mark_watered_now()
+
+    def mark_watered_now(self) -> None:
+        """Mark this plant as watered at the current UTC timestamp."""
+        if self._store is None:
+            return
+
+        self._store.async_update_last_watered(self.entry.entry_id, dt_util.utcnow())
+        for callback in tuple(self._last_watered_callbacks):
+            callback()
 
     def register_last_watered_callback(
         self,

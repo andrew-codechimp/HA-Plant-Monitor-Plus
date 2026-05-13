@@ -1,0 +1,9 @@
+{
+    "entity": {
+        "button": {
+            "watered": {
+                "default": "mdi:watering-can"
+            }
+        }
+    }
+}

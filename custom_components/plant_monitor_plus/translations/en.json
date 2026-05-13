@@ -76,6 +76,11 @@
                 }
             }
         },
+        "button": {
+            "watered": {
+                "name": "Watered"
+            }
+        },
         "sensor": {
             "last_watered": {
                 "name": "Last watered"
@@ -86,7 +91,7 @@
         "step": {
             "init": {
                 "title": "Plant Monitor Thresholds",
-                "description": "Configured sensor entity:\n- Moisture: {moisture_entity_id}",
+                "description": "Configured sensor entity: {moisture_entity_id}",
                 "data": {
                     "moisture_min": "Minimum moisture",
                     "moisture_max": "Maximum moisture",
