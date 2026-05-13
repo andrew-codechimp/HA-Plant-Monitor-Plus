@@ -8,7 +8,15 @@ from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.core import callback
 from homeassistant.helpers.event import async_track_state_change_event
 
-from .const import DOMAIN
+from .const import (
+    ATTR_CURRENT,
+    ATTR_LAST_WATERED,
+    ATTR_MAX,
+    ATTR_MIN,
+    ATTR_REASON,
+    ATTR_SOURCE_ENTITY_ID,
+    DOMAIN,
+)
 
 if TYPE_CHECKING:
     from homeassistant.core import Event, EventStateChangedData, HomeAssistant, State
@@ -85,11 +93,16 @@ class PlantMoistureProblemBinarySensor(BinarySensorEntity):
 
         self._attr_available = evaluation.available
         self._attr_is_on = evaluation.outside
+
+        self._runtime.record_moisture_reading(evaluation.value)
+
         self._attr_extra_state_attributes = {
-            "source_entity_id": self._runtime.moisture_entity_id,
-            "current": evaluation.value,
-            "min": evaluation.min_value,
-            "max": evaluation.max_value,
-            "reason": evaluation.reason,
+            ATTR_SOURCE_ENTITY_ID: self._runtime.moisture_entity_id,
+            ATTR_CURRENT: evaluation.value,
+            ATTR_MIN: evaluation.min_value,
+            ATTR_MAX: evaluation.max_value,
+            ATTR_REASON: evaluation.reason,
+            ATTR_LAST_WATERED: self._runtime.last_watered,
         }
+
         self.async_write_ha_state()

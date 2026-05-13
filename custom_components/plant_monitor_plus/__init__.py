@@ -47,7 +47,9 @@ async def async_setup_entry(
     entry: PlantMonitorConfigEntry,
 ) -> bool:
     """Set up this integration using UI."""
-    entry.runtime_data = PlantMonitorRuntime(entry)
+    runtime = PlantMonitorRuntime(entry)
+    await runtime.async_initialize(hass)
+    entry.runtime_data = runtime
 
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
 

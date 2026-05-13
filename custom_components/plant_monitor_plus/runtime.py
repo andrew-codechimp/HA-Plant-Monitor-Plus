@@ -6,15 +6,13 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from homeassistant.const import CONF_NAME
-
-if TYPE_CHECKING:
-    from homeassistant.config_entries import ConfigEntry
-    from homeassistant.core import HomeAssistant, State
+from homeassistant.util import dt as dt_util
 
 from .const import (
     CONF_MOISTURE_ENTITY_ID,
     CONF_MOISTURE_MAX,
     CONF_MOISTURE_MIN,
+    MOISTURE_WATERING_INCREASE_PERCENT,
     REASON_DRY,
     REASON_ENTITY_NOT_CONFIGURED,
     REASON_ENTITY_STATE_MISSING,
@@ -23,6 +21,13 @@ from .const import (
     REASON_THRESHOLD_DISABLED,
     REASON_WET,
 )
+from .store import PlantMonitorStore
+
+if TYPE_CHECKING:
+    from datetime import datetime
+
+    from homeassistant.config_entries import ConfigEntry
+    from homeassistant.core import HomeAssistant, State
 
 
 @dataclass(frozen=True, slots=True)
@@ -43,11 +48,26 @@ class PlantMonitorRuntime:
     def __init__(self, entry: ConfigEntry) -> None:
         """Initialize runtime state for an entry."""
         self.entry = entry
+        self._store: PlantMonitorStore | None = None
+        self._previous_moisture_value: float | None = None
+
+    async def async_initialize(self, hass: HomeAssistant) -> None:
+        """Load persistent state for this entry."""
+        self._store = PlantMonitorStore(hass)
+        await self._store.async_load()
 
     @property
     def name(self) -> str:
         """Return configured plant name."""
         return str(self.entry.data.get(CONF_NAME, self.entry.title))
+
+    @property
+    def last_watered(self) -> datetime | None:
+        """Return the last watering timestamp."""
+        if self._store is None:
+            return None
+
+        return self._store.last_watered(self.entry.entry_id)
 
     @property
     def moisture_entity_id(self) -> str | None:
@@ -134,6 +154,30 @@ class PlantMonitorRuntime:
             max_value=max_value,
             reason=reason,
         )
+
+    def record_moisture_reading(self, value: float | None) -> None:
+        """Update last watered when moisture increases significantly."""
+        if value is None:
+            return
+
+        previous_value = self._previous_moisture_value
+        self._previous_moisture_value = value
+
+        if previous_value is None:
+            return
+
+        if previous_value <= 0:
+            increased_significantly = value > previous_value
+        else:
+            increased_significantly = (value - previous_value) >= previous_value * (
+                MOISTURE_WATERING_INCREASE_PERCENT / 100.0
+            )
+
+        if not increased_significantly:
+            return
+
+        if self._store is not None:
+            self._store.async_update_last_watered(self.entry.entry_id, dt_util.utcnow())
 
 
 if TYPE_CHECKING:

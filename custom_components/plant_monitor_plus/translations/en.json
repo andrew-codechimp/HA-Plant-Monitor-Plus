@@ -56,6 +56,9 @@
                     "max": {
                         "name": "Maximum threshold"
                     },
+                    "last_watered": {
+                        "name": "Last watered"
+                    },
                     "reason": {
                         "name": "Reason",
                         "state": {
