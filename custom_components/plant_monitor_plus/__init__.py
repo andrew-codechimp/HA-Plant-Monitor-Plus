@@ -94,3 +94,17 @@ async def async_reload_entry(
 ) -> None:
     """Reload config entry."""
     await hass.config_entries.async_reload(entry.entry_id)
+
+
+async def async_remove_entry(
+    hass: HomeAssistant,
+    entry: PlantMonitorConfigEntry,
+) -> None:
+    """Handle removal of a config entry."""
+    if DATA_KEY in hass.data:
+        store = hass.data[DATA_KEY].store
+    else:
+        store = PlantMonitorStore(hass)
+        await store.async_load()
+
+    store.async_remove_device_data(entry.entry_id)

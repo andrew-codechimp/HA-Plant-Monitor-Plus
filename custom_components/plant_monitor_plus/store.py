@@ -75,6 +75,14 @@ class PlantMonitorStore:
             },
         )
 
+    def async_remove_device_data(self, entry_id: str) -> None:
+        """Remove all persisted data for one device entry."""
+        if entry_id not in self._devices:
+            return
+
+        del self._devices[entry_id]
+        self._store.async_delay_save(self._async_store_data, 0)
+
     def _async_store_data(self) -> dict[str, str | None]:
         """Serialize the stored payload."""
         return {
