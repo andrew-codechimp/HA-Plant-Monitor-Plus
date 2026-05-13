@@ -72,7 +72,7 @@
         "step": {
             "init": {
                 "title": "Plant Monitor Thresholds",
-                "description": "Configured sensor entities:\n{configured_entities}",
+                "description": "Configured sensor entities:\n- Moisture: {moisture_entity_id}\n- Conductivity: {conductivity_entity_id}\n- Humidity: {humidity_entity_id}\n- Temperature: {temperature_entity_id}\n- Illuminance: {illuminance_entity_id}",
                 "data": {
                     "conductivity_min": "Minimum conductivity",
                     "conductivity_max": "Maximum conductivity",

@@ -247,29 +247,26 @@ class PlantMonitorPlusOptionsFlowHandler(OptionsFlow):
             if key not in suggested_values and key in self.config_entry.data:
                 suggested_values[key] = self.config_entry.data[key]
 
-        configured_entities = []
-        for label, key in (
-            ("Moisture", CONF_MOISTURE_ENTITY_ID),
-            ("Conductivity", CONF_CONDUCTIVITY_ENTITY_ID),
-            ("Humidity", CONF_HUMIDITY_ENTITY_ID),
-            ("Temperature", CONF_TEMPERATURE_ENTITY_ID),
-            ("Illuminance", CONF_ILLUMINANCE_ENTITY_ID),
-        ):
-            if entity_id := self.config_entry.data.get(key):
-                configured_entities.append(f"- {label}: {entity_id}")
-
-        configured_entities_text = (
-            "\n".join(configured_entities)
-            if configured_entities
-            else "No entities are currently assigned."
-        )
-
         return self.async_show_form(
             step_id="init",
             data_schema=self.add_suggested_values_to_schema(
                 OPTIONS_SCHEMA, suggested_values
             ),
             description_placeholders={
-                "configured_entities": configured_entities_text,
+                "moisture_entity_id": self.config_entry.data.get(
+                    CONF_MOISTURE_ENTITY_ID, ""
+                ),
+                "conductivity_entity_id": self.config_entry.data.get(
+                    CONF_CONDUCTIVITY_ENTITY_ID, ""
+                ),
+                "humidity_entity_id": self.config_entry.data.get(
+                    CONF_HUMIDITY_ENTITY_ID, ""
+                ),
+                "temperature_entity_id": self.config_entry.data.get(
+                    CONF_TEMPERATURE_ENTITY_ID, ""
+                ),
+                "illuminance_entity_id": self.config_entry.data.get(
+                    CONF_ILLUMINANCE_ENTITY_ID, ""
+                ),
             },
         )
