@@ -21,7 +21,6 @@ from .const import (
     REASON_THRESHOLD_DISABLED,
     REASON_WET,
 )
-from .store import PlantMonitorStore
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -29,6 +28,8 @@ if TYPE_CHECKING:
 
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant, State
+
+    from .store import PlantMonitorStore
 
 
 @dataclass(frozen=True, slots=True)
@@ -46,17 +47,12 @@ class MoistureEvaluation:
 class PlantMonitorRuntime:
     """Shared runtime for state evaluation across entities and actions."""
 
-    def __init__(self, entry: ConfigEntry) -> None:
+    def __init__(self, entry: ConfigEntry, store: PlantMonitorStore) -> None:
         """Initialize runtime state for an entry."""
         self.entry = entry
-        self._store: PlantMonitorStore | None = None
+        self._store = store
         self._previous_moisture_value: float | None = None
         self._last_watered_callbacks: list[Callable[[], None]] = []
-
-    async def async_initialize(self, hass: HomeAssistant) -> None:
-        """Load persistent state for this entry."""
-        self._store = PlantMonitorStore(hass)
-        await self._store.async_load()
 
     @property
     def name(self) -> str:
@@ -66,9 +62,6 @@ class PlantMonitorRuntime:
     @property
     def last_watered(self) -> datetime | None:
         """Return the last watering timestamp."""
-        if self._store is None:
-            return None
-
         return self._store.last_watered(self.entry.entry_id)
 
     @property
@@ -180,9 +173,6 @@ class PlantMonitorRuntime:
 
     def mark_watered_now(self) -> None:
         """Mark this plant as watered at the current UTC timestamp."""
-        if self._store is None:
-            return
-
         self._store.async_update_last_watered(self.entry.entry_id, dt_util.utcnow())
         for callback in tuple(self._last_watered_callbacks):
             callback()
