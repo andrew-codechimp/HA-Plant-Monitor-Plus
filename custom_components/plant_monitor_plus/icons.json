@@ -1,5 +1,13 @@
 {
     "entity": {
+        "binary_sensor": {
+            "moisture": {
+                "state": {
+                    "on": "mdi:water-alert",
+                    "off": "mdi:water-check"
+                }
+            }
+        },
         "button": {
             "watered": {
                 "default": "mdi:watering-can"
