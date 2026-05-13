@@ -13,7 +13,6 @@ from .const import (
     CONF_MOISTURE_MAX,
     CONF_MOISTURE_MIN,
     CONF_MOISTURE_WATERING_INCREASE,
-    DEFAULT_MOISTURE_WATERING_INCREASE,
     REASON_DRY,
     REASON_ENTITY_NOT_CONFIGURED,
     REASON_ENTITY_STATE_MISSING,
@@ -25,6 +24,7 @@ from .const import (
 from .store import PlantMonitorStore
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from datetime import datetime
 
     from homeassistant.config_entries import ConfigEntry
@@ -51,6 +51,7 @@ class PlantMonitorRuntime:
         self.entry = entry
         self._store: PlantMonitorStore | None = None
         self._previous_moisture_value: float | None = None
+        self._last_watered_callbacks: list[Callable[[], None]] = []
 
     async def async_initialize(self, hass: HomeAssistant) -> None:
         """Load persistent state for this entry."""
@@ -174,6 +175,21 @@ class PlantMonitorRuntime:
 
         if self._store is not None:
             self._store.async_update_last_watered(self.entry.entry_id, dt_util.utcnow())
+            for callback in tuple(self._last_watered_callbacks):
+                callback()
+
+    def register_last_watered_callback(
+        self,
+        callback: Callable[[], None],
+    ) -> Callable[[], None]:
+        """Register callback fired when last watered is updated."""
+        self._last_watered_callbacks.append(callback)
+
+        def unsubscribe() -> None:
+            if callback in self._last_watered_callbacks:
+                self._last_watered_callbacks.remove(callback)
+
+        return unsubscribe
 
 
 if TYPE_CHECKING:

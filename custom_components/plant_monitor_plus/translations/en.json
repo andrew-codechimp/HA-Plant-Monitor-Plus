@@ -75,6 +75,11 @@
                     }
                 }
             }
+        },
+        "sensor": {
+            "last_watered": {
+                "name": "Last watered"
+            }
         }
     },
     "options": {
