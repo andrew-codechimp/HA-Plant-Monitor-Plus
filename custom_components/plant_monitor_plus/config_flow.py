@@ -17,69 +17,23 @@ from homeassistant.core import callback
 from homeassistant.helpers import selector
 
 from .const import (
-    CONF_CONDUCTIVITY_ENTITY_ID,
-    CONF_CONDUCTIVITY_MAX,
-    CONF_CONDUCTIVITY_MIN,
-    CONF_HUMIDITY_ENTITY_ID,
-    CONF_HUMIDITY_MAX,
-    CONF_HUMIDITY_MIN,
-    CONF_ILLUMINANCE_ENTITY_ID,
-    CONF_ILLUMINANCE_MAX,
-    CONF_ILLUMINANCE_MIN,
     CONF_MOISTURE_ENTITY_ID,
     CONF_MOISTURE_MAX,
     CONF_MOISTURE_MIN,
-    CONF_TEMPERATURE_ENTITY_ID,
-    CONF_TEMPERATURE_MAX,
-    CONF_TEMPERATURE_MIN,
     DOMAIN,
 )
 
-ENTITY_KEYS = (
-    CONF_MOISTURE_ENTITY_ID,
-    CONF_CONDUCTIVITY_ENTITY_ID,
-    CONF_HUMIDITY_ENTITY_ID,
-    CONF_TEMPERATURE_ENTITY_ID,
-    CONF_ILLUMINANCE_ENTITY_ID,
-)
+ENTITY_KEYS = (CONF_MOISTURE_ENTITY_ID,)
 
 THRESHOLD_KEYS = (
     CONF_MOISTURE_MIN,
     CONF_MOISTURE_MAX,
-    CONF_CONDUCTIVITY_MIN,
-    CONF_CONDUCTIVITY_MAX,
-    CONF_HUMIDITY_MIN,
-    CONF_HUMIDITY_MAX,
-    CONF_TEMPERATURE_MIN,
-    CONF_TEMPERATURE_MAX,
-    CONF_ILLUMINANCE_MIN,
-    CONF_ILLUMINANCE_MAX,
 )
 
 ENTITY_SCHEMA = {
     vol.Optional(CONF_MOISTURE_ENTITY_ID): selector.EntitySelector(
         selector.EntitySelectorConfig(
             domain="sensor", device_class=SensorDeviceClass.MOISTURE
-        )
-    ),
-    vol.Optional(CONF_CONDUCTIVITY_ENTITY_ID): selector.EntitySelector(
-        selector.EntitySelectorConfig(
-            domain="sensor", device_class=SensorDeviceClass.CONDUCTIVITY
-        )
-    ),
-    vol.Optional(CONF_HUMIDITY_ENTITY_ID): selector.EntitySelector(
-        selector.EntitySelectorConfig(
-            domain="sensor", device_class=SensorDeviceClass.HUMIDITY
-        )
-    ),
-    vol.Optional(CONF_TEMPERATURE_ENTITY_ID): selector.EntitySelector(
-        selector.EntitySelectorConfig(
-            domain="sensor", device_class=SensorDeviceClass.TEMPERATURE
-        )
-    ),
-    vol.Optional(CONF_ILLUMINANCE_ENTITY_ID): selector.EntitySelector(
-        selector.EntitySelectorConfig(
-            domain="sensor", device_class=SensorDeviceClass.ILLUMINANCE
         )
     ),
 }
@@ -91,46 +45,6 @@ THRESHOLD_SCHEMA = {
         )
     ),
     vol.Required(CONF_MOISTURE_MAX, default=0): selector.NumberSelector(
-        selector.NumberSelectorConfig(
-            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
-        )
-    ),
-    vol.Required(CONF_CONDUCTIVITY_MIN, default=0): selector.NumberSelector(
-        selector.NumberSelectorConfig(
-            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
-        )
-    ),
-    vol.Required(CONF_CONDUCTIVITY_MAX, default=0): selector.NumberSelector(
-        selector.NumberSelectorConfig(
-            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
-        )
-    ),
-    vol.Required(CONF_HUMIDITY_MIN, default=0): selector.NumberSelector(
-        selector.NumberSelectorConfig(
-            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
-        )
-    ),
-    vol.Required(CONF_HUMIDITY_MAX, default=0): selector.NumberSelector(
-        selector.NumberSelectorConfig(
-            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
-        )
-    ),
-    vol.Required(CONF_TEMPERATURE_MIN, default=0): selector.NumberSelector(
-        selector.NumberSelectorConfig(
-            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
-        )
-    ),
-    vol.Required(CONF_TEMPERATURE_MAX, default=0): selector.NumberSelector(
-        selector.NumberSelectorConfig(
-            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
-        )
-    ),
-    vol.Required(CONF_ILLUMINANCE_MIN, default=0): selector.NumberSelector(
-        selector.NumberSelectorConfig(
-            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
-        )
-    ),
-    vol.Required(CONF_ILLUMINANCE_MAX, default=0): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
         )
@@ -255,18 +169,6 @@ class PlantMonitorPlusOptionsFlowHandler(OptionsFlow):
             description_placeholders={
                 "moisture_entity_id": self.config_entry.data.get(
                     CONF_MOISTURE_ENTITY_ID, ""
-                ),
-                "conductivity_entity_id": self.config_entry.data.get(
-                    CONF_CONDUCTIVITY_ENTITY_ID, ""
-                ),
-                "humidity_entity_id": self.config_entry.data.get(
-                    CONF_HUMIDITY_ENTITY_ID, ""
-                ),
-                "temperature_entity_id": self.config_entry.data.get(
-                    CONF_TEMPERATURE_ENTITY_ID, ""
-                ),
-                "illuminance_entity_id": self.config_entry.data.get(
-                    CONF_ILLUMINANCE_ENTITY_ID, ""
                 ),
             },
         )

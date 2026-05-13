@@ -12,38 +12,22 @@ if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant, State
 
 from .const import (
-    CONF_CONDUCTIVITY_ENTITY_ID,
-    CONF_CONDUCTIVITY_MAX,
-    CONF_CONDUCTIVITY_MIN,
-    CONF_HUMIDITY_ENTITY_ID,
-    CONF_HUMIDITY_MAX,
-    CONF_HUMIDITY_MIN,
-    CONF_ILLUMINANCE_ENTITY_ID,
-    CONF_ILLUMINANCE_MAX,
-    CONF_ILLUMINANCE_MIN,
     CONF_MOISTURE_ENTITY_ID,
     CONF_MOISTURE_MAX,
     CONF_MOISTURE_MIN,
-    CONF_TEMPERATURE_ENTITY_ID,
-    CONF_TEMPERATURE_MAX,
-    CONF_TEMPERATURE_MIN,
+    REASON_DRY,
+    REASON_ENTITY_NOT_CONFIGURED,
+    REASON_ENTITY_STATE_MISSING,
+    REASON_NON_NUMERIC_STATE,
+    REASON_OK,
+    REASON_THRESHOLD_DISABLED,
+    REASON_WET,
 )
 
 
 @dataclass(frozen=True, slots=True)
-class MetricDefinition:
-    """Definition of a monitored metric."""
-
-    key: str
-    label: str
-    entity_key: str
-    min_key: str
-    max_key: str
-
-
-@dataclass(frozen=True, slots=True)
-class MetricEvaluation:
-    """Outcome of a metric threshold evaluation."""
+class MoistureEvaluation:
+    """Outcome of a moisture threshold evaluation."""
 
     available: bool
     outside: bool
@@ -56,44 +40,6 @@ class MetricEvaluation:
 class PlantMonitorRuntime:
     """Shared runtime for state evaluation across entities and actions."""
 
-    METRICS: tuple[MetricDefinition, ...] = (
-        MetricDefinition(
-            key="moisture",
-            label="Moisture",
-            entity_key=CONF_MOISTURE_ENTITY_ID,
-            min_key=CONF_MOISTURE_MIN,
-            max_key=CONF_MOISTURE_MAX,
-        ),
-        MetricDefinition(
-            key="conductivity",
-            label="Conductivity",
-            entity_key=CONF_CONDUCTIVITY_ENTITY_ID,
-            min_key=CONF_CONDUCTIVITY_MIN,
-            max_key=CONF_CONDUCTIVITY_MAX,
-        ),
-        MetricDefinition(
-            key="humidity",
-            label="Humidity",
-            entity_key=CONF_HUMIDITY_ENTITY_ID,
-            min_key=CONF_HUMIDITY_MIN,
-            max_key=CONF_HUMIDITY_MAX,
-        ),
-        MetricDefinition(
-            key="temperature",
-            label="Temperature",
-            entity_key=CONF_TEMPERATURE_ENTITY_ID,
-            min_key=CONF_TEMPERATURE_MIN,
-            max_key=CONF_TEMPERATURE_MAX,
-        ),
-        MetricDefinition(
-            key="illuminance",
-            label="Illuminance",
-            entity_key=CONF_ILLUMINANCE_ENTITY_ID,
-            min_key=CONF_ILLUMINANCE_MIN,
-            max_key=CONF_ILLUMINANCE_MAX,
-        ),
-    )
-
     def __init__(self, entry: ConfigEntry) -> None:
         """Initialize runtime state for an entry."""
         self.entry = entry
@@ -103,90 +49,94 @@ class PlantMonitorRuntime:
         """Return configured plant name."""
         return str(self.entry.data.get(CONF_NAME, self.entry.title))
 
-    def configured_metrics(self) -> list[MetricDefinition]:
-        """Return metric definitions that have a configured source entity."""
-        return [metric for metric in self.METRICS if self.entity_id(metric)]
-
-    def entity_id(self, metric: MetricDefinition) -> str | None:
-        """Return source entity_id for a metric."""
-        entity_id = self.entry.data.get(metric.entity_key)
+    @property
+    def moisture_entity_id(self) -> str | None:
+        """Return the configured moisture sensor entity_id."""
+        entity_id = self.entry.data.get(CONF_MOISTURE_ENTITY_ID)
         return str(entity_id) if entity_id else None
 
-    def thresholds(self, metric: MetricDefinition) -> tuple[float, float]:
-        """Return (min, max) thresholds for a metric."""
+    @property
+    def moisture_thresholds(self) -> tuple[float, float]:
+        """Return (min, max) moisture thresholds."""
         min_value = self.entry.options.get(
-            metric.min_key,
-            self.entry.data.get(metric.min_key, 0),
+            CONF_MOISTURE_MIN,
+            self.entry.data.get(CONF_MOISTURE_MIN, 0),
         )
         max_value = self.entry.options.get(
-            metric.max_key,
-            self.entry.data.get(metric.max_key, 0),
+            CONF_MOISTURE_MAX,
+            self.entry.data.get(CONF_MOISTURE_MAX, 0),
         )
         return float(min_value), float(max_value)
 
-    def evaluate_state(
+    def evaluate_moisture(
         self,
         hass: HomeAssistant,
-        metric: MetricDefinition,
         state: State | None = None,
-    ) -> MetricEvaluation:
-        """Evaluate whether metric state is outside configured thresholds."""
-        entity_id = self.entity_id(metric)
-        min_value, max_value = self.thresholds(metric)
+    ) -> MoistureEvaluation:
+        """Evaluate whether moisture is outside configured thresholds."""
+        entity_id = self.moisture_entity_id
+        min_value, max_value = self.moisture_thresholds
 
         if not entity_id:
-            return MetricEvaluation(
+            return MoistureEvaluation(
                 available=False,
                 outside=False,
                 value=None,
                 min_value=min_value,
                 max_value=max_value,
-                reason="entity_not_configured",
+                reason=REASON_ENTITY_NOT_CONFIGURED,
             )
 
         if min_value == 0 or max_value == 0:
-            return MetricEvaluation(
+            return MoistureEvaluation(
                 available=True,
                 outside=False,
                 value=None,
                 min_value=min_value,
                 max_value=max_value,
-                reason="threshold_disabled",
+                reason=REASON_THRESHOLD_DISABLED,
             )
 
         source_state = state if state is not None else hass.states.get(entity_id)
         if source_state is None:
-            return MetricEvaluation(
+            return MoistureEvaluation(
                 available=False,
                 outside=False,
                 value=None,
                 min_value=min_value,
                 max_value=max_value,
-                reason="entity_state_missing",
+                reason=REASON_ENTITY_STATE_MISSING,
             )
 
         try:
             value = float(source_state.state)
         except TypeError, ValueError:
-            return MetricEvaluation(
+            return MoistureEvaluation(
                 available=False,
                 outside=False,
                 value=None,
                 min_value=min_value,
                 max_value=max_value,
-                reason="non_numeric_state",
+                reason=REASON_NON_NUMERIC_STATE,
             )
 
-        outside = value < min_value or value > max_value
-        return MetricEvaluation(
+        if value < min_value:
+            reason = REASON_DRY
+        elif value > max_value:
+            reason = REASON_WET
+        else:
+            reason = REASON_OK
+        return MoistureEvaluation(
             available=True,
-            outside=outside,
+            outside=reason != REASON_OK,
             value=value,
             min_value=min_value,
             max_value=max_value,
-            reason="ok",
+            reason=reason,
         )
 
 
 if TYPE_CHECKING:
+    from homeassistant.config_entries import ConfigEntry
+
     PlantMonitorConfigEntry = ConfigEntry[PlantMonitorRuntime]
