@@ -24,20 +24,20 @@
                 "data_description": {
                     "name": "Name of the plant.",
                     "conductivity_entity_id": "The sensor that provides the conductivity level of the soil.",
-                    "conductivity_min": "Optional lower conductivity threshold.",
-                    "conductivity_max": "Optional upper conductivity threshold.",
+                    "conductivity_min": "Lower conductivity threshold, if a conductivity sensor is specified.",
+                    "conductivity_max": "Upper conductivity threshold, if a conductivity sensor is specified.",
                     "humidity_entity_id": "The sensor that provides the humidity level around the plant.",
-                    "humidity_min": "Optional lower humidity threshold.",
-                    "humidity_max": "Optional upper humidity threshold.",
+                    "humidity_min": "Lower humidity threshold, if a humidity sensor is specified.",
+                    "humidity_max": "Upper humidity threshold, if a humidity sensor is specified.",
+                    "illuminance_min": "Lower illuminance threshold, if a illuminance sensor is specified.",
                     "illuminance_entity_id": "The sensor that provides the illuminance level around the plant.",
-                    "illuminance_min": "Optional lower illuminance threshold.",
-                    "illuminance_max": "Optional upper illuminance threshold.",
+                    "illuminance_max": "Upper illuminance threshold, if a illuminance sensor is specified.",
                     "moisture_entity_id": "The sensor that provides the moisture level of the plant.",
-                    "moisture_min": "Optional lower moisture threshold.",
-                    "moisture_max": "Optional upper moisture threshold.",
+                    "moisture_min": "Lower moisture threshold, if a moisture sensor is specified.",
+                    "moisture_max": "Upper moisture threshold, if a moisture sensor is specified.",
                     "temperature_entity_id": "The sensor that provides the temperature around the plant.",
-                    "temperature_min": "Optional lower temperature threshold.",
-                    "temperature_max": "Optional upper temperature threshold."
+                    "temperature_min": "Lower temperature threshold, if a temperature sensor is specified.",
+                    "temperature_max": "Upper temperature threshold, if a temperature sensor is specified."
                 }
             },
             "reconfigure": {
@@ -84,16 +84,16 @@
                     "temperature_max": "Maximum temperature"
                 },
                 "data_description": {
-                    "conductivity_min": "Optional lower conductivity threshold.",
-                    "conductivity_max": "Optional upper conductivity threshold.",
-                    "humidity_min": "Optional lower humidity threshold.",
-                    "humidity_max": "Optional upper humidity threshold.",
-                    "illuminance_min": "Optional lower illuminance threshold.",
-                    "illuminance_max": "Optional upper illuminance threshold.",
-                    "moisture_min": "Optional lower moisture threshold.",
-                    "moisture_max": "Optional upper moisture threshold.",
-                    "temperature_min": "Optional lower temperature threshold.",
-                    "temperature_max": "Optional upper temperature threshold."
+                    "conductivity_min": "Lower conductivity threshold, if a conductivity sensor is specified.",
+                    "conductivity_max": "Upper conductivity threshold, if a conductivity sensor is specified.",
+                    "humidity_min": "Lower humidity threshold, if a humidity sensor is specified.",
+                    "humidity_max": "Upper humidity threshold, if a humidity sensor is specified.",
+                    "illuminance_min": "Lower illuminance threshold, if a illuminance sensor is specified.",
+                    "illuminance_max": "Upper illuminance threshold, if a illuminance sensor is specified.",
+                    "moisture_min": "Lower moisture threshold, if a moisture sensor is specified.",
+                    "moisture_max": "Upper moisture threshold, if a moisture sensor is specified.",
+                    "temperature_min": "Lower temperature threshold, if a temperature sensor is specified.",
+                    "temperature_max": "Upper temperature threshold, if a temperature sensor is specified."
                 }
             }
         }
