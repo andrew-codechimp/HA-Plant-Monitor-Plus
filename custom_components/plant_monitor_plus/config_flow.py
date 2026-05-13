@@ -85,52 +85,52 @@ ENTITY_SCHEMA = {
 }
 
 THRESHOLD_SCHEMA = {
-    vol.Optional(CONF_MOISTURE_MIN): selector.NumberSelector(
+    vol.Required(CONF_MOISTURE_MIN, default=0): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
         )
     ),
-    vol.Optional(CONF_MOISTURE_MAX): selector.NumberSelector(
+    vol.Required(CONF_MOISTURE_MAX, default=0): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
         )
     ),
-    vol.Optional(CONF_CONDUCTIVITY_MIN): selector.NumberSelector(
+    vol.Required(CONF_CONDUCTIVITY_MIN, default=0): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
         )
     ),
-    vol.Optional(CONF_CONDUCTIVITY_MAX): selector.NumberSelector(
+    vol.Required(CONF_CONDUCTIVITY_MAX, default=0): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
         )
     ),
-    vol.Optional(CONF_HUMIDITY_MIN): selector.NumberSelector(
+    vol.Required(CONF_HUMIDITY_MIN, default=0): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
         )
     ),
-    vol.Optional(CONF_HUMIDITY_MAX): selector.NumberSelector(
+    vol.Required(CONF_HUMIDITY_MAX, default=0): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
         )
     ),
-    vol.Optional(CONF_TEMPERATURE_MIN): selector.NumberSelector(
+    vol.Required(CONF_TEMPERATURE_MIN, default=0): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
         )
     ),
-    vol.Optional(CONF_TEMPERATURE_MAX): selector.NumberSelector(
+    vol.Required(CONF_TEMPERATURE_MAX, default=0): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
         )
     ),
-    vol.Optional(CONF_ILLUMINANCE_MIN): selector.NumberSelector(
+    vol.Required(CONF_ILLUMINANCE_MIN, default=0): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
         )
     ),
-    vol.Optional(CONF_ILLUMINANCE_MAX): selector.NumberSelector(
+    vol.Required(CONF_ILLUMINANCE_MAX, default=0): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
         )
@@ -201,8 +201,18 @@ class PlantMonitorPlusFlowHandler(ConfigFlow, domain=DOMAIN):
         config_entry = self._get_reconfigure_entry()
         errors: dict[str, str] = {}
         if user_input and not errors:
-            updated_data = dict(config_entry.data)
-            updated_data.update(user_input)
+            # Rebuild entity assignments from submitted input so cleared optional
+            # selectors are actually removed from stored config data.
+            updated_data = {
+                key: value
+                for key, value in config_entry.data.items()
+                if key not in ENTITY_KEYS
+            }
+            updated_data[CONF_NAME] = user_input[CONF_NAME]
+            for key in ENTITY_KEYS:
+                if value := user_input.get(key):
+                    updated_data[key] = value
+
             self.hass.config_entries.async_update_entry(
                 config_entry,
                 title=user_input[CONF_NAME],
@@ -237,9 +247,29 @@ class PlantMonitorPlusOptionsFlowHandler(OptionsFlow):
             if key not in suggested_values and key in self.config_entry.data:
                 suggested_values[key] = self.config_entry.data[key]
 
+        configured_entities = []
+        for label, key in (
+            ("Moisture", CONF_MOISTURE_ENTITY_ID),
+            ("Conductivity", CONF_CONDUCTIVITY_ENTITY_ID),
+            ("Humidity", CONF_HUMIDITY_ENTITY_ID),
+            ("Temperature", CONF_TEMPERATURE_ENTITY_ID),
+            ("Illuminance", CONF_ILLUMINANCE_ENTITY_ID),
+        ):
+            if entity_id := self.config_entry.data.get(key):
+                configured_entities.append(f"- {label}: {entity_id}")
+
+        configured_entities_text = (
+            "\n".join(configured_entities)
+            if configured_entities
+            else "No entities are currently assigned."
+        )
+
         return self.async_show_form(
             step_id="init",
             data_schema=self.add_suggested_values_to_schema(
                 OPTIONS_SCHEMA, suggested_values
             ),
+            description_placeholders={
+                "configured_entities": configured_entities_text,
+            },
         )
