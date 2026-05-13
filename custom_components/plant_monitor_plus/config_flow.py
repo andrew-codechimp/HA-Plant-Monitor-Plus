@@ -96,28 +96,44 @@ THRESHOLD_SCHEMA = {
         )
     ),
     vol.Optional(CONF_CONDUCTIVITY_MIN): selector.NumberSelector(
-        selector.NumberSelectorConfig(mode=selector.NumberSelectorMode.SLIDER)
+        selector.NumberSelectorConfig(
+            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
+        )
     ),
     vol.Optional(CONF_CONDUCTIVITY_MAX): selector.NumberSelector(
-        selector.NumberSelectorConfig(mode=selector.NumberSelectorMode.SLIDER)
+        selector.NumberSelectorConfig(
+            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
+        )
     ),
     vol.Optional(CONF_HUMIDITY_MIN): selector.NumberSelector(
-        selector.NumberSelectorConfig(mode=selector.NumberSelectorMode.SLIDER)
+        selector.NumberSelectorConfig(
+            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
+        )
     ),
     vol.Optional(CONF_HUMIDITY_MAX): selector.NumberSelector(
-        selector.NumberSelectorConfig(mode=selector.NumberSelectorMode.SLIDER)
+        selector.NumberSelectorConfig(
+            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
+        )
     ),
     vol.Optional(CONF_TEMPERATURE_MIN): selector.NumberSelector(
-        selector.NumberSelectorConfig(mode=selector.NumberSelectorMode.SLIDER)
+        selector.NumberSelectorConfig(
+            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
+        )
     ),
     vol.Optional(CONF_TEMPERATURE_MAX): selector.NumberSelector(
-        selector.NumberSelectorConfig(mode=selector.NumberSelectorMode.SLIDER)
+        selector.NumberSelectorConfig(
+            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
+        )
     ),
     vol.Optional(CONF_ILLUMINANCE_MIN): selector.NumberSelector(
-        selector.NumberSelectorConfig(mode=selector.NumberSelectorMode.SLIDER)
+        selector.NumberSelectorConfig(
+            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
+        )
     ),
     vol.Optional(CONF_ILLUMINANCE_MAX): selector.NumberSelector(
-        selector.NumberSelectorConfig(mode=selector.NumberSelectorMode.SLIDER)
+        selector.NumberSelectorConfig(
+            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
+        )
     ),
 }
 
@@ -206,7 +222,7 @@ class PlantMonitorPlusFlowHandler(ConfigFlow, domain=DOMAIN):
 class PlantMonitorPlusOptionsFlowHandler(OptionsFlow):
     """Options flow for Plant Monitor Plus."""
 
-    def __init__(self, config_entry: ConfigEntry) -> None:
+    def __init__(self, _config_entry: ConfigEntry) -> None:
         """Initialize options flow."""
 
     async def async_step_init(
