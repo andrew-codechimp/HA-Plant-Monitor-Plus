@@ -18,7 +18,7 @@ from homeassistant.util.hass_dict import HassKey
 
 from .const import DOMAIN, MIN_HA_VERSION
 from .runtime import PlantMonitorPlusRuntime
-from .services import async_setup_services, async_unload_services
+from .services import async_unload_services, setup_services
 from .store import PlantMonitorStore
 
 if TYPE_CHECKING:
@@ -66,7 +66,7 @@ async def async_setup_entry(
         await shared_store.async_load()
         hass.data[DATA_KEY] = PlantMonitorData(store=shared_store)
 
-    async_setup_services(hass)
+    await setup_services(hass)
 
     integration_data = hass.data[DATA_KEY]
 
@@ -87,7 +87,7 @@ async def async_unload_entry(
     """Unload a config entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok and not hass.config_entries.async_entries(DOMAIN):
-        async_unload_services(hass)
+        await async_unload_services(hass)
         hass.data.pop(DATA_KEY, None)
     return unload_ok
 

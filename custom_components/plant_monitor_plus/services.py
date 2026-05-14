@@ -84,7 +84,7 @@ def get_plant_summary(
     )
 
 
-def set_watered(
+async def set_watered(
     hass: HomeAssistant,
     service_call: ServiceCall,
 ) -> None:
@@ -123,11 +123,11 @@ def set_watered(
         utc_dt = dt_util.utcnow()
 
     # Update the timestamp and notify listeners
-    runtime.set_last_watered(utc_dt)
+    await runtime.set_last_watered(utc_dt)
 
 
 @callback
-def async_setup_services(hass: HomeAssistant) -> None:
+async def setup_services(hass: HomeAssistant) -> None:
     """Register integration services."""
     if hass.services.has_service(DOMAIN, SERVICE_GET_PLANT_SUMMARY):
         return
