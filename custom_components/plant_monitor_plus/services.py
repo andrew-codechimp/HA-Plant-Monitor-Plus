@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, cast
 
 from homeassistant.core import SupportsResponse
 
-from .const import DOMAIN, SERVICE_GET_PLANT_SUMMARY
+from .const import DOMAIN, REASON_DRY, REASON_WET, SERVICE_GET_PLANT_SUMMARY
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse
@@ -34,11 +34,10 @@ async def async_get_plant_summary(
         evaluation = runtime.evaluate_moisture(hass)
         if not evaluation.available:
             unavailable.append(runtime.name)
-        elif evaluation.value is not None:
-            if evaluation.value < evaluation.min_value:
-                needs_watering.append(runtime.name)
-            elif evaluation.value > evaluation.max_value:
-                too_wet.append(runtime.name)
+        elif evaluation.reason == REASON_DRY:
+            needs_watering.append(runtime.name)
+        elif evaluation.reason == REASON_WET:
+            too_wet.append(runtime.name)
 
         last_watered = runtime.last_watered
         plants.append(
