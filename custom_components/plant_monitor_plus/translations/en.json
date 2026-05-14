@@ -110,13 +110,13 @@
             "name": "Get plant summary",
             "description": "Return all plant entries and categorized lists."
         },
-        "set_watered": {
-            "name": "Set watered",
+        "set_plant_watered": {
+            "name": "Set plant watered",
             "description": "Set the last watered timestamp for a plant.",
             "fields": {
                 "config_entry_id": {
                     "name": "Plant",
-                    "description": "The plant config entry to update."
+                    "description": "The plant to update."
                 },
                 "datetime": {
                     "name": "Datetime",

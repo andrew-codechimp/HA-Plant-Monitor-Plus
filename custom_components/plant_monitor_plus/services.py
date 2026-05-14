@@ -22,13 +22,13 @@ from .const import (
     REASON_DRY,
     REASON_WET,
     SERVICE_GET_PLANT_SUMMARY,
-    SERVICE_SET_WATERED,
+    SERVICE_SET_PLANT_WATERED,
 )
 
 if TYPE_CHECKING:
     from custom_components.plant_monitor_plus.runtime import PlantMonitorPlusRuntime
 
-SERVICE_SET_WATERED_SCHEMA = vol.Schema(
+SERVICE_SET_PLANT_WATERED_SCHEMA = vol.Schema(
     {
         vol.Required("config_entry_id"): cv.string,
         vol.Optional("datetime"): cv.string,
@@ -84,7 +84,7 @@ def get_plant_summary(
     )
 
 
-async def async_set_watered(
+async def async_set_plant_watered(
     hass: HomeAssistant,
     service_call: ServiceCall,
 ) -> None:
@@ -141,13 +141,13 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 
     hass.services.async_register(
         DOMAIN,
-        SERVICE_SET_WATERED,
-        partial(async_set_watered, hass),
-        schema=SERVICE_SET_WATERED_SCHEMA,
+        SERVICE_SET_PLANT_WATERED,
+        partial(async_set_plant_watered, hass),
+        schema=SERVICE_SET_PLANT_WATERED_SCHEMA,
     )
 
 
 async def async_unload_services(hass: HomeAssistant) -> None:
     """Unregister integration services."""
     hass.services.async_remove(DOMAIN, SERVICE_GET_PLANT_SUMMARY)
-    hass.services.async_remove(DOMAIN, SERVICE_SET_WATERED)
+    hass.services.async_remove(DOMAIN, SERVICE_SET_PLANT_WATERED)

@@ -16,6 +16,6 @@
     },
     "services": {
         "get_plant_summary": "mdi:flower-tulip",
-        "set_watered": "mdi:watering-can"
+        "set_plant_watered": "mdi:watering-can"
     }
 }
