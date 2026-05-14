@@ -54,19 +54,19 @@ class PlantMonitorStore:
 
         return dt_util.parse_datetime(str(last_watered))
 
-    def async_update_device_data(self, entry_id: str, **values: Any) -> None:
+    def update_device_data(self, entry_id: str, **values: Any) -> None:
         """Persist one or more values for a device entry."""
         device_data = self._devices.setdefault(entry_id, {})
         device_data.update(values)
-        self._store.async_delay_save(self._async_store_data, 0)
+        self._store.async_delay_save(self._store_data, 0)
 
-    def async_update_last_watered(
+    def update_last_watered(
         self,
         entry_id: str,
         last_watered: datetime | None,
     ) -> None:
         """Persist a new watering timestamp for a device."""
-        self.async_update_device_data(
+        self.update_device_data(
             entry_id,
             **{
                 STORE_LAST_WATERED_KEY: (
@@ -75,15 +75,15 @@ class PlantMonitorStore:
             },
         )
 
-    def async_remove_device_data(self, entry_id: str) -> None:
+    def remove_device_data(self, entry_id: str) -> None:
         """Remove all persisted data for one device entry."""
         if entry_id not in self._devices:
             return
 
         del self._devices[entry_id]
-        self._store.async_delay_save(self._async_store_data, 0)
+        self._store.async_delay_save(self._store_data, 0)
 
-    def _async_store_data(self) -> dict[str, dict[str, dict[str, Any]]]:
+    def _store_data(self) -> dict[str, dict[str, dict[str, Any]]]:
         """Serialize the stored payload."""
         return {
             STORE_DEVICES_KEY: self._devices,

@@ -173,13 +173,13 @@ class PlantMonitorPlusRuntime:
 
     def mark_watered_now(self) -> None:
         """Mark this plant as watered at the current UTC timestamp."""
-        self._store.async_update_last_watered(self.entry.entry_id, dt_util.utcnow())
+        self._store.update_last_watered(self.entry.entry_id, dt_util.utcnow())
         for callback in tuple(self._last_watered_callbacks):
             callback()
 
     def set_last_watered(self, dt: datetime) -> None:
         """Set the last watered timestamp and notify listeners."""
-        self._store.async_update_last_watered(self.entry.entry_id, dt)
+        self._store.update_last_watered(self.entry.entry_id, dt)
         for callback in tuple(self._last_watered_callbacks):
             callback()
 

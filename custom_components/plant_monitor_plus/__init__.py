@@ -111,4 +111,4 @@ async def async_remove_entry(
         store = PlantMonitorStore(hass)
         await store.async_load()
 
-    store.async_remove_device_data(entry.entry_id)
+    store.remove_device_data(entry.entry_id)
