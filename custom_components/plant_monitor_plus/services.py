@@ -122,7 +122,7 @@ async def async_set_watered(
         utc_dt = dt_util.utcnow()
 
     # Update the timestamp and notify listeners
-    runtime.async_set_last_watered(utc_dt)
+    runtime.set_last_watered(utc_dt)
 
 
 async def async_setup_services(hass: HomeAssistant) -> None:
