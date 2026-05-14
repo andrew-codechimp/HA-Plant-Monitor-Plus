@@ -1,0 +1,4 @@
+get_plant_summary:
+  name: Get plant summary
+  description: Return all plant entries with moisture details and categorized lists.
+  fields: {}

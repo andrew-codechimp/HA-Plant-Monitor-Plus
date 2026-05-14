@@ -13,5 +13,8 @@
                 "default": "mdi:watering-can"
             }
         }
+    },
+    "services": {
+        "get_plant_summary": "mdi:flower-tulip"
     }
 }

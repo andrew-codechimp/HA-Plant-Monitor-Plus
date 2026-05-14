@@ -104,5 +104,11 @@
                 }
             }
         }
+    },
+    "services": {
+        "get_plant_summary": {
+            "name": "Get plant summary",
+            "description": "Return all plant entries, including moisture details and categorized lists for needs_watering, too_wet, and unavailable plants."
+        }
     }
 }
