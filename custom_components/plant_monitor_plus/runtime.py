@@ -177,7 +177,7 @@ class PlantMonitorPlusRuntime:
         for callback in tuple(self._last_watered_callbacks):
             callback()
 
-    async def set_last_watered(self, dt: datetime) -> None:
+    async def async_set_last_watered(self, dt: datetime) -> None:
         """Set the last watered timestamp and notify listeners."""
         self._store.update_last_watered(self.entry.entry_id, dt)
         for callback in tuple(self._last_watered_callbacks):
