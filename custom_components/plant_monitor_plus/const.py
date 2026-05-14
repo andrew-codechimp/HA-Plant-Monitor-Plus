@@ -16,6 +16,7 @@ CONF_MOISTURE_WATERING_INCREASE = "moisture_watering_increase"
 DEFAULT_MOISTURE_WATERING_INCREASE = 20
 
 SERVICE_GET_PLANT_SUMMARY = "get_plant_summary"
+SERVICE_SET_WATERED = "set_watered"
 
 ATTR_CURRENT = "current"
 ATTR_LAST_WATERED = "last_watered"

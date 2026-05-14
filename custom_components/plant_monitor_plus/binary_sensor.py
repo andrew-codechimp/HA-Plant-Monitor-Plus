@@ -15,14 +15,14 @@ from .const import (
     ATTR_MIN,
     ATTR_REASON,
     ATTR_SOURCE_ENTITY_ID,
-    DOMAIN,
 )
+from .entity import PlantMonitorPlusEntity
 
 if TYPE_CHECKING:
     from homeassistant.core import Event, EventStateChangedData, HomeAssistant, State
     from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-    from .runtime import PlantMonitorConfigEntry, PlantMonitorRuntime
+    from .runtime import PlantMonitorConfigEntry, PlantMonitorPlusRuntime
 
 
 async def async_setup_entry(
@@ -31,7 +31,7 @@ async def async_setup_entry(
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up plant moisture problem sensor for a config entry."""
-    runtime: PlantMonitorRuntime = entry.runtime_data
+    runtime: PlantMonitorPlusRuntime = entry.runtime_data
 
     entities = []
     if runtime.moisture_entity_id:
@@ -39,28 +39,18 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-class PlantMoistureProblemBinarySensor(BinarySensorEntity):
+class PlantMoistureProblemBinarySensor(PlantMonitorPlusEntity, BinarySensorEntity):
     """Binary sensor that reports whether moisture is outside its thresholds."""
 
-    _attr_should_poll = False
-    _attr_has_entity_name = True
     _attr_translation_key = "moisture"
 
-    def __init__(self, runtime: PlantMonitorRuntime) -> None:
+    def __init__(self, runtime: PlantMonitorPlusRuntime) -> None:
         """Initialize the moisture problem binary sensor."""
-        self._runtime = runtime
+        super().__init__(runtime)
         self._attr_unique_id = f"{runtime.entry.entry_id}_moisture"
         self._attr_is_on = False
         self._attr_available = True
         self._attr_extra_state_attributes: dict[str, Any] = {}
-
-    @property
-    def device_info(self) -> dict[str, Any]:
-        """Return device info for this sensor."""
-        return {
-            "identifiers": {(DOMAIN, self._runtime.entry.entry_id)},
-            "name": self._runtime.name,
-        }
 
     async def async_added_to_hass(self) -> None:
         """Register state listener and evaluate the initial state."""
@@ -76,6 +66,18 @@ class PlantMoistureProblemBinarySensor(BinarySensorEntity):
                 )
             )
 
+        # Register callback for last_watered updates
+        self.async_on_remove(
+            self._runtime.register_last_watered_callback(
+                self._async_last_watered_updated
+            )
+        )
+
+        self._refresh_state()
+
+    @callback
+    def _async_last_watered_updated(self) -> None:
+        """Handle last watered timestamp updates."""
         self._refresh_state()
 
     @callback

@@ -17,7 +17,7 @@ from homeassistant.const import __version__ as HA_VERSION  # noqa: N812
 from homeassistant.util.hass_dict import HassKey
 
 from .const import DOMAIN, MIN_HA_VERSION
-from .runtime import PlantMonitorRuntime
+from .runtime import PlantMonitorPlusRuntime
 from .services import async_setup_services, async_unload_services
 from .store import PlantMonitorStore
 
@@ -70,7 +70,7 @@ async def async_setup_entry(
 
     integration_data = hass.data[DATA_KEY]
 
-    runtime = PlantMonitorRuntime(entry, integration_data.store)
+    runtime = PlantMonitorPlusRuntime(entry, integration_data.store)
     entry.runtime_data = runtime
 
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))

@@ -44,7 +44,7 @@ class MoistureEvaluation:
     reason: str
 
 
-class PlantMonitorRuntime:
+class PlantMonitorPlusRuntime:
     """Shared runtime for state evaluation across entities and actions."""
 
     def __init__(self, entry: ConfigEntry, store: PlantMonitorStore) -> None:
@@ -177,6 +177,12 @@ class PlantMonitorRuntime:
         for callback in tuple(self._last_watered_callbacks):
             callback()
 
+    def async_set_last_watered(self, dt: datetime) -> None:
+        """Set the last watered timestamp and notify listeners."""
+        self._store.async_update_last_watered(self.entry.entry_id, dt)
+        for callback in tuple(self._last_watered_callbacks):
+            callback()
+
     def register_last_watered_callback(
         self,
         callback: Callable[[], None],
@@ -194,4 +200,4 @@ class PlantMonitorRuntime:
 if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
 
-    PlantMonitorConfigEntry = ConfigEntry[PlantMonitorRuntime]
+    PlantMonitorConfigEntry = ConfigEntry[PlantMonitorPlusRuntime]

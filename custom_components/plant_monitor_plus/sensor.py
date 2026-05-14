@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.core import callback
 from homeassistant.helpers.event import async_track_state_change_event
 
-from .const import DOMAIN
+from .entity import PlantMonitorPlusEntity
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from homeassistant.core import Event, EventStateChangedData, HomeAssistant, State
     from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-    from .runtime import PlantMonitorConfigEntry, PlantMonitorRuntime
+    from .runtime import PlantMonitorConfigEntry, PlantMonitorPlusRuntime
 
 
 async def async_setup_entry(
@@ -25,32 +25,22 @@ async def async_setup_entry(
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up sensors for a config entry."""
-    runtime: PlantMonitorRuntime = entry.runtime_data
+    runtime: PlantMonitorPlusRuntime = entry.runtime_data
     async_add_entities([PlantLastWateredSensor(runtime)])
 
 
-class PlantLastWateredSensor(SensorEntity):
+class PlantLastWateredSensor(PlantMonitorPlusEntity, SensorEntity):
     """Sensor exposing the last watered timestamp."""
 
-    _attr_should_poll = False
-    _attr_has_entity_name = True
     _attr_translation_key = "last_watered"
     _attr_device_class = SensorDeviceClass.TIMESTAMP
     _attr_native_value: datetime | None = None
 
-    def __init__(self, runtime: PlantMonitorRuntime) -> None:
+    def __init__(self, runtime: PlantMonitorPlusRuntime) -> None:
         """Initialize the last watered sensor."""
-        self._runtime = runtime
+        super().__init__(runtime)
         self._attr_unique_id = f"{runtime.entry.entry_id}_last_watered"
         self._attr_available = True
-
-    @property
-    def device_info(self) -> dict[str, Any]:
-        """Return device info for this sensor."""
-        return {
-            "identifiers": {(DOMAIN, self._runtime.entry.entry_id)},
-            "name": self._runtime.name,
-        }
 
     async def async_added_to_hass(self) -> None:
         """Register listeners and evaluate initial state."""

@@ -2,3 +2,16 @@ get_plant_summary:
   name: Get plant summary
   description: Return all plant entries and categorized lists.
   fields: {}
+
+set_watered:
+  name: Set watered
+  description: Set the last watered timestamp for a plant.
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: plant_monitor_plus
+    datetime:
+      selector:
+        datetime:

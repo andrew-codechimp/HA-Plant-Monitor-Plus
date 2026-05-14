@@ -25,7 +25,7 @@ class PlantMonitorStore:
 
     def __init__(self, hass: HomeAssistant) -> None:
         """Initialize the shared integration store."""
-        self._store = Store(hass, STORE_VERSION, STORE_KEY)
+        self._store: Store[dict[str, Any]] = Store(hass, STORE_VERSION, STORE_KEY)
         self._devices: dict[str, dict[str, Any]] = {}
 
     def device_data(self, entry_id: str) -> dict[str, Any]:
@@ -83,7 +83,7 @@ class PlantMonitorStore:
         del self._devices[entry_id]
         self._store.async_delay_save(self._async_store_data, 0)
 
-    def _async_store_data(self) -> dict[str, str | None]:
+    def _async_store_data(self) -> dict[str, dict[str, dict[str, Any]]]:
         """Serialize the stored payload."""
         return {
             STORE_DEVICES_KEY: self._devices,
