@@ -21,8 +21,8 @@ async def async_get_plant_summary(
 ) -> ServiceResponse:
     """Return plant summary details and category lists."""
     plants: list[dict[str, object]] = []
-    needs_watering: list[str] = []
-    too_wet: list[str] = []
+    dry: list[str] = []
+    wet: list[str] = []
     unavailable: list[str] = []
 
     for config_entry in hass.config_entries.async_entries(DOMAIN):
@@ -35,9 +35,9 @@ async def async_get_plant_summary(
         if not evaluation.available:
             unavailable.append(runtime.name)
         elif evaluation.reason == REASON_DRY:
-            needs_watering.append(runtime.name)
+            dry.append(runtime.name)
         elif evaluation.reason == REASON_WET:
-            too_wet.append(runtime.name)
+            wet.append(runtime.name)
 
         last_watered = runtime.last_watered
         plants.append(
@@ -53,8 +53,8 @@ async def async_get_plant_summary(
         )
 
     return {
-        "needs_watering": needs_watering,
-        "too_wet": too_wet,
+        "dry": dry,
+        "wet": wet,
         "unavailable": unavailable,
         "plants": plants,
     }
