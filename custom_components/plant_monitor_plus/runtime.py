@@ -200,4 +200,4 @@ class PlantMonitorPlusRuntime:
 if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
 
-    PlantMonitorConfigEntry = ConfigEntry[PlantMonitorPlusRuntime]
+    PlantMonitorPlusConfigEntry = ConfigEntry[PlantMonitorPlusRuntime]

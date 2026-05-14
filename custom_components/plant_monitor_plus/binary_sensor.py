@@ -22,12 +22,12 @@ if TYPE_CHECKING:
     from homeassistant.core import Event, EventStateChangedData, HomeAssistant, State
     from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-    from .runtime import PlantMonitorConfigEntry, PlantMonitorPlusRuntime
+    from .runtime import PlantMonitorPlusConfigEntry, PlantMonitorPlusRuntime
 
 
 async def async_setup_entry(
     _hass: HomeAssistant,
-    entry: PlantMonitorConfigEntry,
+    entry: PlantMonitorPlusConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up plant moisture problem sensor for a config entry."""

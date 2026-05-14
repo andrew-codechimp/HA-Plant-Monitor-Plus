@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.typing import ConfigType
 
-    from .runtime import PlantMonitorConfigEntry
+    from .runtime import PlantMonitorPlusConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:  # noqa:
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: PlantMonitorConfigEntry,
+    entry: PlantMonitorPlusConfigEntry,
 ) -> bool:
     """Set up this integration using UI."""
     if DATA_KEY not in hass.data:
@@ -82,7 +82,7 @@ async def async_setup_entry(
 
 async def async_unload_entry(
     hass: HomeAssistant,
-    entry: PlantMonitorConfigEntry,
+    entry: PlantMonitorPlusConfigEntry,
 ) -> bool:
     """Unload a config entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
@@ -94,7 +94,7 @@ async def async_unload_entry(
 
 async def async_reload_entry(
     hass: HomeAssistant,
-    entry: PlantMonitorConfigEntry,
+    entry: PlantMonitorPlusConfigEntry,
 ) -> None:
     """Reload config entry."""
     await hass.config_entries.async_reload(entry.entry_id)
@@ -102,7 +102,7 @@ async def async_reload_entry(
 
 async def async_remove_entry(
     hass: HomeAssistant,
-    entry: PlantMonitorConfigEntry,
+    entry: PlantMonitorPlusConfigEntry,
 ) -> None:
     """Handle removal of a config entry."""
     if DATA_KEY in hass.data:
