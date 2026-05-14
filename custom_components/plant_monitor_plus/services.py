@@ -11,6 +11,7 @@ from homeassistant.core import (
     ServiceCall,
     ServiceResponse,
     SupportsResponse,
+    callback,
 )
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import config_validation as cv
@@ -35,7 +36,7 @@ SERVICE_SET_WATERED_SCHEMA = vol.Schema(
 )
 
 
-async def async_get_plant_summary(
+def get_plant_summary(
     hass: HomeAssistant,
     _service_call: ServiceCall,
 ) -> ServiceResponse:
@@ -83,7 +84,7 @@ async def async_get_plant_summary(
     )
 
 
-async def async_set_watered(
+def set_watered(
     hass: HomeAssistant,
     service_call: ServiceCall,
 ) -> None:
@@ -125,7 +126,8 @@ async def async_set_watered(
     runtime.set_last_watered(utc_dt)
 
 
-async def async_setup_services(hass: HomeAssistant) -> None:
+@callback
+def async_setup_services(hass: HomeAssistant) -> None:
     """Register integration services."""
     if hass.services.has_service(DOMAIN, SERVICE_GET_PLANT_SUMMARY):
         return
@@ -133,14 +135,14 @@ async def async_setup_services(hass: HomeAssistant) -> None:
     hass.services.async_register(
         DOMAIN,
         SERVICE_GET_PLANT_SUMMARY,
-        partial(async_get_plant_summary, hass),
+        partial(get_plant_summary, hass),
         supports_response=SupportsResponse.ONLY,
     )
 
     hass.services.async_register(
         DOMAIN,
         SERVICE_SET_WATERED,
-        partial(async_set_watered, hass),
+        partial(set_watered, hass),
         schema=SERVICE_SET_WATERED_SCHEMA,
     )
 

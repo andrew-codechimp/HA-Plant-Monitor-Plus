@@ -66,7 +66,7 @@ async def async_setup_entry(
         await shared_store.async_load()
         hass.data[DATA_KEY] = PlantMonitorData(store=shared_store)
 
-    await async_setup_services(hass)
+    async_setup_services(hass)
 
     integration_data = hass.data[DATA_KEY]
 
@@ -87,7 +87,7 @@ async def async_unload_entry(
     """Unload a config entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok and not hass.config_entries.async_entries(DOMAIN):
-        await async_unload_services(hass)
+        async_unload_services(hass)
         hass.data.pop(DATA_KEY, None)
     return unload_ok
 
