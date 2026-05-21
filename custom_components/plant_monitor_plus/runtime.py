@@ -13,7 +13,6 @@ from .const import (
     CONF_MOISTURE_MIN,
     CONF_MOISTURE_WATERING_INCREASE,
     REASON_DRY,
-    REASON_ENTITY_NOT_CONFIGURED,
     REASON_ENTITY_STATE_MISSING,
     REASON_NON_NUMERIC_STATE,
     REASON_OK,
@@ -64,10 +63,10 @@ class PlantMonitorPlusRuntime:
         return self._store.last_watered(self.entry.entry_id)
 
     @property
-    def moisture_entity_id(self) -> str | None:
+    def moisture_entity_id(self) -> str:
         """Return the configured moisture sensor entity_id."""
         entity_id = self.entry.data[CONF_MOISTURE_ENTITY_ID]
-        return str(entity_id) if entity_id else None
+        return str(entity_id)
 
     @property
     def moisture_thresholds(self) -> tuple[float, float]:
@@ -84,16 +83,6 @@ class PlantMonitorPlusRuntime:
         """Evaluate whether moisture is outside configured thresholds."""
         entity_id = self.moisture_entity_id
         min_value, max_value = self.moisture_thresholds
-
-        if not entity_id:
-            return MoistureEvaluation(
-                available=False,
-                outside=False,
-                value=None,
-                min_value=min_value,
-                max_value=max_value,
-                reason=REASON_ENTITY_NOT_CONFIGURED,
-            )
 
         if min_value == 0 or max_value == 0:
             return MoistureEvaluation(

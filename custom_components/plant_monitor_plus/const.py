@@ -26,7 +26,6 @@ ATTR_REASON = "reason"
 ATTR_SOURCE_ENTITY_ID = "source_entity_id"
 
 REASON_DRY = "dry"
-REASON_ENTITY_NOT_CONFIGURED = "entity_not_configured"
 REASON_ENTITY_STATE_MISSING = "entity_state_missing"
 REASON_NON_NUMERIC_STATE = "non_numeric_state"
 REASON_OK = "ok"
