@@ -72,9 +72,7 @@ class PlantMonitorPlusFlowHandler(ConfigFlow, domain=DOMAIN):
         for entry in self.hass.config_entries.async_entries(DOMAIN):
             if current_entry_id is not None and entry.entry_id == current_entry_id:
                 continue
-            entity_id = entry.data.get(CONF_MOISTURE_ENTITY_ID)
-            if entity_id:
-                excluded.append(str(entity_id))
+            excluded.append(str(entry.data[CONF_MOISTURE_ENTITY_ID]))
         return excluded
 
     def _entity_selector(self, current_entry_id: str | None = None) -> dict:
