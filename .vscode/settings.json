@@ -5,20 +5,22 @@
     "editor.formatOnSaveMode": "file",
     "editor.codeActionsOnSave": { },
     "editor.semanticHighlighting.enabled": true,
-    "[python]": {
-        "editor.defaultFormatter": "charliermarsh.ruff",
-        "editor.formatOnSave": true,
-        "editor.formatOnSaveMode": "file",
-        "editor.formatOnType": false,
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": "always"
-        }
-    },
     "[markdown]": {
         "editor.formatOnSave": false
     },
-    "ruff.nativeServer": "auto",
-    "ruff.importStrategy": "fromEnvironment",
     "ruff.configuration": "/workspaces/HA-Plant-Monitor-Plus/pyproject.toml",
     "python.terminal.activateEnvInCurrentTerminal": true,
+    "ruff.configurationPreference": "filesystemFirst",
+    "ruff.path": [ "/home/vscode/.local/ha-venv/bin/ruff" ],
+    "ruff.importStrategy": "fromEnvironment",
+    "ruff.nativeServer": false,
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+        "editor.formatOnType": false,
+        "editor.formatOnSaveMode": "file",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "always"
+        }
+    }
 }
