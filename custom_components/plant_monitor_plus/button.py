@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from homeassistant.components.button import ButtonEntity
+from homeassistant.util import dt as dt_util
 
 from .entity import PlantMonitorPlusEntity
 
@@ -37,4 +38,4 @@ class PlantWateredButton(PlantMonitorPlusEntity, ButtonEntity):
 
     async def async_press(self) -> None:
         """Handle button press."""
-        self._runtime.mark_watered_now()
+        await self._runtime.async_set_last_watered(dt_util.utcnow())

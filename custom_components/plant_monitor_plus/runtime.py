@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from homeassistant.const import CONF_NAME
-from homeassistant.util import dt as dt_util
 
 from .const import (
     CONF_MOISTURE_ENTITY_ID,
@@ -170,12 +169,6 @@ class PlantMonitorPlusRuntime:
             return
 
         self.mark_watered_now()
-
-    def mark_watered_now(self) -> None:
-        """Mark this plant as watered at the current UTC timestamp."""
-        self._store.update_last_watered(self.entry.entry_id, dt_util.utcnow())
-        for callback in tuple(self._last_watered_callbacks):
-            callback()
 
     async def async_set_last_watered(self, dt: datetime) -> None:
         """Set the last watered timestamp and notify listeners."""
