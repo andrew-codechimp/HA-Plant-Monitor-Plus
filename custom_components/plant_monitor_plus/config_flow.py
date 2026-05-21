@@ -34,14 +34,6 @@ THRESHOLD_KEYS = (
     CONF_MOISTURE_WATERING_INCREASE,
 )
 
-ENTITY_SCHEMA = {
-    vol.Required(CONF_MOISTURE_ENTITY_ID): selector.EntitySelector(
-        selector.EntitySelectorConfig(
-            domain="sensor", device_class=SensorDeviceClass.MOISTURE
-        )
-    ),
-}
-
 THRESHOLD_SCHEMA = {
     vol.Required(CONF_MOISTURE_MIN, default=0): selector.NumberSelector(
         selector.NumberSelectorConfig(
@@ -63,21 +55,6 @@ THRESHOLD_SCHEMA = {
     ),
 }
 
-USER_SCHEMA = vol.Schema(
-    {
-        vol.Required(CONF_NAME): str,
-        **ENTITY_SCHEMA,
-        **THRESHOLD_SCHEMA,
-    }
-)
-
-RECONFIGURE_SCHEMA = vol.Schema(
-    {
-        vol.Required(CONF_NAME): str,
-        **ENTITY_SCHEMA,
-    }
-)
-
 OPTIONS_SCHEMA = vol.Schema(THRESHOLD_SCHEMA)
 
 
@@ -85,6 +62,51 @@ class PlantMonitorPlusFlowHandler(ConfigFlow, domain=DOMAIN):
     """Config flow for Plant Monitor Plus."""
 
     VERSION = 1
+
+    def _excluded_moisture_entities(
+        self,
+        current_entry_id: str | None = None,
+    ) -> list[str]:
+        """Return moisture entities already assigned to other entries."""
+        excluded: list[str] = []
+        for entry in self.hass.config_entries.async_entries(DOMAIN):
+            if current_entry_id is not None and entry.entry_id == current_entry_id:
+                continue
+            entity_id = entry.data.get(CONF_MOISTURE_ENTITY_ID)
+            if entity_id:
+                excluded.append(str(entity_id))
+        return excluded
+
+    def _entity_selector(self, current_entry_id: str | None = None) -> dict:
+        """Build an entity selector excluding moisture entities in use."""
+        return {
+            vol.Required(CONF_MOISTURE_ENTITY_ID): selector.EntitySelector(
+                selector.EntitySelectorConfig(
+                    domain="sensor",
+                    device_class=SensorDeviceClass.MOISTURE,
+                    exclude_entities=self._excluded_moisture_entities(current_entry_id),
+                )
+            )
+        }
+
+    def _user_schema(self) -> vol.Schema:
+        """Build user step schema."""
+        return vol.Schema(
+            {
+                vol.Required(CONF_NAME): str,
+                **self._entity_selector(),
+                **THRESHOLD_SCHEMA,
+            }
+        )
+
+    def _reconfigure_schema(self, current_entry_id: str) -> vol.Schema:
+        """Build reconfigure step schema."""
+        return vol.Schema(
+            {
+                vol.Required(CONF_NAME): str,
+                **self._entity_selector(current_entry_id),
+            }
+        )
 
     @staticmethod
     @callback
@@ -116,7 +138,7 @@ class PlantMonitorPlusFlowHandler(ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="user",
-            data_schema=USER_SCHEMA,
+            data_schema=self._user_schema(),
             errors=errors,
         )
 
@@ -149,7 +171,7 @@ class PlantMonitorPlusFlowHandler(ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="reconfigure",
             data_schema=self.add_suggested_values_to_schema(
-                RECONFIGURE_SCHEMA, config_entry.data
+                self._reconfigure_schema(config_entry.entry_id), config_entry.data
             ),
             errors=errors,
         )
