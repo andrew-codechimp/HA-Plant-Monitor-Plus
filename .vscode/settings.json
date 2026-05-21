@@ -17,7 +17,7 @@
     "[markdown]": {
         "editor.formatOnSave": false
     },
-    "ruff.nativeServer": "off",
+    "ruff.nativeServer": "auto",
     "ruff.importStrategy": "fromEnvironment",
     "ruff.configuration": "/workspaces/HA-Plant-Monitor-Plus/pyproject.toml",
     "python.terminal.activateEnvInCurrentTerminal": true,

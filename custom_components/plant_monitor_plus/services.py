@@ -6,6 +6,7 @@ from functools import partial
 from typing import TYPE_CHECKING, cast
 
 import voluptuous as vol
+
 from homeassistant.core import (
     HomeAssistant,
     ServiceCall,
@@ -32,7 +33,7 @@ SERVICE_SET_PLANT_WATERED_SCHEMA = vol.Schema(
     {
         vol.Required("config_entry_id"): cv.string,
         vol.Optional("datetime"): cv.string,
-    }
+    },
 )
 
 
