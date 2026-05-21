@@ -1,5 +1,4 @@
-"""
-Custom integration to create plant monitors in Home Assistant.
+"""Custom integration to create plant monitors in Home Assistant.
 
 For more details about this integration, please refer to
 https://github.com/andrew-codechimp/ha-plant-monitor-plus
@@ -12,8 +11,11 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from awesomeversion.awesomeversion import AwesomeVersion
-from homeassistant.const import Platform
-from homeassistant.const import __version__ as HA_VERSION  # noqa: N812
+
+from homeassistant.const import (
+    Platform,
+    __version__ as HA_VERSION,  # noqa: N812
+)
 from homeassistant.util.hass_dict import HassKey
 
 from .const import DOMAIN, MIN_HA_VERSION
