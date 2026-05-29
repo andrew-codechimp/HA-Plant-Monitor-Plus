@@ -112,15 +112,15 @@
         },
         "set_plant_watered": {
             "name": "Set plant watered",
-            "description": "Set the last watered timestamp for a plant.",
+            "description": "Set the last watered time for a plant.",
             "fields": {
                 "config_entry_id": {
                     "name": "Plant",
                     "description": "The plant to update."
                 },
                 "datetime": {
-                    "name": "Datetime",
-                    "description": "The watering datetime (local time). If omitted, uses current time."
+                    "name": "Time",
+                    "description": "The watering time (local time). If omitted, uses current time."
                 }
             }
         }
