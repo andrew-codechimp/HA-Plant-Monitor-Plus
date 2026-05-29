@@ -39,8 +39,8 @@
     },
     "entity": {
         "binary_sensor": {
-            "moisture": {
-                "name": "Moisture",
+            "moisture_status": {
+                "name": "Moisture status",
                 "state": {
                     "on": "Problem",
                     "off": "OK"
@@ -82,6 +82,9 @@
             }
         },
         "sensor": {
+            "moisture": {
+                "name": "Moisture"
+            },
             "last_watered": {
                 "name": "Last watered"
             }

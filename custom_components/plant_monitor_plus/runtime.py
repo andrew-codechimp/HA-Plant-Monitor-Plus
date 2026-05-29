@@ -6,6 +6,9 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from homeassistant.const import CONF_NAME
+from homeassistant.core import callback
+from homeassistant.helpers.event import async_track_state_change_event
+from homeassistant.util import dt as dt_util
 
 from .const import (
     CONF_MOISTURE_ENTITY_ID,
@@ -25,7 +28,7 @@ if TYPE_CHECKING:
     from datetime import datetime
 
     from homeassistant.config_entries import ConfigEntry
-    from homeassistant.core import HomeAssistant, State
+    from homeassistant.core import Event, EventStateChangedData, HomeAssistant, State
 
     from .store import PlantMonitorStore
 
@@ -51,6 +54,8 @@ class PlantMonitorPlusRuntime:
         self._store = store
         self._previous_moisture_value: float | None = None
         self._last_watered_callbacks: list[Callable[[], None]] = []
+        self._moisture_callbacks: list[Callable[[State | None], None]] = []
+        self._moisture_unsubscribe: Callable[[], None] | None = None
 
     @property
     def name(self) -> str:
@@ -162,8 +167,49 @@ class PlantMonitorPlusRuntime:
     async def async_set_last_watered(self, dt: datetime) -> None:
         """Set the last watered timestamp and notify listeners."""
         self._store.update_last_watered(self.entry.entry_id, dt)
-        for callback in tuple(self._last_watered_callbacks):
-            callback()
+        for cb in tuple(self._last_watered_callbacks):
+            cb()
+
+    def mark_watered_now(self) -> None:
+        """Set last watered to current time and notify listeners."""
+        self._store.update_last_watered(self.entry.entry_id, dt_util.utcnow())
+        for cb in tuple(self._last_watered_callbacks):
+            cb()
+
+    def register_moisture_callback(
+        self,
+        hass: HomeAssistant,
+        callback: Callable[[State | None], None],
+    ) -> Callable[[], None]:
+        """Register callback fired when the configured moisture entity changes."""
+        self._moisture_callbacks.append(callback)
+
+        if self._moisture_unsubscribe is None:
+            self._moisture_unsubscribe = async_track_state_change_event(
+                hass,
+                [self.moisture_entity_id],
+                self._async_handle_moisture_state_change,
+            )
+
+        def unsubscribe() -> None:
+            if callback in self._moisture_callbacks:
+                self._moisture_callbacks.remove(callback)
+
+            if not self._moisture_callbacks and self._moisture_unsubscribe is not None:
+                self._moisture_unsubscribe()
+                self._moisture_unsubscribe = None
+
+        return unsubscribe
+
+    @callback
+    def _async_handle_moisture_state_change(
+        self,
+        event: Event[EventStateChangedData],
+    ) -> None:
+        """Dispatch moisture source updates to runtime subscribers."""
+        new_state = event.data.get("new_state")
+        for cb in tuple(self._moisture_callbacks):
+            cb(new_state)
 
     def register_last_watered_callback(
         self,

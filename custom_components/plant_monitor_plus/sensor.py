@@ -5,15 +5,16 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
+from homeassistant.const import PERCENTAGE
 from homeassistant.core import callback
-from homeassistant.helpers.event import async_track_state_change_event
 
+from .const import ATTR_SOURCE_ENTITY_ID
 from .entity import PlantMonitorPlusEntity
 
 if TYPE_CHECKING:
     from datetime import datetime
 
-    from homeassistant.core import Event, EventStateChangedData, HomeAssistant, State
+    from homeassistant.core import HomeAssistant, State
     from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
     from .runtime import PlantMonitorPlusConfigEntry, PlantMonitorPlusRuntime
@@ -26,7 +27,52 @@ async def async_setup_entry(
 ) -> None:
     """Set up sensors for a config entry."""
     runtime: PlantMonitorPlusRuntime = entry.runtime_data
-    async_add_entities([PlantLastWateredSensor(runtime)])
+    entities: list[SensorEntity] = [PlantLastWateredSensor(runtime)]
+    if runtime.moisture_entity_id:
+        entities.append(PlantMoistureSensor(runtime))
+    async_add_entities(entities)
+
+
+class PlantMoistureSensor(PlantMonitorPlusEntity, SensorEntity):
+    """Sensor exposing the current moisture value from the watched source entity."""
+
+    _attr_translation_key = "moisture"
+    _attr_native_unit_of_measurement = PERCENTAGE
+    _attr_suggested_display_precision = 0
+    _attr_native_value: float | None = None
+
+    def __init__(self, runtime: PlantMonitorPlusRuntime) -> None:
+        """Initialize the moisture sensor."""
+        super().__init__(runtime)
+        self._attr_unique_id = f"{runtime.entry.entry_id}_moisture_value"
+        self._attr_available = True
+
+    async def async_added_to_hass(self) -> None:
+        """Register listeners and evaluate initial state."""
+        await super().async_added_to_hass()
+
+        self.async_on_remove(
+            self._runtime.register_moisture_callback(
+                self.hass,
+                self._refresh_state,
+            )
+        )
+
+        self._refresh_state()
+
+    @callback
+    def _refresh_state(self, source_state: State | None = None) -> None:
+        """Refresh sensor value from runtime moisture evaluation."""
+        evaluation = self._runtime.evaluate_moisture(
+            hass=self.hass,
+            state=source_state,
+        )
+        self._attr_available = evaluation.available
+        self._attr_native_value = evaluation.value
+        self._attr_extra_state_attributes = {
+            ATTR_SOURCE_ENTITY_ID: self._runtime.moisture_entity_id,
+        }
+        self.async_write_ha_state()
 
 
 class PlantLastWateredSensor(PlantMonitorPlusEntity, SensorEntity):
@@ -46,15 +92,12 @@ class PlantLastWateredSensor(PlantMonitorPlusEntity, SensorEntity):
         """Register listeners and evaluate initial state."""
         await super().async_added_to_hass()
 
-        entity_id = self._runtime.moisture_entity_id
-        if entity_id:
-            self.async_on_remove(
-                async_track_state_change_event(
-                    self.hass,
-                    [entity_id],
-                    self._async_handle_state_change,
-                )
+        self.async_on_remove(
+            self._runtime.register_moisture_callback(
+                self.hass,
+                self._refresh_state,
             )
+        )
 
         self.async_on_remove(
             self._runtime.register_last_watered_callback(
@@ -63,11 +106,6 @@ class PlantLastWateredSensor(PlantMonitorPlusEntity, SensorEntity):
         )
 
         self._refresh_state()
-
-    @callback
-    def _async_handle_state_change(self, event: Event[EventStateChangedData]) -> None:
-        """Handle source entity state changes."""
-        self._refresh_state(event.data.get("new_state"))
 
     @callback
     def _async_handle_last_watered_update(self) -> None:

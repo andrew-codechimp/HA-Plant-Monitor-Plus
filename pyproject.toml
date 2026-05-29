@@ -169,6 +169,7 @@ voluptuous = "vol"
 # results.
 python_version = "3.14"
 platform = "linux"
+explicit_package_bases = true
 
 # show error messages from unrelated files
 follow_imports = "normal"

@@ -12,6 +12,11 @@
             "watered": {
                 "default": "mdi:watering-can"
             }
+        },
+        "sensor": {
+            "moisture": {
+                "default": "mdi:water-percent"
+            }
         }
     },
     "services": {
