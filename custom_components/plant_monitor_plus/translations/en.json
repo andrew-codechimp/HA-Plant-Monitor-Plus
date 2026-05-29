@@ -13,9 +13,9 @@
                 "data_description": {
                     "name": "Name of the plant.",
                     "moisture_entity_id": "The sensor that provides the moisture level of the plant.",
-                    "moisture_min": "Minimum moisture threshold, if either the minimum or maximum is 0 this disables checking moisture.",
-                    "moisture_max": "Maximum moisture threshold, if either the minimum or maximum is 0 this disables checking moisture.",
-                    "moisture_watering_increase": "Moisture increase amount that will automatically set the plant as watered (0 disables automatic watering detection)."
+                    "moisture_min": "The threshold where the plant is too dry, if either the minimum or maximum is 0 this disables checking moisture.",
+                    "moisture_max": "The threshold where the plant is too wet, if either the minimum or maximum is 0 this disables checking moisture.",
+                    "moisture_watering_increase": "The amount that the moisture increases that indicates the plant has been watered and will automatically set the plant as watered (0 disables automatic watering detection)."
                 }
             },
             "reconfigure": {
@@ -53,10 +53,10 @@
                         "name": "Current moisture"
                     },
                     "min": {
-                        "name": "Minimum threshold"
+                        "name": "Minimum moisture"
                     },
                     "max": {
-                        "name": "Maximum threshold"
+                        "name": "Maximum moisture"
                     },
                     "last_watered": {
                         "name": "Last watered"
@@ -70,7 +70,7 @@
                             "entity_not_configured": "Entity not configured",
                             "entity_state_missing": "Entity state missing",
                             "non_numeric_state": "Non-numeric state",
-                            "threshold_disabled": "Threshold disabled"
+                            "threshold_disabled": "Thresholds disabled"
                         }
                     }
                 }
@@ -101,9 +101,9 @@
                     "moisture_watering_increase": "Watering increase"
                 },
                 "data_description": {
-                    "moisture_min": "Minimum moisture threshold, if either the minimum or maximum is 0 this disables checking moisture.",
-                    "moisture_max": "Maximum moisture threshold, if either the minimum or maximum is 0 this disables checking moisture.",
-                    "moisture_watering_increase": "Moisture increase amount that will automatically set the plant as watered (0 disables automatic watering detection)."
+                    "moisture_min": "The threshold where the plant is too dry, if either the minimum or maximum is 0 this disables checking moisture.",
+                    "moisture_max": "The threshold where the plant is too wet, if either the minimum or maximum is 0 this disables checking moisture.",
+                    "moisture_watering_increase": "The amount that the moisture increases that indicates the plant has been watered and will automatically set the plant as watered (0 disables automatic watering detection)."
                 }
             }
         }
@@ -111,7 +111,7 @@
     "services": {
         "get_plant_summary": {
             "name": "Get plant summary",
-            "description": "Return all plant entries and categorized lists."
+            "description": "Return all plant entries with lists of plants with problems."
         },
         "set_plant_watered": {
             "name": "Set plant watered",
