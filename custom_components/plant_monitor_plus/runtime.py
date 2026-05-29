@@ -152,12 +152,7 @@ class PlantMonitorPlusRuntime:
         if previous_value is None:
             return
 
-        if previous_value <= 0:
-            increased_significantly = value > previous_value
-        else:
-            increased_significantly = (value - previous_value) >= previous_value * (
-                threshold / 100.0
-            )
+        increased_significantly = (value - previous_value) >= threshold
 
         if not increased_significantly:
             return

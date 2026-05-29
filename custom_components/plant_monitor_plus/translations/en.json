@@ -15,7 +15,7 @@
                     "moisture_entity_id": "The sensor that provides the moisture level of the plant.",
                     "moisture_min": "Lower moisture threshold, if either the min or max is 0 this disables checking moisture.",
                     "moisture_max": "Upper moisture threshold, if either the min or max is 0 this disables checking moisture.",
-                    "moisture_watering_increase": "Percentage increase in moisture that indicates the plant has been watered (0 disables automatic watering detection)."
+                    "moisture_watering_increase": "Moisture increase amount that indicates the plant has been watered (0 disables automatic watering detection)."
                 }
             },
             "reconfigure": {
@@ -103,7 +103,7 @@
                 "data_description": {
                     "moisture_min": "Lower moisture threshold, if either the min or max is 0 this disables checking moisture.",
                     "moisture_max": "Upper moisture threshold, if either the min or max is 0 this disables checking moisture.",
-                    "moisture_watering_increase": "Percentage increase in moisture that indicates the plant has been watered (0 disables automatic watering detection)."
+                    "moisture_watering_increase": "Moisture increase amount that indicates the plant has been watered (0 disables automatic watering detection)."
                 }
             }
         }
