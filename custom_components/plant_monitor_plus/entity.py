@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from homeassistant.const import MATCH_ALL
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity import Entity
 
@@ -18,6 +19,7 @@ class PlantMonitorPlusEntity(Entity):
 
     _attr_should_poll = False
     _attr_has_entity_name = True
+    _unrecorded_attributes = frozenset({MATCH_ALL})
 
     def __init__(self, runtime: PlantMonitorPlusRuntime) -> None:
         """Initialize the entity."""
