@@ -16,9 +16,10 @@ from homeassistant.const import (
     Platform,
     __version__ as HA_VERSION,  # noqa: N812
 )
+from homeassistant.helpers import issue_registry as ir
 from homeassistant.util.hass_dict import HassKey
 
-from .const import DOMAIN, MIN_HA_VERSION
+from .const import DOMAIN, ISSUE_MOISTURE_ENTITY_INVALID, MIN_HA_VERSION
 from .runtime import PlantMonitorPlusRuntime
 from .services import async_setup_services, async_unload_services
 from .store import PlantMonitorStore
@@ -74,6 +75,7 @@ async def async_setup_entry(
 
     runtime = PlantMonitorPlusRuntime(entry, integration_data.store)
     entry.runtime_data = runtime
+    entry.async_on_unload(runtime.async_setup_moisture_entity_watcher(hass))
 
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
 
@@ -114,3 +116,9 @@ async def async_remove_entry(
         await store.async_load()
 
     store.remove_device_data(entry.entry_id)
+
+    ir.async_delete_issue(
+        hass,
+        DOMAIN,
+        f"{ISSUE_MOISTURE_ENTITY_INVALID}_{entry.entry_id}",
+    )

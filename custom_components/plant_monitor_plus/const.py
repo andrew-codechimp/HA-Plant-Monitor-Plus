@@ -31,3 +31,5 @@ REASON_NON_NUMERIC_STATE = "non_numeric_state"
 REASON_OK = "ok"
 REASON_THRESHOLD_DISABLED = "threshold_disabled"
 REASON_WET = "wet"
+
+ISSUE_MOISTURE_ENTITY_INVALID = "moisture_entity_invalid"

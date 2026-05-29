@@ -6,8 +6,12 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from homeassistant.const import CONF_NAME
-from homeassistant.core import callback
-from homeassistant.helpers.event import async_track_state_change_event
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import entity_registry as er, issue_registry as ir
+from homeassistant.helpers.event import (
+    async_track_entity_registry_updated_event,
+    async_track_state_change_event,
+)
 from homeassistant.util import dt as dt_util
 
 from .const import (
@@ -15,6 +19,8 @@ from .const import (
     CONF_MOISTURE_MAX,
     CONF_MOISTURE_MIN,
     CONF_MOISTURE_WATERING_INCREASE,
+    DOMAIN,
+    ISSUE_MOISTURE_ENTITY_INVALID,
     REASON_DRY,
     REASON_ENTITY_STATE_MISSING,
     REASON_NON_NUMERIC_STATE,
@@ -28,7 +34,7 @@ if TYPE_CHECKING:
     from datetime import datetime
 
     from homeassistant.config_entries import ConfigEntry
-    from homeassistant.core import Event, EventStateChangedData, HomeAssistant, State
+    from homeassistant.core import Event, EventStateChangedData, State
 
     from .store import PlantMonitorStore
 
@@ -56,6 +62,14 @@ class PlantMonitorPlusRuntime:
         self._last_watered_callbacks: list[Callable[[], None]] = []
         self._moisture_callbacks: list[Callable[[State | None], None]] = []
         self._moisture_unsubscribe: Callable[[], None] | None = None
+        self._hass: HomeAssistant | None = None
+        self._registry_unsubscribe: Callable[[], None] | None = None
+        self._tracked_moisture_entity_id: str | None = None
+
+    @property
+    def _moisture_entity_issue_id(self) -> str:
+        """Return issue id for moisture source problems."""
+        return f"{ISSUE_MOISTURE_ENTITY_INVALID}_{self.entry.entry_id}"
 
     @property
     def name(self) -> str:
@@ -216,6 +230,113 @@ class PlantMonitorPlusRuntime:
                 self._last_watered_callbacks.remove(callback)
 
         return unsubscribe
+
+    @callback
+    def async_setup_moisture_entity_watcher(
+        self, hass: HomeAssistant
+    ) -> Callable[[], None]:
+        """Watch source moisture entity for registry rename/removal events."""
+        self._hass = hass
+        self._async_update_registry_watcher(hass, self.moisture_entity_id)
+        self._async_clear_or_create_missing_entity_issue(hass)
+
+        @callback
+        def _cleanup() -> None:
+            if self._registry_unsubscribe is not None:
+                self._registry_unsubscribe()
+                self._registry_unsubscribe = None
+
+        return _cleanup
+
+    @callback
+    def _async_update_registry_watcher(
+        self,
+        hass: HomeAssistant,
+        entity_id: str,
+    ) -> None:
+        """Recreate watcher for the current moisture entity id."""
+        if self._registry_unsubscribe is not None:
+            self._registry_unsubscribe()
+            self._registry_unsubscribe = None
+
+        self._tracked_moisture_entity_id = entity_id
+        self._registry_unsubscribe = async_track_entity_registry_updated_event(
+            hass,
+            entity_id,
+            self._async_handle_moisture_entity_registry_change,
+        )
+
+    @callback
+    def _async_clear_or_create_missing_entity_issue(self, hass: HomeAssistant) -> None:
+        """Create issue if source entity no longer exists in registry."""
+        entity_id = self.moisture_entity_id
+        if er.async_get(hass).async_get(entity_id) is not None:
+            ir.async_delete_issue(hass, DOMAIN, self._moisture_entity_issue_id)
+            return
+
+        self._async_create_moisture_entity_issue(
+            hass,
+            translation_key="moisture_entity_removed",
+            placeholders={"entity_id": entity_id, "name": self.name},
+        )
+
+    @callback
+    def _async_handle_moisture_entity_registry_change(
+        self,
+        event: Event,
+    ) -> None:
+        """Handle source moisture entity rename/removal events."""
+        if self._hass is None:
+            return
+
+        data = event.data
+        action = data["action"]
+
+        if action == "remove":
+            self._async_create_moisture_entity_issue(
+                self._hass,
+                translation_key="moisture_entity_removed",
+                placeholders={"entity_id": data["entity_id"], "name": self.name},
+            )
+            return
+
+        if action != "update" or "entity_id" not in data.get("changes", {}):
+            return
+
+        new_entity_id = data["entity_id"]
+
+        # Entity rename: keep config in sync and reload silently.
+        self._hass.config_entries.async_update_entry(
+            self.entry,
+            data={
+                **self.entry.data,
+                CONF_MOISTURE_ENTITY_ID: new_entity_id,
+            },
+        )
+        self._async_update_registry_watcher(self._hass, new_entity_id)
+        ir.async_delete_issue(self._hass, DOMAIN, self._moisture_entity_issue_id)
+        self._hass.config_entries.async_schedule_reload(self.entry.entry_id)
+
+    @callback
+    def _async_create_moisture_entity_issue(
+        self,
+        hass: HomeAssistant,
+        *,
+        translation_key: str,
+        placeholders: dict[str, str],
+    ) -> None:
+        """Create a fixable issue that starts reconfigure for this entry."""
+        ir.async_create_issue(
+            hass,
+            DOMAIN,
+            self._moisture_entity_issue_id,
+            is_fixable=True,
+            is_persistent=True,
+            severity=ir.IssueSeverity.WARNING,
+            translation_key=translation_key,
+            translation_placeholders=placeholders,
+            data={"entry_id": self.entry.entry_id},
+        )
 
 
 if TYPE_CHECKING:

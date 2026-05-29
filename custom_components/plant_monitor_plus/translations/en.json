@@ -127,5 +127,18 @@
                 }
             }
         }
+    },
+    "issues": {
+        "moisture_entity_removed": {
+            "fix_flow": {
+                "step": {
+                    "confirm": {
+                        "title": "{name} moisture sensor missing",
+                        "description": "The configured moisture sensor no longer exists in Home Assistant.\n\nSelect a new moisture sensor for this plant by reconfiguring the device."
+                    }
+                }
+            },
+            "title": "{name} moisture sensor missing"
+        }
     }
 }
