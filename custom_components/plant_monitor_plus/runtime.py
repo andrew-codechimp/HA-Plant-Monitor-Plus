@@ -103,16 +103,6 @@ class PlantMonitorPlusRuntime:
         entity_id = self.moisture_entity_id
         min_value, max_value = self.moisture_thresholds
 
-        if min_value == 0 or max_value == 0:
-            return MoistureEvaluation(
-                available=True,
-                outside=False,
-                value=None,
-                min_value=min_value,
-                max_value=max_value,
-                reason=REASON_THRESHOLD_DISABLED,
-            )
-
         source_state = state if state is not None else hass.states.get(entity_id)
         if source_state is None:
             return MoistureEvaluation(
@@ -134,6 +124,16 @@ class PlantMonitorPlusRuntime:
                 min_value=min_value,
                 max_value=max_value,
                 reason=REASON_NON_NUMERIC_STATE,
+            )
+
+        if min_value == 0 or max_value == 0:
+            return MoistureEvaluation(
+                available=True,
+                outside=False,
+                value=value,
+                min_value=min_value,
+                max_value=max_value,
+                reason=REASON_THRESHOLD_DISABLED,
             )
 
         if value < min_value:

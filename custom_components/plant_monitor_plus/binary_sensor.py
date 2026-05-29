@@ -14,6 +14,7 @@ from .const import (
     ATTR_MIN,
     ATTR_REASON,
     ATTR_SOURCE_ENTITY_ID,
+    REASON_THRESHOLD_DISABLED,
 )
 from .entity import PlantMonitorPlusEntity
 
@@ -85,7 +86,11 @@ class PlantMoistureProblemBinarySensor(PlantMonitorPlusEntity, BinarySensorEntit
         )
 
         self._attr_available = evaluation.available
-        self._attr_is_on = evaluation.outside
+        self._attr_is_on = (
+            None
+            if evaluation.reason == REASON_THRESHOLD_DISABLED
+            else evaluation.outside
+        )
 
         self._runtime.record_moisture_reading(evaluation.value)
 
