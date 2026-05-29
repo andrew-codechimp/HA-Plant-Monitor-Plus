@@ -154,10 +154,8 @@ class PlantMonitorPlusRuntime:
 
         increased_significantly = (value - previous_value) >= threshold
 
-        if not increased_significantly:
-            return
-
-        self.mark_watered_now()
+        if increased_significantly:
+            self.mark_watered_now()
 
     async def async_set_last_watered(self, dt: datetime) -> None:
         """Set the last watered timestamp and notify listeners."""
