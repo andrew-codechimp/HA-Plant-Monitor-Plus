@@ -15,9 +15,11 @@ if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
 
 STORE_VERSION = 1
-STORE_KEY = DOMAIN
+STORE_KEY = f"{DOMAIN}.storage"
 STORE_DEVICES_KEY = "devices"
+STORE_LAST_MODIFIED_KEY = "last_modified"
 STORE_LAST_WATERED_KEY = "last_watered"
+STORE_PROBLEM_STATE_KEY = "problem_state"
 
 
 class PlantMonitorStore:
@@ -54,6 +56,28 @@ class PlantMonitorStore:
 
         return dt_util.parse_datetime(str(last_watered))
 
+    def last_modified(self, entry_id: str) -> datetime | None:
+        """Return the cached last modified timestamp for a device."""
+        device_data = self._devices.get(entry_id, {})
+        last_modified = device_data.get(STORE_LAST_MODIFIED_KEY)
+        if last_modified is None:
+            return None
+
+        return dt_util.parse_datetime(str(last_modified))
+
+    def has_problem_state(self, entry_id: str) -> bool:
+        """Return whether a persisted problem state exists for a device."""
+        return STORE_PROBLEM_STATE_KEY in self._devices.get(entry_id, {})
+
+    def problem_state(self, entry_id: str) -> bool | None:
+        """Return the cached problem state for a device."""
+        device_data = self._devices.get(entry_id, {})
+        problem_state = device_data.get(STORE_PROBLEM_STATE_KEY)
+        if problem_state is None:
+            return None
+
+        return bool(problem_state)
+
     def update_device_data(self, entry_id: str, **values: Any) -> None:
         """Persist one or more values for a device entry."""
         device_data = self._devices.setdefault(entry_id, {})
@@ -73,6 +97,32 @@ class PlantMonitorStore:
                     last_watered.isoformat() if last_watered is not None else None
                 )
             },
+        )
+
+    def update_last_modified(
+        self,
+        entry_id: str,
+        last_modified: datetime | None,
+    ) -> None:
+        """Persist a new modified timestamp for a device."""
+        self.update_device_data(
+            entry_id,
+            **{
+                STORE_LAST_MODIFIED_KEY: (
+                    last_modified.isoformat() if last_modified is not None else None
+                )
+            },
+        )
+
+    def update_problem_state(
+        self,
+        entry_id: str,
+        problem_state: bool | None,
+    ) -> None:
+        """Persist the latest problem state for a device."""
+        self.update_device_data(
+            entry_id,
+            **{STORE_PROBLEM_STATE_KEY: problem_state},
         )
 
     def remove_device_data(self, entry_id: str) -> None:

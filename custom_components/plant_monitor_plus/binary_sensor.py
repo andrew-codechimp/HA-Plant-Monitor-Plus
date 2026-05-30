@@ -9,6 +9,7 @@ from homeassistant.core import callback
 
 from .const import (
     ATTR_CURRENT,
+    ATTR_LAST_MODIFIED,
     ATTR_LAST_WATERED,
     ATTR_MAX,
     ATTR_MIN,
@@ -85,12 +86,23 @@ class PlantMoistureProblemBinarySensor(PlantMonitorPlusEntity, BinarySensorEntit
             state=source_state,
         )
 
+        had_previous_state = self._runtime.has_problem_state
+        previous_state = self._runtime.problem_state
         self._attr_available = evaluation.available
-        self._attr_is_on = (
-            None
-            if evaluation.reason == REASON_THRESHOLD_DISABLED
-            else evaluation.outside
-        )
+
+        # Only treat available evaluations as authoritative for change tracking.
+        if evaluation.available:
+            current_problem_state: bool | None = (
+                None
+                if evaluation.reason == REASON_THRESHOLD_DISABLED
+                else evaluation.outside
+            )
+            self._attr_is_on = current_problem_state
+
+            if had_previous_state and current_problem_state != previous_state:
+                self._runtime.mark_modified_now()
+
+            self._runtime.set_problem_state(current_problem_state)
 
         self._runtime.record_moisture_reading(evaluation.value)
 
@@ -100,6 +112,7 @@ class PlantMoistureProblemBinarySensor(PlantMonitorPlusEntity, BinarySensorEntit
             ATTR_MIN: evaluation.min_value,
             ATTR_MAX: evaluation.max_value,
             ATTR_REASON: evaluation.reason,
+            ATTR_LAST_MODIFIED: self._runtime.last_modified,
             ATTR_LAST_WATERED: self._runtime.last_watered,
         }
 

@@ -82,6 +82,21 @@ class PlantMonitorPlusRuntime:
         return self._store.last_watered(self.entry.entry_id)
 
     @property
+    def last_modified(self) -> datetime | None:
+        """Return the last problem state modification timestamp."""
+        return self._store.last_modified(self.entry.entry_id)
+
+    @property
+    def has_problem_state(self) -> bool:
+        """Return whether a previous problem state is persisted."""
+        return self._store.has_problem_state(self.entry.entry_id)
+
+    @property
+    def problem_state(self) -> bool | None:
+        """Return the persisted problem state."""
+        return self._store.problem_state(self.entry.entry_id)
+
+    @property
     def moisture_entity_id(self) -> str:
         """Return the configured moisture sensor entity_id."""
         entity_id = self.entry.data[CONF_MOISTURE_ENTITY_ID]
@@ -182,6 +197,14 @@ class PlantMonitorPlusRuntime:
         self._store.update_last_watered(self.entry.entry_id, dt_util.utcnow())
         for cb in tuple(self._last_watered_callbacks):
             cb()
+
+    def mark_modified_now(self) -> None:
+        """Set last modified to current time."""
+        self._store.update_last_modified(self.entry.entry_id, dt_util.utcnow())
+
+    def set_problem_state(self, state: bool | None) -> None:
+        """Persist the latest problem state."""
+        self._store.update_problem_state(self.entry.entry_id, state)
 
     def register_moisture_callback(
         self,

@@ -61,6 +61,7 @@ def get_plant_summary(
         elif evaluation.reason == REASON_WET:
             wet.append(runtime.name)
 
+        last_modified = runtime.last_modified
         last_watered = runtime.last_watered
         plants.append(
             {
@@ -70,6 +71,7 @@ def get_plant_summary(
                 "min": evaluation.min_value,
                 "max": evaluation.max_value,
                 "reason": evaluation.reason,
+                "last_modified": (last_modified.isoformat() if last_modified else None),
                 "last_watered": (last_watered.isoformat() if last_watered else None),
             }
         )
@@ -77,8 +79,8 @@ def get_plant_summary(
     return cast(
         "ServiceResponse",
         {
-            "dry": dry,
-            "wet": wet,
+            "too_dry": dry,
+            "too_wet": wet,
             "unavailable": unavailable,
             "plants": plants,
         },
