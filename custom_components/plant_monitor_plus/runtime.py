@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Literal, TypedDict, cast
 
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
@@ -37,6 +37,14 @@ if TYPE_CHECKING:
     from homeassistant.core import Event, EventStateChangedData, State
 
     from .store import PlantMonitorStore
+
+
+class _RegistryEntityUpdatedData(TypedDict):
+    """Typed payload for entity registry update events."""
+
+    action: Literal["update"]
+    entity_id: str
+    changes: dict[str, Any]
 
 
 @dataclass(frozen=True, slots=True)
@@ -306,7 +314,7 @@ class PlantMonitorPlusRuntime:
     @callback
     def _async_handle_moisture_entity_registry_change(
         self,
-        event: Event,
+        event: Event[er.EventEntityRegistryUpdatedData],
     ) -> None:
         """Handle source moisture entity rename/removal events."""
         if self._hass is None:
@@ -323,7 +331,12 @@ class PlantMonitorPlusRuntime:
             )
             return
 
-        if action != "update" or "entity_id" not in data.get("changes", {}):
+        if action != "update":
+            return
+
+        update_data = cast(_RegistryEntityUpdatedData, data)
+        changes = update_data["changes"]
+        if "entity_id" not in changes:
             return
 
         new_entity_id = data["entity_id"]
