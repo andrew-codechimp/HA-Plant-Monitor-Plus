@@ -128,7 +128,7 @@
     "options": {
         "step": {
             "init": {
-                "title": "Plant Monitor Thresholds",
+                "title": "Plant Monitor Options",
                 "description": "Configured sensor entity: {moisture_entity_id}",
                 "data": {
                     "moisture_min": "Minimum moisture",
