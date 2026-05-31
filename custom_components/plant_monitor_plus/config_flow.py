@@ -22,7 +22,7 @@ from .const import (
     CONF_MOISTURE_MAX,
     CONF_MOISTURE_MIN,
     CONF_WATERING_DETECTION_THRESHOLD,
-    DEFAULT_MOISTURE_WATERING_INCREASE,
+    DEFAULT_WATERING_DETECTION_THRESHOLD,
     DOMAIN,
 )
 
@@ -47,7 +47,7 @@ THRESHOLD_SCHEMA = {
     ),
     vol.Required(
         CONF_WATERING_DETECTION_THRESHOLD,
-        default=DEFAULT_MOISTURE_WATERING_INCREASE,
+        default=DEFAULT_WATERING_DETECTION_THRESHOLD,
     ): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
