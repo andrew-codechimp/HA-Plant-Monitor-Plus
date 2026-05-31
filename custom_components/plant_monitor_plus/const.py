@@ -12,7 +12,7 @@ STORE_VERSION = 1
 CONF_MOISTURE_ENTITY_ID = "moisture_entity_id"
 CONF_MOISTURE_MAX = "moisture_max"
 CONF_MOISTURE_MIN = "moisture_min"
-CONF_MOISTURE_WATERING_INCREASE = "moisture_watering_increase"
+CONF_WATERING_DETECTION_THRESHOLD = "watering_detection_threshold"
 DEFAULT_MOISTURE_WATERING_INCREASE = 20
 
 SERVICE_GET_PLANT_SUMMARY = "get_plant_summary"

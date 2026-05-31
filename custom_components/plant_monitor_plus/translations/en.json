@@ -8,14 +8,14 @@
                     "moisture_entity_id": "Moisture sensor",
                     "moisture_min": "Minimum moisture",
                     "moisture_max": "Maximum moisture",
-                    "moisture_watering_increase": "Watering detection threshold"
+                    "watering_detection_threshold": "Watering detection threshold"
                 },
                 "data_description": {
                     "name": "Name of the plant.",
                     "moisture_entity_id": "The sensor that provides the moisture level of the plant.",
                     "moisture_min": "The threshold where the plant is too dry, if either the minimum or maximum is 0 this disables checking moisture.",
                     "moisture_max": "The threshold where the plant is too wet, if either the minimum or maximum is 0 this disables checking moisture.",
-                    "moisture_watering_increase": "How much the moisture level has to increase to register that the plant has been watered (0 disables automatic watering detection)."
+                    "watering_detection_threshold": "How much the moisture level has to increase to register that the plant has been watered (0 disables automatic watering detection)."
                 }
             },
             "reconfigure": {
@@ -101,12 +101,12 @@
                 "data": {
                     "moisture_min": "Minimum moisture",
                     "moisture_max": "Maximum moisture",
-                    "moisture_watering_increase": "Watering detection threshold"
+                    "watering_detection_threshold": "Watering detection threshold"
                 },
                 "data_description": {
                     "moisture_min": "The threshold where the plant is too dry, if either the minimum or maximum is 0 this disables checking moisture.",
                     "moisture_max": "The threshold where the plant is too wet, if either the minimum or maximum is 0 this disables checking moisture.",
-                    "moisture_watering_increase": "How much the moisture level has to increase to register that the plant has been watered (0 disables automatic watering detection)."
+                    "watering_detection_threshold": "How much the moisture level has to increase to register that the plant has been watered (0 disables automatic watering detection)."
                 }
             }
         }

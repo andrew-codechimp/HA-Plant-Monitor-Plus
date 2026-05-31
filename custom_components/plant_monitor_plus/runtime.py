@@ -18,7 +18,7 @@ from .const import (
     CONF_MOISTURE_ENTITY_ID,
     CONF_MOISTURE_MAX,
     CONF_MOISTURE_MIN,
-    CONF_MOISTURE_WATERING_INCREASE,
+    CONF_WATERING_DETECTION_THRESHOLD,
     DOMAIN,
     ISSUE_MOISTURE_ENTITY_INVALID,
     REASON_DRY,
@@ -171,7 +171,7 @@ class PlantMonitorPlusRuntime:
         if value is None:
             return
 
-        threshold = float(self.entry.options[CONF_MOISTURE_WATERING_INCREASE])
+        threshold = float(self.entry.options[CONF_WATERING_DETECTION_THRESHOLD])
         if threshold == 0:
             return
 
