@@ -8,11 +8,11 @@ from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.core import callback
 
 from .const import (
-    ATTR_CURRENT,
+    ATTR_CURRENT_MOISTURE,
     ATTR_LAST_MODIFIED,
     ATTR_LAST_WATERED,
-    ATTR_MAX,
-    ATTR_MIN,
+    ATTR_MAXIMUM_MOISTURE,
+    ATTR_MINIMUM_MOISTURE,
     ATTR_REASON,
     ATTR_SOURCE_ENTITY_ID,
     REASON_THRESHOLD_DISABLED,
@@ -104,13 +104,13 @@ class PlantMoistureProblemBinarySensor(PlantMonitorPlusEntity, BinarySensorEntit
 
             self._runtime.set_problem_state(current_problem_state)
 
-        self._runtime.record_moisture_reading(evaluation.value)
+        self._runtime.record_moisture_reading(evaluation.moisture_value)
 
         self._attr_extra_state_attributes = {
             ATTR_SOURCE_ENTITY_ID: self._runtime.moisture_entity_id,
-            ATTR_CURRENT: evaluation.value,
-            ATTR_MIN: evaluation.min_value,
-            ATTR_MAX: evaluation.max_value,
+            ATTR_CURRENT_MOISTURE: evaluation.moisture_value,
+            ATTR_MINIMUM_MOISTURE: evaluation.minimum_moisture_value,
+            ATTR_MAXIMUM_MOISTURE: evaluation.maximum_moisture_value,
             ATTR_REASON: evaluation.reason,
             ATTR_LAST_MODIFIED: self._runtime.last_modified,
             ATTR_LAST_WATERED: self._runtime.last_watered,

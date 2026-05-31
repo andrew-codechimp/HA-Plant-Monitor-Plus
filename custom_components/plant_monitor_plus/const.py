@@ -18,11 +18,11 @@ DEFAULT_MOISTURE_WATERING_INCREASE = 20
 SERVICE_GET_PLANT_SUMMARY = "get_plant_summary"
 SERVICE_SET_PLANT_WATERED = "set_plant_watered"
 
-ATTR_CURRENT = "current"
+ATTR_CURRENT_MOISTURE = "current_moisture"
 ATTR_LAST_MODIFIED = "last_modified"
 ATTR_LAST_WATERED = "last_watered"
-ATTR_MAX = "max"
-ATTR_MIN = "min"
+ATTR_MAXIMUM_MOISTURE = "maximum_moisture"
+ATTR_MINIMUM_MOISTURE = "minimum_moisture"
 ATTR_REASON = "reason"
 ATTR_SOURCE_ENTITY_ID = "source_entity_id"
 

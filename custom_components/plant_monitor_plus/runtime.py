@@ -45,9 +45,9 @@ class MoistureEvaluation:
 
     available: bool
     outside: bool
-    value: float | None
-    min_value: float
-    max_value: float
+    moisture_value: float | None
+    minimum_moisture_value: float
+    maximum_moisture_value: float
     reason: str
 
 
@@ -123,9 +123,9 @@ class PlantMonitorPlusRuntime:
             return MoistureEvaluation(
                 available=False,
                 outside=False,
-                value=None,
-                min_value=min_value,
-                max_value=max_value,
+                moisture_value=None,
+                minimum_moisture_value=min_value,
+                maximum_moisture_value=max_value,
                 reason=REASON_ENTITY_STATE_MISSING,
             )
 
@@ -135,9 +135,9 @@ class PlantMonitorPlusRuntime:
             return MoistureEvaluation(
                 available=False,
                 outside=False,
-                value=None,
-                min_value=min_value,
-                max_value=max_value,
+                moisture_value=None,
+                minimum_moisture_value=min_value,
+                maximum_moisture_value=max_value,
                 reason=REASON_NON_NUMERIC_STATE,
             )
 
@@ -145,9 +145,9 @@ class PlantMonitorPlusRuntime:
             return MoistureEvaluation(
                 available=True,
                 outside=False,
-                value=value,
-                min_value=min_value,
-                max_value=max_value,
+                moisture_value=value,
+                minimum_moisture_value=min_value,
+                maximum_moisture_value=max_value,
                 reason=REASON_THRESHOLD_DISABLED,
             )
 
@@ -160,9 +160,9 @@ class PlantMonitorPlusRuntime:
         return MoistureEvaluation(
             available=True,
             outside=reason != REASON_OK,
-            value=value,
-            min_value=min_value,
-            max_value=max_value,
+            moisture_value=value,
+            minimum_moisture_value=min_value,
+            maximum_moisture_value=max_value,
             reason=reason,
         )
 

@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, cast
 
 import voluptuous as vol
 
+from homeassistant.const import ATTR_NAME
 from homeassistant.core import (
     HomeAssistant,
     ServiceCall,
@@ -19,6 +20,12 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.util import dt as dt_util
 
 from .const import (
+    ATTR_CURRENT_MOISTURE,
+    ATTR_LAST_MODIFIED,
+    ATTR_LAST_WATERED,
+    ATTR_MAXIMUM_MOISTURE,
+    ATTR_MINIMUM_MOISTURE,
+    ATTR_REASON,
     DOMAIN,
     REASON_DRY,
     REASON_WET,
@@ -65,22 +72,24 @@ def get_plant_summary(
         last_watered = runtime.last_watered
         plants.append(
             {
-                "name": runtime.name,
+                ATTR_NAME: runtime.name,
                 "config_entry_id": config_entry.entry_id,
-                "current": evaluation.value,
-                "min": evaluation.min_value,
-                "max": evaluation.max_value,
-                "reason": evaluation.reason,
-                "last_modified": (last_modified.isoformat() if last_modified else None),
-                "last_watered": (last_watered.isoformat() if last_watered else None),
+                ATTR_CURRENT_MOISTURE: evaluation.moisture_value,
+                ATTR_MINIMUM_MOISTURE: evaluation.minimum_moisture_value,
+                ATTR_MAXIMUM_MOISTURE: evaluation.maximum_moisture_value,
+                ATTR_REASON: evaluation.reason,
+                ATTR_LAST_MODIFIED: (
+                    last_modified.isoformat() if last_modified else None
+                ),
+                ATTR_LAST_WATERED: (last_watered.isoformat() if last_watered else None),
             }
         )
 
     return cast(
         "ServiceResponse",
         {
-            "too_dry": dry,
-            "too_wet": wet,
+            REASON_DRY: dry,
+            REASON_WET: wet,
             "unavailable": unavailable,
             "plants": plants,
         },

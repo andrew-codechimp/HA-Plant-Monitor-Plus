@@ -49,13 +49,13 @@
                     "source_entity_id": {
                         "name": "Source entity"
                     },
-                    "current": {
+                    "current_moisture": {
                         "name": "Current moisture"
                     },
-                    "min": {
+                    "minimum_moisture": {
                         "name": "Minimum moisture"
                     },
-                    "max": {
+                    "maximum_moisture": {
                         "name": "Maximum moisture"
                     },
                     "last_watered": {
@@ -81,7 +81,39 @@
         },
         "button": {
             "watered": {
-                "name": "Watered"
+                "name": "Watered",
+                "state_attributes": {
+                    "source_entity_id": {
+                        "name": "Source entity"
+                    },
+                    "current_moisture": {
+                        "name": "Current moisture"
+                    },
+                    "minimum_moisture": {
+                        "name": "Minimum moisture"
+                    },
+                    "maximum_moisture": {
+                        "name": "Maximum moisture"
+                    },
+                    "last_watered": {
+                        "name": "Last watered"
+                    },
+                    "last_modified": {
+                        "name": "Last modified"
+                    },
+                    "reason": {
+                        "name": "Reason",
+                        "state": {
+                            "dry": "Too dry",
+                            "wet": "Too wet",
+                            "ok": "OK",
+                            "entity_not_configured": "Entity not configured",
+                            "entity_state_missing": "Entity state missing",
+                            "non_numeric_state": "Non-numeric state",
+                            "threshold_disabled": "Thresholds disabled"
+                        }
+                    }
+                }
             }
         },
         "sensor": {
