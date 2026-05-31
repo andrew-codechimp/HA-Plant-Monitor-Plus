@@ -9,11 +9,11 @@ from homeassistant.const import PERCENTAGE
 from homeassistant.core import callback
 
 from .const import (
-    ATTR_CURRENT_MOISTURE,
+    ATTR_CURRENT,
     ATTR_LAST_MODIFIED,
     ATTR_LAST_WATERED,
-    ATTR_MAXIMUM_MOISTURE,
-    ATTR_MINIMUM_MOISTURE,
+    ATTR_MAXIMUM,
+    ATTR_MINIMUM,
     ATTR_REASON,
     ATTR_SOURCE_ENTITY_ID,
 )
@@ -76,14 +76,14 @@ class PlantMoistureSensor(PlantMonitorPlusEntity, SensorEntity):
             state=source_state,
         )
         self._attr_available = evaluation.available
-        self._attr_native_value = evaluation.moisture_value
+        self._attr_native_value = evaluation.value
         self._attr_extra_state_attributes = {
             ATTR_SOURCE_ENTITY_ID: self._runtime.moisture_entity_id,
-            ATTR_CURRENT_MOISTURE: evaluation.moisture_value,
-            ATTR_MINIMUM_MOISTURE: evaluation.minimum_moisture_value,
-            ATTR_MAXIMUM_MOISTURE: evaluation.maximum_moisture_value,
+            ATTR_CURRENT: evaluation.value,
+            ATTR_MINIMUM: evaluation.minimum_value,
+            ATTR_MAXIMUM: evaluation.maximum_value,
             ATTR_REASON: evaluation.reason,
-            ATTR_LAST_MODIFIED: self._runtime.last_modified,
+            ATTR_LAST_MODIFIED: self._runtime.moisture_last_modified,
             ATTR_LAST_WATERED: self._runtime.last_watered,
         }
 

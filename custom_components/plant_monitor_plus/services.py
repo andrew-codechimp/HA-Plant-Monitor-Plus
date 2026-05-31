@@ -20,15 +20,16 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.util import dt as dt_util
 
 from .const import (
-    ATTR_CURRENT_MOISTURE,
-    ATTR_LAST_MODIFIED,
     ATTR_LAST_WATERED,
-    ATTR_MAXIMUM_MOISTURE,
-    ATTR_MINIMUM_MOISTURE,
-    ATTR_REASON,
     DOMAIN,
-    REASON_DRY,
-    REASON_WET,
+    REASON_TOO_DRY,
+    REASON_TOO_WET,
+    SERVICE_ATTR_MOISTURE_CURRENT,
+    SERVICE_ATTR_MOISTURE_LAST_MODIFIED,
+    SERVICE_ATTR_MOISTURE_MAXIMUM,
+    SERVICE_ATTR_MOISTURE_MINIMUM,
+    SERVICE_ATTR_MOISTURE_PROBLEM,
+    SERVICE_ATTR_MOISTURE_REASON,
     SERVICE_GET_PLANT_SUMMARY,
     SERVICE_SET_PLANT_WATERED,
 )
@@ -50,8 +51,8 @@ def get_plant_summary(
 ) -> ServiceResponse:
     """Return plant summary details and category lists."""
     plants: list[dict[str, object]] = []
-    dry: list[str] = []
-    wet: list[str] = []
+    too_dry: list[str] = []
+    too_wet: list[str] = []
     unavailable: list[str] = []
 
     for config_entry in hass.config_entries.async_entries(DOMAIN):
@@ -63,23 +64,26 @@ def get_plant_summary(
         evaluation = runtime.evaluate_moisture(hass)
         if not evaluation.available:
             unavailable.append(runtime.name)
-        elif evaluation.reason == REASON_DRY:
-            dry.append(runtime.name)
-        elif evaluation.reason == REASON_WET:
-            wet.append(runtime.name)
+        elif evaluation.reason == REASON_TOO_DRY:
+            too_dry.append(runtime.name)
+        elif evaluation.reason == REASON_TOO_WET:
+            too_wet.append(runtime.name)
 
-        last_modified = runtime.last_modified
+        moisture_last_modified = runtime.moisture_last_modified
         last_watered = runtime.last_watered
         plants.append(
             {
                 ATTR_NAME: runtime.name,
                 "config_entry_id": config_entry.entry_id,
-                ATTR_CURRENT_MOISTURE: evaluation.moisture_value,
-                ATTR_MINIMUM_MOISTURE: evaluation.minimum_moisture_value,
-                ATTR_MAXIMUM_MOISTURE: evaluation.maximum_moisture_value,
-                ATTR_REASON: evaluation.reason,
-                ATTR_LAST_MODIFIED: (
-                    last_modified.isoformat() if last_modified else None
+                SERVICE_ATTR_MOISTURE_CURRENT: evaluation.value,
+                SERVICE_ATTR_MOISTURE_MINIMUM: evaluation.minimum_value,
+                SERVICE_ATTR_MOISTURE_MAXIMUM: evaluation.maximum_value,
+                SERVICE_ATTR_MOISTURE_PROBLEM: evaluation.problem,
+                SERVICE_ATTR_MOISTURE_REASON: evaluation.reason,
+                SERVICE_ATTR_MOISTURE_LAST_MODIFIED: (
+                    moisture_last_modified.isoformat()
+                    if moisture_last_modified
+                    else None
                 ),
                 ATTR_LAST_WATERED: (last_watered.isoformat() if last_watered else None),
             }
@@ -88,8 +92,8 @@ def get_plant_summary(
     return cast(
         "ServiceResponse",
         {
-            REASON_DRY: dry,
-            REASON_WET: wet,
+            REASON_TOO_DRY: too_dry,
+            REASON_TOO_WET: too_wet,
             "unavailable": unavailable,
             "plants": plants,
         },

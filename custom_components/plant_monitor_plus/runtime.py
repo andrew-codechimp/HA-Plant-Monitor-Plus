@@ -21,12 +21,12 @@ from .const import (
     CONF_WATERING_DETECTION_THRESHOLD,
     DOMAIN,
     ISSUE_MOISTURE_ENTITY_INVALID,
-    REASON_DRY,
     REASON_ENTITY_STATE_MISSING,
     REASON_NON_NUMERIC_STATE,
     REASON_OK,
     REASON_THRESHOLD_DISABLED,
-    REASON_WET,
+    REASON_TOO_DRY,
+    REASON_TOO_WET,
 )
 
 if TYPE_CHECKING:
@@ -52,10 +52,10 @@ class MoistureEvaluation:
     """Outcome of a moisture threshold evaluation."""
 
     available: bool
-    outside: bool
-    moisture_value: float | None
-    minimum_moisture_value: float
-    maximum_moisture_value: float
+    problem: bool
+    value: float | None
+    minimum_value: float
+    maximum_value: float
     reason: str
 
 
@@ -90,19 +90,19 @@ class PlantMonitorPlusRuntime:
         return self._store.last_watered(self.entry.entry_id)
 
     @property
-    def last_modified(self) -> datetime | None:
+    def moisture_last_modified(self) -> datetime | None:
         """Return the last problem state modification timestamp."""
-        return self._store.last_modified(self.entry.entry_id)
+        return self._store.moisture_last_modified(self.entry.entry_id)
 
     @property
-    def has_problem_state(self) -> bool:
-        """Return whether a previous problem state is persisted."""
-        return self._store.has_problem_state(self.entry.entry_id)
+    def has_moisture_problem_state(self) -> bool:
+        """Return whether a previous moisture problem state is persisted."""
+        return self._store.has_moisture_problem_state(self.entry.entry_id)
 
     @property
-    def problem_state(self) -> bool | None:
-        """Return the persisted problem state."""
-        return self._store.problem_state(self.entry.entry_id)
+    def moisture_problem_state(self) -> bool | None:
+        """Return the persisted moisture problem state."""
+        return self._store.moisture_problem_state(self.entry.entry_id)
 
     @property
     def moisture_entity_id(self) -> str:
@@ -124,16 +124,16 @@ class PlantMonitorPlusRuntime:
     ) -> MoistureEvaluation:
         """Evaluate whether moisture is outside configured thresholds."""
         entity_id = self.moisture_entity_id
-        min_value, max_value = self.moisture_thresholds
+        minimum_value, maximum_value = self.moisture_thresholds
 
         source_state = state if state is not None else hass.states.get(entity_id)
         if source_state is None:
             return MoistureEvaluation(
                 available=False,
-                outside=False,
-                moisture_value=None,
-                minimum_moisture_value=min_value,
-                maximum_moisture_value=max_value,
+                problem=False,
+                value=None,
+                minimum_value=minimum_value,
+                maximum_value=maximum_value,
                 reason=REASON_ENTITY_STATE_MISSING,
             )
 
@@ -142,35 +142,35 @@ class PlantMonitorPlusRuntime:
         except TypeError, ValueError:
             return MoistureEvaluation(
                 available=False,
-                outside=False,
-                moisture_value=None,
-                minimum_moisture_value=min_value,
-                maximum_moisture_value=max_value,
+                problem=False,
+                value=None,
+                minimum_value=minimum_value,
+                maximum_value=maximum_value,
                 reason=REASON_NON_NUMERIC_STATE,
             )
 
-        if min_value == 0 or max_value == 0:
+        if minimum_value == 0 or maximum_value == 0:
             return MoistureEvaluation(
                 available=True,
-                outside=False,
-                moisture_value=value,
-                minimum_moisture_value=min_value,
-                maximum_moisture_value=max_value,
+                problem=False,
+                value=value,
+                minimum_value=minimum_value,
+                maximum_value=maximum_value,
                 reason=REASON_THRESHOLD_DISABLED,
             )
 
-        if value < min_value:
-            reason = REASON_DRY
-        elif value > max_value:
-            reason = REASON_WET
+        if value < minimum_value:
+            reason = REASON_TOO_DRY
+        elif value > maximum_value:
+            reason = REASON_TOO_WET
         else:
             reason = REASON_OK
         return MoistureEvaluation(
             available=True,
-            outside=reason != REASON_OK,
-            moisture_value=value,
-            minimum_moisture_value=min_value,
-            maximum_moisture_value=max_value,
+            problem=reason != REASON_OK,
+            value=value,
+            minimum_value=minimum_value,
+            maximum_value=maximum_value,
             reason=reason,
         )
 
@@ -206,13 +206,13 @@ class PlantMonitorPlusRuntime:
         for cb in tuple(self._last_watered_callbacks):
             cb()
 
-    def mark_modified_now(self) -> None:
-        """Set last modified to current time."""
-        self._store.update_last_modified(self.entry.entry_id, dt_util.utcnow())
+    def mark_moisture_modified_now(self) -> None:
+        """Set last moisture modified to current time."""
+        self._store.update_moisture_last_modified(self.entry.entry_id, dt_util.utcnow())
 
-    def set_problem_state(self, state: bool | None) -> None:
-        """Persist the latest problem state."""
-        self._store.update_problem_state(self.entry.entry_id, state)
+    def set_moisture_problem_state(self, state: bool | None) -> None:
+        """Persist the latest moisture problem state."""
+        self._store.update_moisture_problem_state(self.entry.entry_id, state)
 
     def register_moisture_callback(
         self,

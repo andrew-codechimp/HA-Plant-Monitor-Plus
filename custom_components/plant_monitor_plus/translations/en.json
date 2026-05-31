@@ -49,14 +49,14 @@
                     "source_entity_id": {
                         "name": "Source entity"
                     },
-                    "current_moisture": {
-                        "name": "Current moisture"
+                    "current": {
+                        "name": "Current"
                     },
-                    "minimum_moisture": {
-                        "name": "Minimum moisture"
+                    "minimum": {
+                        "name": "Minimum"
                     },
-                    "maximum_moisture": {
-                        "name": "Maximum moisture"
+                    "maximum": {
+                        "name": "Maximum"
                     },
                     "last_watered": {
                         "name": "Last watered"
@@ -67,8 +67,8 @@
                     "reason": {
                         "name": "Reason",
                         "state": {
-                            "dry": "Too dry",
-                            "wet": "Too wet",
+                            "too_dry": "Too dry",
+                            "too_wet": "Too wet",
                             "ok": "OK",
                             "entity_not_configured": "Entity not configured",
                             "entity_state_missing": "Entity state missing",
@@ -81,19 +81,24 @@
         },
         "button": {
             "watered": {
-                "name": "Watered",
+                "name": "Watered"
+            }
+        },
+        "sensor": {
+            "moisture": {
+                "name": "Moisture",
                 "state_attributes": {
                     "source_entity_id": {
                         "name": "Source entity"
                     },
-                    "current_moisture": {
-                        "name": "Current moisture"
+                    "current": {
+                        "name": "Current"
                     },
-                    "minimum_moisture": {
-                        "name": "Minimum moisture"
+                    "minimum": {
+                        "name": "Minimum"
                     },
-                    "maximum_moisture": {
-                        "name": "Maximum moisture"
+                    "maximum": {
+                        "name": "Maximum"
                     },
                     "last_watered": {
                         "name": "Last watered"
@@ -104,8 +109,8 @@
                     "reason": {
                         "name": "Reason",
                         "state": {
-                            "dry": "Too dry",
-                            "wet": "Too wet",
+                            "too_dry": "Too dry",
+                            "too_wet": "Too wet",
                             "ok": "OK",
                             "entity_not_configured": "Entity not configured",
                             "entity_state_missing": "Entity state missing",
@@ -114,11 +119,6 @@
                         }
                     }
                 }
-            }
-        },
-        "sensor": {
-            "moisture": {
-                "name": "Moisture"
             },
             "last_watered": {
                 "name": "Last watered"

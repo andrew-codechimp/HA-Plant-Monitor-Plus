@@ -8,11 +8,11 @@ from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.core import callback
 
 from .const import (
-    ATTR_CURRENT_MOISTURE,
+    ATTR_CURRENT,
     ATTR_LAST_MODIFIED,
     ATTR_LAST_WATERED,
-    ATTR_MAXIMUM_MOISTURE,
-    ATTR_MINIMUM_MOISTURE,
+    ATTR_MAXIMUM,
+    ATTR_MINIMUM,
     ATTR_REASON,
     ATTR_SOURCE_ENTITY_ID,
     REASON_THRESHOLD_DISABLED,
@@ -86,8 +86,8 @@ class PlantMoistureProblemBinarySensor(PlantMonitorPlusEntity, BinarySensorEntit
             state=source_state,
         )
 
-        had_previous_state = self._runtime.has_problem_state
-        previous_state = self._runtime.problem_state
+        had_previous_state = self._runtime.has_moisture_problem_state
+        previous_state = self._runtime.moisture_problem_state
         self._attr_available = evaluation.available
 
         # Only treat available evaluations as authoritative for change tracking.
@@ -95,24 +95,24 @@ class PlantMoistureProblemBinarySensor(PlantMonitorPlusEntity, BinarySensorEntit
             current_problem_state: bool | None = (
                 None
                 if evaluation.reason == REASON_THRESHOLD_DISABLED
-                else evaluation.outside
+                else evaluation.problem
             )
             self._attr_is_on = current_problem_state
 
             if had_previous_state and current_problem_state != previous_state:
-                self._runtime.mark_modified_now()
+                self._runtime.mark_moisture_modified_now()
 
-            self._runtime.set_problem_state(current_problem_state)
+            self._runtime.set_moisture_problem_state(current_problem_state)
 
-        self._runtime.record_moisture_reading(evaluation.moisture_value)
+        self._runtime.record_moisture_reading(evaluation.value)
 
         self._attr_extra_state_attributes = {
             ATTR_SOURCE_ENTITY_ID: self._runtime.moisture_entity_id,
-            ATTR_CURRENT_MOISTURE: evaluation.moisture_value,
-            ATTR_MINIMUM_MOISTURE: evaluation.minimum_moisture_value,
-            ATTR_MAXIMUM_MOISTURE: evaluation.maximum_moisture_value,
+            ATTR_CURRENT: evaluation.value,
+            ATTR_MINIMUM: evaluation.minimum_value,
+            ATTR_MAXIMUM: evaluation.maximum_value,
             ATTR_REASON: evaluation.reason,
-            ATTR_LAST_MODIFIED: self._runtime.last_modified,
+            ATTR_LAST_MODIFIED: self._runtime.moisture_last_modified,
             ATTR_LAST_WATERED: self._runtime.last_watered,
         }
 
