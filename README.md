@@ -7,6 +7,13 @@
 
 ## Early Development
 
+Plant Monitor Plus is an integration to give details of a plants moisture with a problem sensor when it requires attention and a last watered tracker that you can automatically (or manually) record when the plant was last watered.
+
+When you configure each plant you provide a physical moisture sensor and set thesholds for minimum, maximum and amount of moisture increase to detect a plant has been watered.
+You are able to adjust these at any time via the UI.
+
+A Get plant summary action is available to get details of all plants and what requires attention which you can call at convenient times to send notifications etc.
+
 _Please :star: this repo if you find it useful_
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png)](https://www.buymeacoffee.com/codechimp)
@@ -15,6 +22,33 @@ _Please :star: this repo if you find it useful_
 ![Device Creation](https://raw.githubusercontent.com/andrew-codechimp/HA-Plant-Monitor-Plus/main/images/configuration.png "Device Creation")
 
 ![Device Entities](https://raw.githubusercontent.com/andrew-codechimp/HA-Plant-Monitor-Plus/main/images/device.png "Device Entities")
+
+## Example plant summary automation
+
+```
+alias: Plant monitor moisture notification
+description: "Display a notification showing plants that need watering"
+triggers:
+  - trigger: time
+    at: "08:30:00"
+conditions: []
+actions:
+  - action: plant_monitor_plus.get_plant_summary
+    metadata: {}
+    data: {}
+    response_variable: plant_action_response
+  - variables:
+      plantsensors: "{{plant_action_response['too_dry'] | join(', ')}}"
+  - if:
+      - condition: template
+        value_template: "{{ plantsensors != '' }}"
+    then:
+      - action: persistent_notification.create
+        metadata: {}
+        data:
+          message: "Low moisture warning for: {{plantsensors}}"
+mode: single
+```
 
 ## Installation
 
