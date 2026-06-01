@@ -46,7 +46,7 @@ class PlantMoisturePlusSensor(PlantMonitorPlusEntity, SensorEntity):
     """Sensor exposing the current moisture value from the watched source entity."""
 
     _attr_translation_key = "moisture_plus"
-    _attr_name = "Moisture Plus"
+    _attr_name = "Moisture+"
     _attr_native_unit_of_measurement = PERCENTAGE
     _attr_suggested_display_precision = 0
     _attr_native_value: float | None = None
@@ -55,6 +55,7 @@ class PlantMoisturePlusSensor(PlantMonitorPlusEntity, SensorEntity):
         """Initialize the moisture sensor."""
         super().__init__(runtime)
         self._attr_suggested_object_id = f"{slugify(runtime.name)}_moisture_plus"
+        self.entity_id = f"sensor.{slugify(runtime.name)}_moisture_plus"
         self._attr_unique_id = f"{runtime.entry.entry_id}_moisture_plus"
         self._attr_available = True
 
