@@ -108,8 +108,6 @@ class PlantMoistureProblemBinarySensor(PlantMonitorPlusEntity, BinarySensorEntit
 
             self._runtime.set_moisture_problem_state(current_problem_state)
 
-        self._runtime.record_moisture_reading(evaluation.value)
-
         self._attr_extra_state_attributes = {
             ATTR_SOURCE_ENTITY_ID: self._runtime.moisture_entity_id,
             ATTR_CURRENT: evaluation.value,

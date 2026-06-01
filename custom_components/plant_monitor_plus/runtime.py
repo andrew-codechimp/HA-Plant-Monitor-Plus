@@ -262,6 +262,16 @@ class PlantMonitorPlusRuntime:
     ) -> None:
         """Dispatch moisture source updates to runtime subscribers."""
         new_state = event.data.get("new_state")
+
+        value: float | None = None
+        if new_state is not None:
+            try:
+                value = float(new_state.state)
+            except (TypeError, ValueError):
+                value = None
+
+        self.record_moisture_reading(value)
+
         for cb in tuple(self._moisture_callbacks):
             cb(new_state)
 
