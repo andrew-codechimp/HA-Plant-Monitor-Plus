@@ -46,6 +46,7 @@ class PlantMoisturePlusSensor(PlantMonitorPlusEntity, SensorEntity):
     """Sensor exposing the current moisture value from the watched source entity."""
 
     _attr_translation_key = "moisture_plus"
+    _attr_name = "Moisture Plus"
     _attr_native_unit_of_measurement = PERCENTAGE
     _attr_suggested_display_precision = 0
     _attr_native_value: float | None = None
