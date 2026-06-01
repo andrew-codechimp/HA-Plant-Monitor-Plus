@@ -85,8 +85,8 @@
             }
         },
         "sensor": {
-            "moisture": {
-                "name": "Moisture",
+            "moisture_plus": {
+                "name": "Moisture+",
                 "state_attributes": {
                     "source_entity_id": {
                         "name": "Source entity"

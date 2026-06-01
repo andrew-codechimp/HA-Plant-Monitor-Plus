@@ -14,7 +14,7 @@
             }
         },
         "sensor": {
-            "moisture": {
+            "moisture_plus": {
                 "default": "mdi:water-percent"
             }
         }

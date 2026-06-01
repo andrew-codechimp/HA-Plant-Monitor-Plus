@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.const import PERCENTAGE
 from homeassistant.core import callback
+from homeassistant.util import slugify
 
 from .const import (
     ATTR_CURRENT,
@@ -37,14 +38,14 @@ async def async_setup_entry(
     runtime: PlantMonitorPlusRuntime = entry.runtime_data
     entities: list[SensorEntity] = [PlantLastWateredSensor(runtime)]
     if runtime.moisture_entity_id:
-        entities.append(PlantMoistureSensor(runtime))
+        entities.append(PlantMoisturePlusSensor(runtime))
     async_add_entities(entities)
 
 
-class PlantMoistureSensor(PlantMonitorPlusEntity, SensorEntity):
+class PlantMoisturePlusSensor(PlantMonitorPlusEntity, SensorEntity):
     """Sensor exposing the current moisture value from the watched source entity."""
 
-    _attr_translation_key = "moisture"
+    _attr_translation_key = "moisture_plus"
     _attr_native_unit_of_measurement = PERCENTAGE
     _attr_suggested_display_precision = 0
     _attr_native_value: float | None = None
@@ -52,7 +53,8 @@ class PlantMoistureSensor(PlantMonitorPlusEntity, SensorEntity):
     def __init__(self, runtime: PlantMonitorPlusRuntime) -> None:
         """Initialize the moisture sensor."""
         super().__init__(runtime)
-        self._attr_unique_id = f"{runtime.entry.entry_id}_moisture_value"
+        self._attr_suggested_object_id = f"{slugify(runtime.name)}_moisture_plus"
+        self._attr_unique_id = f"{runtime.entry.entry_id}_moisture_plus"
         self._attr_available = True
 
     async def async_added_to_hass(self) -> None:
