@@ -76,7 +76,10 @@ class PlantMoistureProblemBinarySensor(PlantMonitorPlusEntity, BinarySensorEntit
     @callback
     def _async_last_watered_updated(self) -> None:
         """Handle last watered timestamp updates."""
-        self._refresh_state()
+        self._attr_extra_state_attributes[ATTR_LAST_WATERED] = (
+            self._runtime.last_watered
+        )
+        self.async_write_ha_state()
 
     @callback
     def _refresh_state(self, source_state: State | None = None) -> None:
