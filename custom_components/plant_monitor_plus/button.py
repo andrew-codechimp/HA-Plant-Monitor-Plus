@@ -30,6 +30,7 @@ class PlantWateredButton(PlantMonitorPlusEntity, ButtonEntity):
     """Button to manually mark a plant as watered now."""
 
     _attr_translation_key = "watered"
+    _attr_name = "Watered"
 
     def __init__(self, runtime: PlantMonitorPlusRuntime) -> None:
         """Initialize the watered button."""

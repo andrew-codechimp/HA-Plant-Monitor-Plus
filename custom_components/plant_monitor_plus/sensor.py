@@ -97,6 +97,7 @@ class PlantLastWateredSensor(PlantMonitorPlusEntity, SensorEntity):
     """Sensor exposing the last watered timestamp."""
 
     _attr_translation_key = "last_watered"
+    _attr_name = "Last watered"
     _attr_device_class = SensorDeviceClass.TIMESTAMP
     _attr_native_value: datetime | None = None
 

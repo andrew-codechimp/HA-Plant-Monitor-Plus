@@ -44,6 +44,7 @@ class PlantMoistureProblemBinarySensor(PlantMonitorPlusEntity, BinarySensorEntit
     """Binary sensor that reports whether moisture is outside its thresholds."""
 
     _attr_translation_key = "moisture_status"
+    _attr_name = "Moisture status"
 
     def __init__(self, runtime: PlantMonitorPlusRuntime) -> None:
         """Initialize the moisture problem binary sensor."""
