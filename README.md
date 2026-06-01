@@ -14,6 +14,8 @@ _Please :star: this repo if you find it useful_
 
 ![Device Creation](https://raw.githubusercontent.com/andrew-codechimp/HA-Plant-Monitor-Plus/main/images/configuration.png "Device Creation")
 
+![Device Entities](https://raw.githubusercontent.com/andrew-codechimp/HA-Plant-Monitor-Plus/main/images/device.png "Device Entities")
+
 ## Installation
 
 ### HACS
@@ -26,7 +28,6 @@ This is a HACS custom integration, if the link does not work you will have to ad
 [commits]: https://github.com/andrew-codechimp/HA-Plant-Monitor-Plus/commits/main
 [hacs]: https://github.com/hacs/integration
 [hacsbadge]: https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge
-[exampleimg]: example.png
 [license-shield]: https://img.shields.io/github/license/andrew-codechimp/HA-Plant-Monitor-Plus.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/andrew-codechimp/HA-Plant-Monitor-Plus.svg?style=for-the-badge
 [releases]: https://github.com/andrew-codechimp/HA-Plant-Monitor-Plus/releases
