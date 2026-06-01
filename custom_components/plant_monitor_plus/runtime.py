@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+from collections import deque
 from dataclasses import dataclass
+from datetime import timedelta
 from typing import TYPE_CHECKING, Any, Literal, TypedDict, cast
 
 from homeassistant.const import CONF_NAME
@@ -27,6 +29,7 @@ from .const import (
     REASON_THRESHOLD_DISABLED,
     REASON_TOO_DRY,
     REASON_TOO_WET,
+    WATERING_DETECTION_WINDOW_MINUTES,
 )
 
 if TYPE_CHECKING:
@@ -66,7 +69,7 @@ class PlantMonitorPlusRuntime:
         """Initialize runtime state for an entry."""
         self.entry = entry
         self._store = store
-        self._previous_moisture_value: float | None = None
+        self._recent_moisture_readings: deque[tuple[datetime, float]] = deque()
         self._last_watered_callbacks: list[Callable[[], None]] = []
         self._moisture_callbacks: list[Callable[[State | None], None]] = []
         self._moisture_unsubscribe: Callable[[], None] | None = None
@@ -175,7 +178,7 @@ class PlantMonitorPlusRuntime:
         )
 
     def record_moisture_reading(self, value: float | None) -> None:
-        """Update last watered when moisture increases significantly."""
+        """Update last watered when moisture increases within the detection window."""
         if value is None:
             return
 
@@ -183,16 +186,29 @@ class PlantMonitorPlusRuntime:
         if threshold == 0:
             return
 
-        previous_value = self._previous_moisture_value
-        self._previous_moisture_value = value
+        now = dt_util.utcnow()
+        self._recent_moisture_readings.append((now, value))
 
-        if previous_value is None:
+        window_start = now - timedelta(minutes=WATERING_DETECTION_WINDOW_MINUTES)
+        while (
+            len(self._recent_moisture_readings) > 1
+            and self._recent_moisture_readings[0][0] < window_start
+        ):
+            self._recent_moisture_readings.popleft()
+
+        if len(self._recent_moisture_readings) < 2:
             return
 
-        increased_significantly = (value - previous_value) >= threshold
+        lowest_window_value = min(
+            reading_value for _, reading_value in self._recent_moisture_readings
+        )
+        increased_significantly = (value - lowest_window_value) >= threshold
 
         if increased_significantly:
             self.mark_watered_now()
+            # Reset baseline after detection to avoid repeated triggers on the same rise.
+            self._recent_moisture_readings.clear()
+            self._recent_moisture_readings.append((now, value))
 
     async def async_set_last_watered(self, dt: datetime) -> None:
         """Set the last watered timestamp and notify listeners."""
