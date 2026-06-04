@@ -8,12 +8,16 @@
     "[markdown]": {
         "editor.formatOnSave": false
     },
-    "ruff.configuration": "/workspaces/HA-Plant-Monitor-Plus/pyproject.toml",
+    "ruff.configuration": "${workspaceFolder}/pyproject.toml",
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
     "python.terminal.activateEnvInCurrentTerminal": true,
     "ruff.configurationPreference": "filesystemFirst",
-    "ruff.path": [ "/home/vscode/.local/ha-venv/bin/ruff" ],
+    "ruff.path": ["${workspaceFolder}/.venv/bin/ruff"],
     "ruff.importStrategy": "fromEnvironment",
     "ruff.nativeServer": false,
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/../ha-core"
+    ],
     "[python]": {
         "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.formatOnSave": true,
@@ -22,5 +26,12 @@
         "editor.codeActionsOnSave": {
             "source.organizeImports": "always"
         }
-    }
+    },
+    "python-envs.pythonProjects": [
+        {
+            "path": ".",
+            "envManager": "ms-python.python:venv",
+            "packageManager": "ms-python.python:pip"
+        }
+    ]
 }
