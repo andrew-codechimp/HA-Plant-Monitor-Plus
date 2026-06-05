@@ -191,7 +191,7 @@ class PlantMonitorPlusRuntime:
 
         window_start = now - timedelta(minutes=WATERING_DETECTION_WINDOW_MINUTES)
         while (
-            len(self._recent_moisture_readings) > 1
+            len(self._recent_moisture_readings) > 2
             and self._recent_moisture_readings[0][0] < window_start
         ):
             self._recent_moisture_readings.popleft()
@@ -267,7 +267,7 @@ class PlantMonitorPlusRuntime:
         if new_state is not None:
             try:
                 value = float(new_state.state)
-            except (TypeError, ValueError):
+            except TypeError, ValueError:
                 value = None
 
         self.record_moisture_reading(value)
