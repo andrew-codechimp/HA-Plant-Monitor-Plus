@@ -264,8 +264,9 @@ class PlantMonitorPlusRuntime:
 
     def set_moisture_problem_state(self, state: bool | None) -> None:
         """Persist the latest moisture problem state."""
-        device = {MOISTURE_PROBLEM_STATE: state}
-        self.async_update_device(device_id=self.entry.entry_id, data=device)
+        if self.moisture_problem_state != state:
+            device = {MOISTURE_PROBLEM_STATE: state}
+            self.async_update_device(device_id=self.entry.entry_id, data=device)
 
     def register_moisture_callback(
         self,
