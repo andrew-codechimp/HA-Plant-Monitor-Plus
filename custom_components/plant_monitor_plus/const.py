@@ -36,6 +36,11 @@ ATTR_MINIMUM = "minimum"
 ATTR_REASON = "reason"
 ATTR_SOURCE_ENTITY_ID = "source_entity_id"
 
+REMOVE = "remove"
+MOISTURE_LAST_MODIFIED = "moisture_last_modified"
+MOISTURE_PROBLEM_STATE = "moisture_problem_state"
+LAST_WATERED = "last_watered"
+
 REASON_OK = "ok"
 REASON_TOO_DRY = "too_dry"
 REASON_TOO_WET = "too_wet"

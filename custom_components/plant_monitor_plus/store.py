@@ -2,139 +2,144 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from collections import OrderedDict
+from collections.abc import MutableMapping
+from datetime import datetime
+from typing import Any, cast
 
+import attr
+
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.storage import Store
-from homeassistant.util import dt as dt_util
 
 from .const import DOMAIN
 
-if TYPE_CHECKING:
-    from datetime import datetime
+STORAGE_VERSION_MAJOR = 1
+STORAGE_VERSION_MINOR = 1
+DATA_REGISTRY = f"{DOMAIN}_storage"
+STORAGE_KEY = f"{DOMAIN}.storage"
 
-    from homeassistant.core import HomeAssistant
-
-STORE_VERSION = 1
-STORE_KEY = f"{DOMAIN}.storage"
-STORE_DEVICES_KEY = "devices"
-STORE_MOISTURE_LAST_MODIFIED_KEY = "moisture_last_modified"
-STORE_LAST_WATERED_KEY = "last_watered"
-STORE_MOISTURE_PROBLEM_STATE_KEY = "moisture_problem_state"
+SAVE_DELAY = 10
 
 
-class PlantMonitorStore:
+@attr.s(slots=True, frozen=True)
+class DeviceEntry:
+    # pylint: disable=too-few-public-methods
+    """Plant Device storage Entry."""
+
+    device_id = attr.ib(type=str, default=None)
+    moisture_problem_state = attr.ib(type=bool, default=None)
+    moisture_last_modified = attr.ib(type=datetime, default=None)
+    last_watered = attr.ib(type=datetime, default=None)
+
+
+class MigratableStore(Store):
+    """Holds plant data."""
+
+    async def _async_migrate_func(
+        self,
+        old_major_version: int,  # noqa: ARG002
+        old_minor_version: int,  # noqa: ARG002
+        data: dict,
+    ):
+        # Do nothing for now
+        return data
+
+
+class PlantMonitorStorage:
     """Persist per-entry data for all plant monitor devices."""
 
     def __init__(self, hass: HomeAssistant) -> None:
         """Initialize the shared integration store."""
-        self._store: Store[dict[str, Any]] = Store(hass, STORE_VERSION, STORE_KEY)
-        self._devices: dict[str, dict[str, Any]] = {}
-
-    def device_data(self, entry_id: str) -> dict[str, Any]:
-        """Return cached data for one device entry."""
-        return dict(self._devices.get(entry_id, {}))
+        self.hass = hass
+        self.devices: MutableMapping[str, DeviceEntry] = {}
+        self._store = MigratableStore(
+            hass,
+            STORAGE_VERSION_MAJOR,
+            STORAGE_KEY,
+            minor_version=STORAGE_VERSION_MINOR,
+        )
 
     async def async_load(self) -> None:
         """Load persisted device data for all entries."""
-        data = await self._store.async_load() or {}
-        devices = data.get(STORE_DEVICES_KEY, {})
-        if isinstance(devices, dict):
-            self._devices = {
-                str(entry_id): dict(device_data)
-                for entry_id, device_data in devices.items()
-                if isinstance(device_data, dict)
-            }
-        else:
-            self._devices = {}
+        data = await self._store.async_load()
+        devices: OrderedDict[str, DeviceEntry] = OrderedDict()
 
-    def last_watered(self, entry_id: str) -> datetime | None:
-        """Return the cached last watering timestamp for a device."""
-        device_data = self._devices.get(entry_id, {})
-        last_watered = device_data.get(STORE_LAST_WATERED_KEY)
-        if last_watered is None:
+        if data is not None and "devices" in data:
+            for device in data["devices"]:
+                devices[device["device_id"]] = DeviceEntry(**device)
+
+        self.devices = devices
+
+    @callback
+    def async_schedule_save(self) -> None:
+        """Schedule saving the registry."""
+        self._store.async_delay_save(self._data_to_save, SAVE_DELAY)
+
+    async def async_save(self) -> None:
+        """Save the registry."""
+        await self._store.async_save(self._data_to_save())
+
+    @callback
+    def _data_to_save(self) -> dict:
+        """Return data for the registry to store in a file."""
+        store_data = {}
+        store_data["devices"] = [attr.asdict(entry) for entry in self.devices.values()]
+        return store_data
+
+    @callback
+    def async_get_device(self, device_id) -> dict[str, Any] | None:
+        """Get an existing DeviceEntry by id."""
+        res = self.devices.get(device_id)
+        return attr.asdict(res) if res else None
+
+    @callback
+    def async_get_devices(self):
+        """Get existing devices."""
+        res = {}
+        for key, val in self.devices.items():
+            res[key] = attr.asdict(val)
+        return res
+
+    @callback
+    def async_create_device(self, device_id: str, data: dict) -> DeviceEntry | None:
+        """Create a new DeviceEntry."""
+        if device_id in self.devices:
             return None
+        new_device = DeviceEntry(**data, device_id=device_id)
+        self.devices[device_id] = new_device
+        self.async_schedule_save()
+        return new_device
 
-        return dt_util.parse_datetime(str(last_watered))
+    @callback
+    def async_delete_device(self, device_id: str) -> bool:
+        """Delete DeviceEntry."""
+        if device_id in self.devices:
+            del self.devices[device_id]
+            self.async_schedule_save()
+            return True
+        return False
 
-    def moisture_last_modified(self, entry_id: str) -> datetime | None:
-        """Return the cached last moisture modified timestamp for a device."""
-        device_data = self._devices.get(entry_id, {})
-        last_modified = device_data.get(STORE_MOISTURE_LAST_MODIFIED_KEY)
-        if last_modified is None:
-            return None
+    @callback
+    def async_update_device(self, device_id: str, changes: dict) -> DeviceEntry:
+        """Update existing DeviceEntry."""
+        old = self.devices[device_id]
+        new = self.devices[device_id] = attr.evolve(old, **changes)
+        self.async_schedule_save()
+        return new
 
-        return dt_util.parse_datetime(str(last_modified))
 
-    def has_moisture_problem_state(self, entry_id: str) -> bool:
-        """Return whether a persisted problem state exists for a device."""
-        return STORE_MOISTURE_PROBLEM_STATE_KEY in self._devices.get(entry_id, {})
+async def async_get_registry(hass: HomeAssistant) -> PlantMonitorStorage:
+    """Return plant monitor storage instance."""
+    task = hass.data.get(DATA_REGISTRY)
 
-    def moisture_problem_state(self, entry_id: str) -> bool | None:
-        """Return the cached problem state for a device."""
-        device_data = self._devices.get(entry_id, {})
-        problem_state = device_data.get(STORE_MOISTURE_PROBLEM_STATE_KEY)
-        if problem_state is None:
-            return None
+    if task is None:
 
-        return bool(problem_state)
+        async def _load_reg() -> PlantMonitorStorage:
+            registry = PlantMonitorStorage(hass)
+            await registry.async_load()
+            return registry
 
-    def update_device_data(self, entry_id: str, **values: Any) -> None:
-        """Persist one or more values for a device entry."""
-        device_data = self._devices.setdefault(entry_id, {})
-        device_data.update(values)
-        self._store.async_delay_save(self._store_data, 0)
+        task = hass.data[DATA_REGISTRY] = hass.async_create_task(_load_reg())
 
-    def update_last_watered(
-        self,
-        entry_id: str,
-        last_watered: datetime | None,
-    ) -> None:
-        """Persist a new watering timestamp for a device."""
-        self.update_device_data(
-            entry_id,
-            **{
-                STORE_LAST_WATERED_KEY: (
-                    last_watered.isoformat() if last_watered is not None else None
-                )
-            },
-        )
-
-    def update_moisture_last_modified(
-        self,
-        entry_id: str,
-        last_modified: datetime | None,
-    ) -> None:
-        """Persist a new moisture modified timestamp for a device."""
-        self.update_device_data(
-            entry_id,
-            **{
-                STORE_MOISTURE_LAST_MODIFIED_KEY: (
-                    last_modified.isoformat() if last_modified is not None else None
-                )
-            },
-        )
-
-    def update_moisture_problem_state(
-        self,
-        entry_id: str,
-        problem_state: bool | None,
-    ) -> None:
-        """Persist the latest moisture problem state for a device."""
-        self.update_device_data(
-            entry_id,
-            **{STORE_MOISTURE_PROBLEM_STATE_KEY: problem_state},
-        )
-
-    def remove_device_data(self, entry_id: str) -> None:
-        """Remove all persisted data for one device entry."""
-        if entry_id not in self._devices:
-            return
-
-        del self._devices[entry_id]
-        self._store.async_delay_save(self._store_data, 0)
-
-    def _store_data(self) -> dict[str, dict[str, dict[str, Any]]]:
-        """Serialize the stored payload."""
-        return {
-            STORE_DEVICES_KEY: self._devices,
-        }
+    return cast(PlantMonitorStorage, await task)

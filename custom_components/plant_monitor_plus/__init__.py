@@ -22,7 +22,7 @@ from homeassistant.util.hass_dict import HassKey
 from .const import DOMAIN, ISSUE_MOISTURE_ENTITY_INVALID, MIN_HA_VERSION
 from .runtime import PlantMonitorPlusRuntime
 from .services import async_setup_services, async_unload_services
-from .store import PlantMonitorStore
+from .store import PlantMonitorStorage, async_get_registry
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -39,7 +39,7 @@ PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.BUTTON, Platform.S
 class PlantMonitorData:
     """Typed integration data stored in hass.data."""
 
-    store: PlantMonitorStore
+    store: PlantMonitorStorage
 
 
 DATA_KEY: HassKey[PlantMonitorData] = HassKey(DOMAIN)
@@ -65,7 +65,7 @@ async def async_setup_entry(
 ) -> bool:
     """Set up this integration using UI."""
     if DATA_KEY not in hass.data:
-        shared_store = PlantMonitorStore(hass)
+        shared_store = await async_get_registry(hass)
         await shared_store.async_load()
         hass.data[DATA_KEY] = PlantMonitorData(store=shared_store)
 
@@ -112,10 +112,10 @@ async def async_remove_entry(
     if DATA_KEY in hass.data:
         store = hass.data[DATA_KEY].store
     else:
-        store = PlantMonitorStore(hass)
+        store = PlantMonitorStorage(hass)
         await store.async_load()
 
-    store.remove_device_data(entry.entry_id)
+    store.async_delete_device(entry.entry_id)
 
     ir.async_delete_issue(
         hass,

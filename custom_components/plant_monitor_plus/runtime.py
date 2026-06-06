@@ -23,12 +23,16 @@ from .const import (
     CONF_WATERING_DETECTION_THRESHOLD,
     DOMAIN,
     ISSUE_MOISTURE_ENTITY_INVALID,
+    LAST_WATERED,
+    MOISTURE_LAST_MODIFIED,
+    MOISTURE_PROBLEM_STATE,
     REASON_ENTITY_STATE_MISSING,
     REASON_NON_NUMERIC_STATE,
     REASON_OK,
     REASON_THRESHOLD_DISABLED,
     REASON_TOO_DRY,
     REASON_TOO_WET,
+    REMOVE,
     WATERING_DETECTION_WINDOW_MINUTES,
 )
 
@@ -39,7 +43,7 @@ if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import Event, EventStateChangedData, State
 
-    from .store import PlantMonitorStore
+    from .store import PlantMonitorStorage
 
 
 class _RegistryEntityUpdatedData(TypedDict):
@@ -65,7 +69,7 @@ class MoistureEvaluation:
 class PlantMonitorPlusRuntime:
     """Shared runtime for state evaluation across entities and actions."""
 
-    def __init__(self, entry: ConfigEntry, store: PlantMonitorStore) -> None:
+    def __init__(self, entry: ConfigEntry, store: PlantMonitorStorage) -> None:
         """Initialize runtime state for an entry."""
         self.entry = entry
         self._store = store
@@ -76,6 +80,16 @@ class PlantMonitorPlusRuntime:
         self._hass: HomeAssistant | None = None
         self._registry_unsubscribe: Callable[[], None] | None = None
         self._tracked_moisture_entity_id: str | None = None
+
+    def async_update_device(self, device_id: str, data: dict):
+        """Conditional create, update or remove device from store."""
+
+        if REMOVE in data:
+            self._store.async_delete_device(device_id)
+        elif self._store.async_get_device(device_id):
+            self._store.async_update_device(device_id, data)
+        else:
+            self._store.async_create_device(device_id, data)
 
     @property
     def _moisture_entity_issue_id(self) -> str:
@@ -90,22 +104,37 @@ class PlantMonitorPlusRuntime:
     @property
     def last_watered(self) -> datetime | None:
         """Return the last watering timestamp."""
-        return self._store.last_watered(self.entry.entry_id)
+        entry = self._store.async_get_device(self.entry.entry_id)
+
+        if entry and LAST_WATERED in entry and entry[LAST_WATERED] is not None:
+            return entry[LAST_WATERED]
+        return None
 
     @property
     def moisture_last_modified(self) -> datetime | None:
         """Return the last problem state modification timestamp."""
-        return self._store.moisture_last_modified(self.entry.entry_id)
+        entry = self._store.async_get_device(self.entry.entry_id)
 
-    @property
-    def has_moisture_problem_state(self) -> bool:
-        """Return whether a previous moisture problem state is persisted."""
-        return self._store.has_moisture_problem_state(self.entry.entry_id)
+        if (
+            entry
+            and MOISTURE_LAST_MODIFIED in entry
+            and entry[MOISTURE_LAST_MODIFIED] is not None
+        ):
+            return entry[MOISTURE_LAST_MODIFIED]
+        return None
 
     @property
     def moisture_problem_state(self) -> bool | None:
         """Return the persisted moisture problem state."""
-        return self._store.moisture_problem_state(self.entry.entry_id)
+        entry = self._store.async_get_device(self.entry.entry_id)
+
+        if (
+            entry
+            and MOISTURE_PROBLEM_STATE in entry
+            and entry[MOISTURE_PROBLEM_STATE] is not None
+        ):
+            return entry[MOISTURE_PROBLEM_STATE]
+        return None
 
     @property
     def moisture_entity_id(self) -> str:
@@ -205,30 +234,34 @@ class PlantMonitorPlusRuntime:
         increased_significantly = (value - lowest_window_value) >= threshold
 
         if increased_significantly:
-            self.mark_watered_now()
+            self.set_watered_now()
             # Reset baseline after detection to avoid repeated triggers on the same rise.
             self._recent_moisture_readings.clear()
             self._recent_moisture_readings.append((now, value))
 
     async def async_set_last_watered(self, dt: datetime) -> None:
         """Set the last watered timestamp and notify listeners."""
-        self._store.update_last_watered(self.entry.entry_id, dt)
+        device = {LAST_WATERED: dt}
+        self.async_update_device(device_id=self.entry.entry_id, data=device)
         for cb in tuple(self._last_watered_callbacks):
             cb()
 
-    def mark_watered_now(self) -> None:
+    def set_watered_now(self) -> None:
         """Set last watered to current time and notify listeners."""
-        self._store.update_last_watered(self.entry.entry_id, dt_util.utcnow())
+        device = {LAST_WATERED: dt_util.utcnow()}
+        self.async_update_device(device_id=self.entry.entry_id, data=device)
         for cb in tuple(self._last_watered_callbacks):
             cb()
 
-    def mark_moisture_modified_now(self) -> None:
+    def set_moisture_modified_now(self) -> None:
         """Set last moisture modified to current time."""
-        self._store.update_moisture_last_modified(self.entry.entry_id, dt_util.utcnow())
+        device = {MOISTURE_LAST_MODIFIED: dt_util.utcnow()}
+        self.async_update_device(device_id=self.entry.entry_id, data=device)
 
     def set_moisture_problem_state(self, state: bool | None) -> None:
         """Persist the latest moisture problem state."""
-        self._store.update_moisture_problem_state(self.entry.entry_id, state)
+        device = {MOISTURE_PROBLEM_STATE: state}
+        self.async_update_device(device_id=self.entry.entry_id, data=device)
 
     def register_moisture_callback(
         self,

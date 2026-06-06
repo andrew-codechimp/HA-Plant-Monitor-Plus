@@ -90,7 +90,6 @@ class PlantMoistureProblemBinarySensor(PlantMonitorPlusEntity, BinarySensorEntit
             state=source_state,
         )
 
-        had_previous_state = self._runtime.has_moisture_problem_state
         previous_state = self._runtime.moisture_problem_state
         self._attr_available = evaluation.available
 
@@ -103,8 +102,8 @@ class PlantMoistureProblemBinarySensor(PlantMonitorPlusEntity, BinarySensorEntit
             )
             self._attr_is_on = current_problem_state
 
-            if had_previous_state and current_problem_state != previous_state:
-                self._runtime.mark_moisture_modified_now()
+            if previous_state is not None and current_problem_state != previous_state:
+                self._runtime.set_moisture_modified_now()
 
             self._runtime.set_moisture_problem_state(current_problem_state)
 
