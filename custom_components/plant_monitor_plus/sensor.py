@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.const import PERCENTAGE
 from homeassistant.core import callback
-from homeassistant.util import dt as dt_util, slugify
+from homeassistant.util import slugify
 
 from .const import (
     ATTR_CURRENT,
