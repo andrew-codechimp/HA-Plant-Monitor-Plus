@@ -1,7 +1,5 @@
 """Sensors for plant_monitor_plus."""
 
-from __future__ import annotations
-
 from typing import TYPE_CHECKING
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity

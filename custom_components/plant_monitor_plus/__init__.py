@@ -4,18 +4,13 @@ For more details about this integration, please refer to
 https://github.com/andrew-codechimp/ha-plant-monitor-plus
 """
 
-from __future__ import annotations
-
 import logging
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from awesomeversion import AwesomeVersion
 
-from homeassistant.const import (
-    Platform,
-    __version__ as HA_VERSION,  # noqa: N812
-)
+from homeassistant.const import Platform, __version__ as HA_VERSION  # noqa: N812
 from homeassistant.helpers import issue_registry as ir
 from homeassistant.util.hass_dict import HassKey
 

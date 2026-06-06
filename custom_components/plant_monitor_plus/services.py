@@ -1,7 +1,5 @@
 """Service registration for plant_monitor_plus."""
 
-from __future__ import annotations
-
 from functools import partial
 from typing import TYPE_CHECKING, cast
 
@@ -71,23 +69,19 @@ def get_plant_summary(
 
         moisture_last_modified = runtime.moisture_last_modified
         last_watered = runtime.last_watered
-        plants.append(
-            {
-                ATTR_NAME: runtime.name,
-                "config_entry_id": config_entry.entry_id,
-                SERVICE_ATTR_MOISTURE_CURRENT: evaluation.value,
-                SERVICE_ATTR_MOISTURE_MINIMUM: evaluation.minimum_value,
-                SERVICE_ATTR_MOISTURE_MAXIMUM: evaluation.maximum_value,
-                SERVICE_ATTR_MOISTURE_PROBLEM: evaluation.problem,
-                SERVICE_ATTR_MOISTURE_REASON: evaluation.reason,
-                SERVICE_ATTR_MOISTURE_LAST_MODIFIED: (
-                    moisture_last_modified.isoformat()
-                    if moisture_last_modified
-                    else None
-                ),
-                ATTR_LAST_WATERED: (last_watered.isoformat() if last_watered else None),
-            }
-        )
+        plants.append({
+            ATTR_NAME: runtime.name,
+            "config_entry_id": config_entry.entry_id,
+            SERVICE_ATTR_MOISTURE_CURRENT: evaluation.value,
+            SERVICE_ATTR_MOISTURE_MINIMUM: evaluation.minimum_value,
+            SERVICE_ATTR_MOISTURE_MAXIMUM: evaluation.maximum_value,
+            SERVICE_ATTR_MOISTURE_PROBLEM: evaluation.problem,
+            SERVICE_ATTR_MOISTURE_REASON: evaluation.reason,
+            SERVICE_ATTR_MOISTURE_LAST_MODIFIED: (
+                moisture_last_modified.isoformat() if moisture_last_modified else None
+            ),
+            ATTR_LAST_WATERED: (last_watered.isoformat() if last_watered else None),
+        })
 
     return cast(
         "ServiceResponse",

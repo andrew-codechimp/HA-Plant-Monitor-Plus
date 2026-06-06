@@ -1,7 +1,5 @@
 """Base entity class for plant_monitor_plus."""
 
-from __future__ import annotations
-
 from typing import TYPE_CHECKING
 
 from homeassistant.const import MATCH_ALL

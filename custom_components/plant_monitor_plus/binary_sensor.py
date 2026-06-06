@@ -1,7 +1,5 @@
 """Binary sensors for plant_monitor_plus threshold problems."""
 
-from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
 
 from homeassistant.components.binary_sensor import BinarySensorEntity

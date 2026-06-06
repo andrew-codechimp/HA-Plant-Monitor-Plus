@@ -1,11 +1,6 @@
 """Repairs for plant_monitor_plus."""
 
-from __future__ import annotations
-
-from homeassistant.components.repairs import (
-    ConfirmRepairFlow,
-    RepairsFlow,
-)
+from homeassistant.components.repairs import ConfirmRepairFlow, RepairsFlow
 from homeassistant.core import HomeAssistant
 
 from .const import ISSUE_MOISTURE_ENTITY_INVALID

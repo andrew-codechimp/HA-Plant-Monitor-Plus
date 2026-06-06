@@ -1,7 +1,5 @@
 """Persistent storage for plant_monitor_plus device data."""
 
-from __future__ import annotations
-
 from collections import OrderedDict
 from collections.abc import MutableMapping
 from datetime import datetime
