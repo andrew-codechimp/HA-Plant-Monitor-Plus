@@ -22,6 +22,8 @@ from .const import (
     CONF_MOISTURE_MAX,
     CONF_MOISTURE_MIN,
     CONF_WATERING_DETECTION_THRESHOLD,
+    DEFAULT_MOISTURE_MAX,
+    DEFAULT_MOISTURE_MIN,
     DEFAULT_WATERING_DETECTION_THRESHOLD,
     DOMAIN,
 )
@@ -35,12 +37,16 @@ THRESHOLD_KEYS = (
 )
 
 THRESHOLD_SCHEMA = {
-    vol.Required(CONF_MOISTURE_MIN, default=0): selector.NumberSelector(
+    vol.Required(
+        CONF_MOISTURE_MIN, default=DEFAULT_MOISTURE_MIN
+    ): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
         )
     ),
-    vol.Required(CONF_MOISTURE_MAX, default=0): selector.NumberSelector(
+    vol.Required(
+        CONF_MOISTURE_MAX, default=DEFAULT_MOISTURE_MAX
+    ): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
         )
@@ -89,22 +95,18 @@ class PlantMonitorPlusFlowHandler(ConfigFlow, domain=DOMAIN):
 
     def _user_schema(self) -> vol.Schema:
         """Build user step schema."""
-        return vol.Schema(
-            {
-                vol.Required(CONF_NAME): str,
-                **self._entity_selector(),
-                **THRESHOLD_SCHEMA,
-            }
-        )
+        return vol.Schema({
+            vol.Required(CONF_NAME): str,
+            **self._entity_selector(),
+            **THRESHOLD_SCHEMA,
+        })
 
     def _reconfigure_schema(self, current_entry_id: str) -> vol.Schema:
         """Build reconfigure step schema."""
-        return vol.Schema(
-            {
-                vol.Required(CONF_NAME): str,
-                **self._entity_selector(current_entry_id),
-            }
-        )
+        return vol.Schema({
+            vol.Required(CONF_NAME): str,
+            **self._entity_selector(current_entry_id),
+        })
 
     @staticmethod
     @callback
