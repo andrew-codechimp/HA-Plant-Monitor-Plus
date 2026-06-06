@@ -105,7 +105,10 @@ class PlantMonitorPlusRuntime:
         entry = self._store.async_get_device(self.entry.entry_id)
 
         if entry and LAST_WATERED in entry and entry[LAST_WATERED] is not None:
-            return entry[LAST_WATERED]
+            last_watered = entry[LAST_WATERED]
+            if isinstance(last_watered, str):
+                return dt_util.parse_datetime(last_watered)
+            return cast("datetime", last_watered)
         return None
 
     @property
@@ -118,7 +121,10 @@ class PlantMonitorPlusRuntime:
             and MOISTURE_LAST_MODIFIED in entry
             and entry[MOISTURE_LAST_MODIFIED] is not None
         ):
-            return entry[MOISTURE_LAST_MODIFIED]
+            modified = entry[MOISTURE_LAST_MODIFIED]
+            if isinstance(modified, str):
+                return dt_util.parse_datetime(modified)
+            return cast("datetime", modified)
         return None
 
     @property
