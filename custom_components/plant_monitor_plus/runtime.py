@@ -257,8 +257,8 @@ class PlantMonitorPlusRuntime:
         for cb in tuple(self._last_watered_callbacks):
             cb()
 
-    def set_moisture_modified_now(self) -> None:
-        """Set last moisture modified to current time."""
+    def set_moisture_problem_modified_now(self) -> None:
+        """Set last moisture modified problem to current time."""
         device = {MOISTURE_PROBLEM_LAST_MODIFIED: dt_util.utcnow()}
         self.async_update_device(device_id=self.entry.entry_id, data=device)
 
