@@ -2,7 +2,10 @@
 
 from typing import TYPE_CHECKING, Any
 
-from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.components.binary_sensor import (
+    BinarySensorDeviceClass,
+    BinarySensorEntity,
+)
 from homeassistant.core import callback
 
 from .const import (
@@ -51,6 +54,7 @@ class PlantMoistureProblemBinarySensor(PlantMonitorPlusEntity, BinarySensorEntit
         self._attr_is_on = False
         self._attr_available = True
         self._attr_extra_state_attributes: dict[str, Any] = {}
+        self._attr_device_class = BinarySensorDeviceClass.PROBLEM
 
     async def async_added_to_hass(self) -> None:
         """Register state listener and evaluate the initial state."""
