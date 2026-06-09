@@ -22,7 +22,7 @@ from .const import (
     DOMAIN,
     ISSUE_MOISTURE_ENTITY_INVALID,
     LAST_WATERED,
-    MOISTURE_LAST_MODIFIED,
+    MOISTURE_PROBLEM_LAST_MODIFIED,
     MOISTURE_PROBLEM_STATE,
     REASON_ENTITY_STATE_MISSING,
     REASON_NON_NUMERIC_STATE,
@@ -112,16 +112,16 @@ class PlantMonitorPlusRuntime:
         return None
 
     @property
-    def moisture_last_modified(self) -> datetime | None:
+    def moisture_problem_last_modified(self) -> datetime | None:
         """Return the last problem state modification timestamp."""
         entry = self._store.async_get_device(self.entry.entry_id)
 
         if (
             entry
-            and MOISTURE_LAST_MODIFIED in entry
-            and entry[MOISTURE_LAST_MODIFIED] is not None
+            and MOISTURE_PROBLEM_LAST_MODIFIED in entry
+            and entry[MOISTURE_PROBLEM_LAST_MODIFIED] is not None
         ):
-            modified = entry[MOISTURE_LAST_MODIFIED]
+            modified = entry[MOISTURE_PROBLEM_LAST_MODIFIED]
             if isinstance(modified, str):
                 return dt_util.parse_datetime(modified)
             return cast("datetime", modified)
@@ -259,7 +259,7 @@ class PlantMonitorPlusRuntime:
 
     def set_moisture_modified_now(self) -> None:
         """Set last moisture modified to current time."""
-        device = {MOISTURE_LAST_MODIFIED: dt_util.utcnow()}
+        device = {MOISTURE_PROBLEM_LAST_MODIFIED: dt_util.utcnow()}
         self.async_update_device(device_id=self.entry.entry_id, data=device)
 
     def set_moisture_problem_state(self, state: bool | None) -> None:

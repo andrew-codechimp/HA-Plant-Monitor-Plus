@@ -61,8 +61,8 @@
                     "last_watered": {
                         "name": "Last watered"
                     },
-                    "last_modified": {
-                        "name": "Last modified"
+                    "problem_last_modified": {
+                        "name": "Problem last modified"
                     },
                     "reason": {
                         "name": "Reason",
@@ -103,8 +103,8 @@
                     "last_watered": {
                         "name": "Last watered"
                     },
-                    "last_modified": {
-                        "name": "Last modified"
+                    "problem_last_modified": {
+                        "name": "Problem last modified"
                     },
                     "reason": {
                         "name": "Reason",

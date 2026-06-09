@@ -9,10 +9,10 @@ from homeassistant.util import slugify
 
 from .const import (
     ATTR_CURRENT,
-    ATTR_LAST_MODIFIED,
     ATTR_LAST_WATERED,
     ATTR_MAXIMUM,
     ATTR_MINIMUM,
+    ATTR_PROBLEM_LAST_MODIFIED,
     ATTR_REASON,
     ATTR_SOURCE_ENTITY_ID,
 )
@@ -85,7 +85,7 @@ class PlantMoisturePlusSensor(PlantMonitorPlusEntity, SensorEntity):
             ATTR_MINIMUM: evaluation.minimum_value,
             ATTR_MAXIMUM: evaluation.maximum_value,
             ATTR_REASON: evaluation.reason,
-            ATTR_LAST_MODIFIED: self._runtime.moisture_last_modified,
+            ATTR_PROBLEM_LAST_MODIFIED: self._runtime.moisture_problem_last_modified,
             ATTR_LAST_WATERED: self._runtime.last_watered,
         }
 
