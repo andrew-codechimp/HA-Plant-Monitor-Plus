@@ -67,7 +67,7 @@ def get_plant_summary(
         elif evaluation.reason == REASON_TOO_WET:
             too_wet.append(runtime.name)
 
-        moisture_last_modified = runtime.moisture_problem_last_modified
+        moisture_problem_last_modified = runtime.moisture_problem_last_modified
         last_watered = runtime.last_watered
         plants.append({
             ATTR_NAME: runtime.name,
@@ -78,7 +78,9 @@ def get_plant_summary(
             SERVICE_ATTR_MOISTURE_PROBLEM: evaluation.problem,
             SERVICE_ATTR_MOISTURE_REASON: evaluation.reason,
             SERVICE_ATTR_MOISTURE_PROBLEM_LAST_MODIFIED: (
-                moisture_last_modified.isoformat() if moisture_last_modified else None
+                moisture_problem_last_modified.isoformat()
+                if moisture_problem_last_modified
+                else None
             ),
             ATTR_LAST_WATERED: (last_watered.isoformat() if last_watered else None),
         })
