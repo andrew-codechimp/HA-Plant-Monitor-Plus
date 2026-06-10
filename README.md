@@ -5,14 +5,37 @@
 [![Downloads][download-latest-shield]]()
 [![License][license-shield]](LICENSE)
 
-## Early Development
+## ⚠️ Early Development
 
 Plant Monitor Plus is an integration to give details of a plants moisture with a problem sensor when it requires attention and a last watered tracker that you can automatically (or manually) record when the plant was last watered.
 
-When you configure each plant you provide a physical moisture sensor and set thesholds for minimum, maximum and amount of moisture increase to detect a plant has been watered.
+When you configure each plant you provide a physical moisture sensor and set thresholds for minimum, maximum and amount of moisture increase to detect a plant has been watered.
 You are able to adjust these at any time via the UI.
 
-A Get plant summary action is available to get details of all plants and what requires attention which you can call at convenient times to send notifications etc.
+## Entities
+
+### Moisture status
+A binary problem sensor indicating if there is a problem that needs addressing with attributes giving detailed information.
+
+### Watered
+A button to manually update the plant as having been watered.
+
+### Moisture+
+A sensor that mirrors the current moisture value but adding attributes for configuration and state for the device, intended for easy use within dashboards.
+
+### Last watered
+A sensor indicating the last time the plant was watered, updated by either automatic detection if an increase threshold is set, manual button press or the set plant watered action.
+
+## Actions
+
+### Get plant summary
+
+Get details of all plants and what requires attention which you can call at convenient times to send notifications etc.
+
+### Set plant watered
+
+Provides a way to set a plant as having been watered, either now or a manually specified date.
+
 
 _Please :star: this repo if you find it useful_
 
