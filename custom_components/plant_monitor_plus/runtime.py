@@ -425,7 +425,7 @@ class PlantMonitorPlusRuntime:
         translation_key: str,
         placeholders: dict[str, str],
     ) -> None:
-        """Create a fixable issue that starts reconfigure for this entry."""
+        """Create an issue."""
         ir.async_create_issue(
             hass,
             DOMAIN,
