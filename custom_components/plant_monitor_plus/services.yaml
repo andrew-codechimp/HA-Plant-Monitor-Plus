@@ -3,6 +3,28 @@ get_plant_summary:
   description: Return all plant entries and categorized lists.
   fields: {}
 
+set_plant_thresholds:
+  name: Set plant thresholds
+  description: Set the thresholds for a plant.
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: plant_monitor_plus
+    moisture_minimum:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 100
+    moisture_maximum:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 100
+
 set_plant_watered:
   name: Set plant watered
   description: Set the last watered timestamp for a plant.

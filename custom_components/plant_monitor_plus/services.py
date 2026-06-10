@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, cast
 
 import voluptuous as vol
 
-from homeassistant.const import ATTR_NAME
+from homeassistant.const import ATTR_CONFIG_ENTRY_ID, ATTR_NAME
 from homeassistant.core import (
     HomeAssistant,
     ServiceCall,
@@ -14,11 +14,16 @@ from homeassistant.core import (
     callback,
 )
 from homeassistant.exceptions import ServiceValidationError
-from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import config_validation as cv, selector, service
 from homeassistant.util import dt as dt_util
 
 from .const import (
+    ATTR_DATETIME,
     ATTR_LAST_WATERED,
+    ATTR_MOISTURE_MAXIMUM,
+    ATTR_MOISTURE_MINIMUM,
+    CONF_MOISTURE_MAX,
+    CONF_MOISTURE_MIN,
     DOMAIN,
     REASON_TOO_DRY,
     REASON_TOO_WET,
@@ -28,17 +33,38 @@ from .const import (
     SERVICE_ATTR_MOISTURE_PROBLEM,
     SERVICE_ATTR_MOISTURE_PROBLEM_LAST_MODIFIED,
     SERVICE_ATTR_MOISTURE_REASON,
+    SERVICE_ATTR_PLANTS,
+    SERVICE_ATTR_UNAVAILABLE,
     SERVICE_GET_PLANT_SUMMARY,
+    SERVICE_SET_PLANT_THRESHOLDS,
     SERVICE_SET_PLANT_WATERED,
 )
 
 if TYPE_CHECKING:
     from custom_components.plant_monitor_plus.runtime import PlantMonitorPlusRuntime
 
+    from .runtime import PlantMonitorPlusConfigEntry
+
+SERVICE_SET_PLANT_THRESHOLDS_SCHEMA = vol.Schema(
+    {
+        vol.Required(ATTR_CONFIG_ENTRY_ID): cv.string,
+        vol.Required(CONF_MOISTURE_MIN): selector.NumberSelector(
+            selector.NumberSelectorConfig(
+                min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
+            )
+        ),
+        vol.Required(CONF_MOISTURE_MAX): selector.NumberSelector(
+            selector.NumberSelectorConfig(
+                min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
+            )
+        ),
+    },
+)
+
 SERVICE_SET_PLANT_WATERED_SCHEMA = vol.Schema(
     {
-        vol.Required("config_entry_id"): cv.string,
-        vol.Optional("datetime"): cv.string,
+        vol.Required(ATTR_CONFIG_ENTRY_ID): cv.string,
+        vol.Optional(ATTR_DATETIME): cv.string,
     },
 )
 
@@ -71,7 +97,7 @@ def get_plant_summary(
         last_watered = runtime.last_watered
         plants.append({
             ATTR_NAME: runtime.name,
-            "config_entry_id": config_entry.entry_id,
+            ATTR_CONFIG_ENTRY_ID: config_entry.entry_id,
             SERVICE_ATTR_MOISTURE_CURRENT: evaluation.value,
             SERVICE_ATTR_MOISTURE_MINIMUM: evaluation.minimum_value,
             SERVICE_ATTR_MOISTURE_MAXIMUM: evaluation.maximum_value,
@@ -90,32 +116,39 @@ def get_plant_summary(
         {
             REASON_TOO_DRY: too_dry,
             REASON_TOO_WET: too_wet,
-            "unavailable": unavailable,
-            "plants": plants,
+            SERVICE_ATTR_UNAVAILABLE: unavailable,
+            SERVICE_ATTR_PLANTS: plants,
         },
     )
 
 
-async def async_set_plant_watered(
+async def async_set_plant_thresholds(
     hass: HomeAssistant,
     service_call: ServiceCall,
 ) -> None:
+    """Set thresholds for a plant."""
+    entry: PlantMonitorPlusConfigEntry = service.async_get_config_entry(
+        service_call.hass, DOMAIN, service_call.data[ATTR_CONFIG_ENTRY_ID]
+    )
+
+    moisture_min: int = service_call.data[ATTR_MOISTURE_MINIMUM]
+    moisture_max: int = service_call.data[ATTR_MOISTURE_MAXIMUM]
+
+    new_options = entry.options.copy()
+    new_options[CONF_MOISTURE_MIN] = moisture_min
+    new_options[CONF_MOISTURE_MAX] = moisture_max
+    hass.config_entries.async_update_entry(entry, options=new_options)
+
+
+async def async_set_plant_watered(
+    hass: HomeAssistant,  # noqa: ARG001
+    service_call: ServiceCall,
+) -> None:
     """Set the last watered timestamp for a plant."""
-    config_entry_id: str = service_call.data.get("config_entry_id", "")
-    datetime_str: str | None = service_call.data.get("datetime")
-
-    # Validate config_entry_id exists in this domain and get runtime
-    runtime = None
-    for entry in hass.config_entries.async_entries(DOMAIN):
-        if entry.entry_id == config_entry_id:
-            runtime_data = getattr(entry, "runtime_data", None)
-            if runtime_data is not None:
-                runtime = cast("PlantMonitorPlusRuntime", runtime_data)
-            break
-
-    if runtime is None:
-        msg = f"Config entry '{config_entry_id}' not found in {DOMAIN} domain"
-        raise ServiceValidationError(msg)
+    entry: PlantMonitorPlusConfigEntry = service.async_get_config_entry(
+        service_call.hass, DOMAIN, service_call.data[ATTR_CONFIG_ENTRY_ID]
+    )
+    datetime_str: str | None = service_call.data.get(ATTR_DATETIME)
 
     # Parse datetime or use current UTC time
     if datetime_str:
@@ -123,19 +156,23 @@ async def async_set_plant_watered(
             # Parse as local time and convert to UTC
             local_dt = dt_util.parse_datetime(datetime_str)
             if local_dt is None:
-                msg = f"Invalid datetime format: '{datetime_str}'"
-                raise ServiceValidationError(msg)
+                raise ServiceValidationError(
+                    translation_domain=DOMAIN,
+                    translation_key="invalid_datetime",
+                )
+
             # Convert local time to UTC
             utc_dt = dt_util.as_utc(local_dt)
         except ValueError as e:
-            msg = f"Invalid datetime: {e}"
-            raise ServiceValidationError(msg) from e
+            raise ServiceValidationError(
+                translation_domain=DOMAIN, translation_key="invalid_datetime"
+            ) from e
     else:
         # Use current UTC time
         utc_dt = dt_util.utcnow()
 
     # Update the timestamp and notify listeners
-    await runtime.async_set_last_watered(utc_dt)
+    await entry.runtime_data.async_set_last_watered(utc_dt)
 
 
 @callback
@@ -153,6 +190,13 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 
     hass.services.async_register(
         DOMAIN,
+        SERVICE_SET_PLANT_THRESHOLDS,
+        partial(async_set_plant_thresholds, hass),
+        schema=SERVICE_SET_PLANT_THRESHOLDS_SCHEMA,
+    )
+
+    hass.services.async_register(
+        DOMAIN,
         SERVICE_SET_PLANT_WATERED,
         partial(async_set_plant_watered, hass),
         schema=SERVICE_SET_PLANT_WATERED_SCHEMA,
@@ -162,4 +206,5 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 async def async_unload_services(hass: HomeAssistant) -> None:
     """Unregister integration services."""
     hass.services.async_remove(DOMAIN, SERVICE_GET_PLANT_SUMMARY)
+    hass.services.async_remove(DOMAIN, SERVICE_SET_PLANT_THRESHOLDS)
     hass.services.async_remove(DOMAIN, SERVICE_SET_PLANT_WATERED)

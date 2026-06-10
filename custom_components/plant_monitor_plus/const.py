@@ -21,6 +21,12 @@ WATERING_DETECTION_WINDOW_MINUTES = 60
 # Services
 SERVICE_GET_PLANT_SUMMARY = "get_plant_summary"
 SERVICE_SET_PLANT_WATERED = "set_plant_watered"
+SERVICE_SET_PLANT_THRESHOLDS = "set_plant_thresholds"
+
+# Service attributes
+ATTR_DATETIME = "datetime"
+ATTR_MOISTURE_MINIMUM = "moisture_minimum"
+ATTR_MOISTURE_MAXIMUM = "moisture_maximum"
 
 # Service response attributes
 SERVICE_ATTR_MOISTURE_CURRENT = "moisture_current"
@@ -29,6 +35,8 @@ SERVICE_ATTR_MOISTURE_MINIMUM = "moisture_minimum"
 SERVICE_ATTR_MOISTURE_PROBLEM_LAST_MODIFIED = "moisture_problem_last_modified"
 SERVICE_ATTR_MOISTURE_PROBLEM = "moisture_problem"
 SERVICE_ATTR_MOISTURE_REASON = "moisture_reason"
+SERVICE_ATTR_UNAVAILABLE = "unavailable"
+SERVICE_ATTR_PLANTS = "plants"
 
 # Moisture attributes
 ATTR_PROBLEM_LAST_MODIFIED = "problem_last_modified"

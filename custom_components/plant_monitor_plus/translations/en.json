@@ -125,6 +125,11 @@
             }
         }
     },
+    "exceptions": {
+        "invalid_datetime": {
+            "message": "Invalid datetime."
+        }
+    },
     "options": {
         "step": {
             "init": {
@@ -159,6 +164,24 @@
                 "datetime": {
                     "name": "Time",
                     "description": "The watering time (local time). If omitted, uses current time."
+                }
+            }
+        },
+        "set_plant_thresholds": {
+            "name": "Set plant thresholds",
+            "description": "Set the thresholds for a plant.",
+            "fields": {
+                "config_entry_id": {
+                    "name": "Plant",
+                    "description": "The plant to update."
+                },
+                "moisture_minimum": {
+                    "name": "Minimum moisture",
+                    "description": "The threshold where the plant is too dry, if either the minimum or maximum is 0 this disables checking moisture."
+                },
+                "moisture_maximum": {
+                    "name": "Maximum moisture",
+                    "description": "The threshold where the plant is too wet, if either the minimum or maximum is 0 this disables checking moisture."
                 }
             }
         }
