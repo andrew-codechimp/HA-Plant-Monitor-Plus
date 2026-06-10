@@ -38,7 +38,7 @@ Provides a way to set a plant as having been watered, either now or at a specifi
 
 ### Set plant thresholds
 
-Updates a plant thresholds, useful for seasonal adjustment automations.
+Updates a plant's thresholds, useful for seasonal adjustment automations.
 
 _Please :star: this repo if you find it useful_
 
