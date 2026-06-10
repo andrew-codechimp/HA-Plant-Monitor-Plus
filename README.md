@@ -20,11 +20,11 @@ A binary problem sensor indicating if there is a problem that needs addressing w
 ### Watered
 A button to manually update the plant as having been watered.
 
-### Moisture+
-A sensor that mirrors the current moisture value but adding attributes for configuration and state for the device, intended for easy use within dashboards.
-
 ### Last watered
 A sensor indicating the last time the plant was watered, updated by either automatic detection (if an increase threshold is set), a manual button press, or the set plant watered action.
+
+### Moisture+
+A sensor that mirrors the current moisture value but adding attributes for configuration and state for the device, intended for easy use within dashboards.
 
 ## Actions
 
