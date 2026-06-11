@@ -28,6 +28,7 @@ class DeviceEntry:
     device_id = attr.ib(type=str, default=None)
     moisture_problem_state = attr.ib(type=bool, default=None)
     moisture_problem_last_modified = attr.ib(type=datetime, default=None)
+    moisture_last_value = attr.ib(type=float, default=None)
     last_watered = attr.ib(type=datetime, default=None)
 
 

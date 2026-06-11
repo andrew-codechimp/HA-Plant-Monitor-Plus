@@ -69,6 +69,7 @@ async def async_setup_entry(
     integration_data = hass.data[DATA_KEY]
 
     runtime = PlantMonitorPlusRuntime(entry, integration_data.store)
+    runtime.restore_recent_moisture_readings()
     entry.runtime_data = runtime
     entry.async_on_unload(runtime.async_setup_moisture_entity_watcher(hass))
 

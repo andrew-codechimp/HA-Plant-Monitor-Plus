@@ -22,6 +22,7 @@ from .const import (
     DOMAIN,
     ISSUE_MOISTURE_ENTITY_INVALID,
     LAST_WATERED,
+    MOISTURE_LAST_VALUE,
     MOISTURE_PROBLEM_LAST_MODIFIED,
     MOISTURE_PROBLEM_STATE,
     REASON_ENTITY_STATE_MISSING,
@@ -88,6 +89,19 @@ class PlantMonitorPlusRuntime:
             self._store.async_update_device(device_id, data)
         else:
             self._store.async_create_device(device_id, data)
+
+    def restore_recent_moisture_readings(self) -> None:
+        """Pre-populate recent moisture readings with the last known value to enable watering detection on startup."""
+        entry = self._store.async_get_device(self.entry.entry_id)
+
+        if (
+            entry
+            and MOISTURE_LAST_VALUE in entry
+            and entry[MOISTURE_LAST_VALUE] is not None
+        ):
+            last_value = entry[MOISTURE_LAST_VALUE]
+            now = dt_util.utcnow()
+            self._recent_moisture_readings.append((now, float(last_value)))
 
     @property
     def _moisture_entity_issue_id(self) -> str:
@@ -221,6 +235,9 @@ class PlantMonitorPlusRuntime:
 
         now = dt_util.utcnow()
         self._recent_moisture_readings.append((now, value))
+
+        device = {MOISTURE_LAST_VALUE: value}
+        self.async_update_device(device_id=self.entry.entry_id, data=device)
 
         window_start = now - timedelta(minutes=WATERING_DETECTION_WINDOW_MINUTES)
         while (

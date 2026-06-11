@@ -50,6 +50,7 @@ ATTR_SOURCE_ENTITY_ID = "source_entity_id"
 
 # Storage fields
 REMOVE = "remove"
+MOISTURE_LAST_VALUE = "moisture_last_value"
 MOISTURE_PROBLEM_LAST_MODIFIED = "moisture_problem_last_modified"
 MOISTURE_PROBLEM_STATE = "moisture_problem_state"
 LAST_WATERED = "last_watered"
