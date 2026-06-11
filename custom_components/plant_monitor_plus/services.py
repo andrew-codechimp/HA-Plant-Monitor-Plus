@@ -18,10 +18,7 @@ from homeassistant.helpers import config_validation as cv, selector, service
 from homeassistant.util import dt as dt_util
 
 from .const import (
-    ATTR_DATETIME,
     ATTR_LAST_WATERED,
-    ATTR_MOISTURE_MAXIMUM,
-    ATTR_MOISTURE_MINIMUM,
     CONF_MOISTURE_MAX,
     CONF_MOISTURE_MIN,
     DOMAIN,
@@ -36,6 +33,9 @@ from .const import (
     SERVICE_ATTR_PLANTS,
     SERVICE_ATTR_UNAVAILABLE,
     SERVICE_GET_PLANT_SUMMARY,
+    SERVICE_PARAM_DATETIME,
+    SERVICE_PARAM_MOISTURE_MAXIMUM,
+    SERVICE_PARAM_MOISTURE_MINIMUM,
     SERVICE_SET_PLANT_THRESHOLDS,
     SERVICE_SET_PLANT_WATERED,
 )
@@ -48,12 +48,12 @@ if TYPE_CHECKING:
 SERVICE_SET_PLANT_THRESHOLDS_SCHEMA = vol.Schema(
     {
         vol.Required(ATTR_CONFIG_ENTRY_ID): cv.string,
-        vol.Optional(ATTR_MOISTURE_MINIMUM): selector.NumberSelector(
+        vol.Optional(SERVICE_PARAM_MOISTURE_MINIMUM): selector.NumberSelector(
             selector.NumberSelectorConfig(
                 min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
             )
         ),
-        vol.Optional(ATTR_MOISTURE_MAXIMUM): selector.NumberSelector(
+        vol.Optional(SERVICE_PARAM_MOISTURE_MAXIMUM): selector.NumberSelector(
             selector.NumberSelectorConfig(
                 min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
             )
@@ -64,7 +64,7 @@ SERVICE_SET_PLANT_THRESHOLDS_SCHEMA = vol.Schema(
 SERVICE_SET_PLANT_WATERED_SCHEMA = vol.Schema(
     {
         vol.Required(ATTR_CONFIG_ENTRY_ID): cv.string,
-        vol.Optional(ATTR_DATETIME): cv.string,
+        vol.Optional(SERVICE_PARAM_DATETIME): cv.string,
     },
 )
 
@@ -133,10 +133,14 @@ async def async_set_plant_thresholds(
 
     new_options = entry.options.copy()
 
-    if (moisture_min := service_call.data.get(ATTR_MOISTURE_MINIMUM)) is not None:
+    if (
+        moisture_min := service_call.data.get(SERVICE_PARAM_MOISTURE_MINIMUM)
+    ) is not None:
         new_options[CONF_MOISTURE_MIN] = moisture_min
 
-    if (moisture_max := service_call.data.get(ATTR_MOISTURE_MAXIMUM)) is not None:
+    if (
+        moisture_max := service_call.data.get(SERVICE_PARAM_MOISTURE_MAXIMUM)
+    ) is not None:
         new_options[CONF_MOISTURE_MAX] = moisture_max
 
     if new_options != entry.options:
@@ -151,7 +155,7 @@ async def async_set_plant_watered(
     entry: PlantMonitorPlusConfigEntry = service.async_get_config_entry(
         service_call.hass, DOMAIN, service_call.data[ATTR_CONFIG_ENTRY_ID]
     )
-    datetime_str: str | None = service_call.data.get(ATTR_DATETIME)
+    datetime_str: str | None = service_call.data.get(SERVICE_PARAM_DATETIME)
 
     # Parse datetime or use current UTC time
     if datetime_str:

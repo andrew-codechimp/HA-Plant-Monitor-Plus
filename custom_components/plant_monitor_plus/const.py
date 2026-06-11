@@ -23,10 +23,10 @@ SERVICE_GET_PLANT_SUMMARY = "get_plant_summary"
 SERVICE_SET_PLANT_WATERED = "set_plant_watered"
 SERVICE_SET_PLANT_THRESHOLDS = "set_plant_thresholds"
 
-# Service attributes
-ATTR_DATETIME = "datetime"
-ATTR_MOISTURE_MINIMUM = "moisture_minimum"
-ATTR_MOISTURE_MAXIMUM = "moisture_maximum"
+# Service parameters
+SERVICE_PARAM_DATETIME = "datetime"
+SERVICE_PARAM_MOISTURE_MINIMUM = "moisture_minimum"
+SERVICE_PARAM_MOISTURE_MAXIMUM = "moisture_maximum"
 
 # Service response attributes
 SERVICE_ATTR_MOISTURE_CURRENT = "moisture_current"
