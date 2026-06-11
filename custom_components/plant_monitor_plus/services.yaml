@@ -18,12 +18,14 @@ set_plant_thresholds:
         number:
           min: 0
           max: 100
+          unit_of_measurement: "%"
     moisture_maximum:
       required: false
       selector:
         number:
           min: 0
           max: 100
+          unit_of_measurement: "%"
 
 set_plant_watered:
   name: Set plant watered

@@ -39,14 +39,20 @@ THRESHOLD_SCHEMA = {
         CONF_MOISTURE_MINIMUM, default=DEFAULT_MOISTURE_MIN
     ): selector.NumberSelector(
         selector.NumberSelectorConfig(
-            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
+            min=0,
+            max=100,
+            mode=selector.NumberSelectorMode.SLIDER,
+            unit_of_measurement="%",
         )
     ),
     vol.Required(
         CONF_MOISTURE_MAXIMUM, default=DEFAULT_MOISTURE_MAX
     ): selector.NumberSelector(
         selector.NumberSelectorConfig(
-            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
+            min=0,
+            max=100,
+            mode=selector.NumberSelectorMode.SLIDER,
+            unit_of_measurement="%",
         )
     ),
     vol.Required(
@@ -54,7 +60,10 @@ THRESHOLD_SCHEMA = {
         default=DEFAULT_WATERING_DETECTION_THRESHOLD,
     ): selector.NumberSelector(
         selector.NumberSelectorConfig(
-            min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
+            min=0,
+            max=100,
+            mode=selector.NumberSelectorMode.SLIDER,
+            unit_of_measurement="%",
         )
     ),
 }
