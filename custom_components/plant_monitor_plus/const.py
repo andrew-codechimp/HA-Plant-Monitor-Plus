@@ -7,6 +7,7 @@ LOGGER: Logger = getLogger(__package__)
 DOMAIN = "plant_monitor_plus"
 MIN_HA_VERSION = "2026.5.1"
 
+# Config
 CONF_MOISTURE_ENTITY_ID = "moisture_entity_id"
 CONF_MOISTURE_MAX = "moisture_max"
 CONF_MOISTURE_MIN = "moisture_min"
@@ -38,7 +39,7 @@ SERVICE_ATTR_MOISTURE_REASON = "moisture_reason"
 SERVICE_ATTR_UNAVAILABLE = "unavailable"
 SERVICE_ATTR_PLANTS = "plants"
 
-# Moisture attributes
+# Entity attributes
 ATTR_PROBLEM_LAST_MODIFIED = "problem_last_modified"
 ATTR_LAST_WATERED = "last_watered"
 ATTR_CURRENT = "current"
@@ -61,4 +62,5 @@ REASON_THRESHOLD_DISABLED = "threshold_disabled"
 REASON_ENTITY_STATE_MISSING = "entity_state_missing"
 REASON_NON_NUMERIC_STATE = "non_numeric_state"
 
+# Issues
 ISSUE_MOISTURE_ENTITY_INVALID = "moisture_entity_invalid"
