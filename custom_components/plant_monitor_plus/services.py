@@ -48,12 +48,12 @@ if TYPE_CHECKING:
 SERVICE_SET_PLANT_THRESHOLDS_SCHEMA = vol.Schema(
     {
         vol.Required(ATTR_CONFIG_ENTRY_ID): cv.string,
-        vol.Required(CONF_MOISTURE_MIN): selector.NumberSelector(
+        vol.Optional(ATTR_MOISTURE_MINIMUM): selector.NumberSelector(
             selector.NumberSelectorConfig(
                 min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
             )
         ),
-        vol.Required(CONF_MOISTURE_MAX): selector.NumberSelector(
+        vol.Optional(ATTR_MOISTURE_MAXIMUM): selector.NumberSelector(
             selector.NumberSelectorConfig(
                 min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
             )
@@ -131,13 +131,16 @@ async def async_set_plant_thresholds(
         service_call.hass, DOMAIN, service_call.data[ATTR_CONFIG_ENTRY_ID]
     )
 
-    moisture_min: int = service_call.data[ATTR_MOISTURE_MINIMUM]
-    moisture_max: int = service_call.data[ATTR_MOISTURE_MAXIMUM]
-
     new_options = entry.options.copy()
-    new_options[CONF_MOISTURE_MIN] = moisture_min
-    new_options[CONF_MOISTURE_MAX] = moisture_max
-    hass.config_entries.async_update_entry(entry, options=new_options)
+
+    if (moisture_min := service_call.data.get(ATTR_MOISTURE_MINIMUM)) is not None:
+        new_options[CONF_MOISTURE_MIN] = moisture_min
+
+    if (moisture_max := service_call.data.get(ATTR_MOISTURE_MAXIMUM)) is not None:
+        new_options[CONF_MOISTURE_MAX] = moisture_max
+
+    if new_options != entry.options:
+        hass.config_entries.async_update_entry(entry, options=new_options)
 
 
 async def async_set_plant_watered(
