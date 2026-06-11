@@ -16,8 +16,8 @@ from homeassistant.util import dt as dt_util
 
 from .const import (
     CONF_MOISTURE_ENTITY_ID,
-    CONF_MOISTURE_MAX,
-    CONF_MOISTURE_MIN,
+    CONF_MOISTURE_MAXIMUM,
+    CONF_MOISTURE_MINIMUM,
     CONF_WATERING_DETECTION_THRESHOLD,
     DOMAIN,
     ISSUE_MOISTURE_ENTITY_INVALID,
@@ -149,8 +149,8 @@ class PlantMonitorPlusRuntime:
     @property
     def moisture_thresholds(self) -> tuple[float, float]:
         """Return (min, max) moisture thresholds."""
-        min_value = self.entry.options[CONF_MOISTURE_MIN]
-        max_value = self.entry.options[CONF_MOISTURE_MAX]
+        min_value = self.entry.options[CONF_MOISTURE_MINIMUM]
+        max_value = self.entry.options[CONF_MOISTURE_MAXIMUM]
         return float(min_value), float(max_value)
 
     def evaluate_moisture(

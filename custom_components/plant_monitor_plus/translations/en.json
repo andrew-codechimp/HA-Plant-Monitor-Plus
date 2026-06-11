@@ -6,15 +6,15 @@
                 "data": {
                     "name": "Name",
                     "moisture_entity_id": "Moisture sensor",
-                    "moisture_min": "Minimum moisture",
-                    "moisture_max": "Maximum moisture",
+                    "moisture_minimum": "Minimum moisture",
+                    "moisture_maximum": "Maximum moisture",
                     "watering_detection_threshold": "Watering detection threshold"
                 },
                 "data_description": {
                     "name": "Name of the plant.",
                     "moisture_entity_id": "The sensor that provides the moisture level of the plant.",
-                    "moisture_min": "The threshold where the plant is too dry, if either the minimum or maximum is 0 this disables checking moisture.",
-                    "moisture_max": "The threshold where the plant is too wet, if either the minimum or maximum is 0 this disables checking moisture.",
+                    "moisture_minimum": "The threshold where the plant is too dry, if either the minimum or maximum is 0 this disables checking moisture.",
+                    "moisture_maximum": "The threshold where the plant is too wet, if either the minimum or maximum is 0 this disables checking moisture.",
                     "watering_detection_threshold": "How much the moisture level has to recently increase to register that the plant has been watered (0 disables automatic watering detection)."
                 }
             },
@@ -136,13 +136,13 @@
                 "title": "Plant Monitor Options",
                 "description": "Configured sensor entity: {moisture_entity_id}",
                 "data": {
-                    "moisture_min": "Minimum moisture",
-                    "moisture_max": "Maximum moisture",
+                    "moisture_minimum": "Minimum moisture",
+                    "moisture_maximum": "Maximum moisture",
                     "watering_detection_threshold": "Watering detection threshold"
                 },
                 "data_description": {
-                    "moisture_min": "The threshold where the plant is too dry, if either the minimum or maximum is 0 this disables checking moisture.",
-                    "moisture_max": "The threshold where the plant is too wet, if either the minimum or maximum is 0 this disables checking moisture.",
+                    "moisture_minimum": "The threshold where the plant is too dry, if either the minimum or maximum is 0 this disables checking moisture.",
+                    "moisture_maximum": "The threshold where the plant is too wet, if either the minimum or maximum is 0 this disables checking moisture.",
                     "watering_detection_threshold": "How much the moisture level has to recently increase to register that the plant has been watered (0 disables automatic watering detection)."
                 }
             }

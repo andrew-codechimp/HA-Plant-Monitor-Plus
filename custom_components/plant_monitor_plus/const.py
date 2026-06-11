@@ -9,8 +9,8 @@ MIN_HA_VERSION = "2026.5.1"
 
 # Config
 CONF_MOISTURE_ENTITY_ID = "moisture_entity_id"
-CONF_MOISTURE_MAX = "moisture_max"
-CONF_MOISTURE_MIN = "moisture_min"
+CONF_MOISTURE_MAXIMUM = "moisture_maximum"
+CONF_MOISTURE_MINIMUM = "moisture_minimum"
 CONF_WATERING_DETECTION_THRESHOLD = "watering_detection_threshold"
 
 # Defaults

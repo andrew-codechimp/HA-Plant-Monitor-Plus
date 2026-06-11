@@ -19,8 +19,8 @@ from homeassistant.util import dt as dt_util
 
 from .const import (
     ATTR_LAST_WATERED,
-    CONF_MOISTURE_MAX,
-    CONF_MOISTURE_MIN,
+    CONF_MOISTURE_MAXIMUM,
+    CONF_MOISTURE_MINIMUM,
     DOMAIN,
     REASON_TOO_DRY,
     REASON_TOO_WET,
@@ -136,12 +136,12 @@ async def async_set_plant_thresholds(
     if (
         moisture_min := service_call.data.get(SERVICE_PARAM_MOISTURE_MINIMUM)
     ) is not None:
-        new_options[CONF_MOISTURE_MIN] = moisture_min
+        new_options[CONF_MOISTURE_MINIMUM] = moisture_min
 
     if (
         moisture_max := service_call.data.get(SERVICE_PARAM_MOISTURE_MAXIMUM)
     ) is not None:
-        new_options[CONF_MOISTURE_MAX] = moisture_max
+        new_options[CONF_MOISTURE_MAXIMUM] = moisture_max
 
     if new_options != entry.options:
         hass.config_entries.async_update_entry(entry, options=new_options)

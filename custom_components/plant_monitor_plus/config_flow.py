@@ -17,8 +17,8 @@ from homeassistant.helpers import selector
 
 from .const import (
     CONF_MOISTURE_ENTITY_ID,
-    CONF_MOISTURE_MAX,
-    CONF_MOISTURE_MIN,
+    CONF_MOISTURE_MAXIMUM,
+    CONF_MOISTURE_MINIMUM,
     CONF_WATERING_DETECTION_THRESHOLD,
     DEFAULT_MOISTURE_MAX,
     DEFAULT_MOISTURE_MIN,
@@ -29,21 +29,21 @@ from .const import (
 ENTITY_KEYS = (CONF_MOISTURE_ENTITY_ID,)
 
 THRESHOLD_KEYS = (
-    CONF_MOISTURE_MIN,
-    CONF_MOISTURE_MAX,
+    CONF_MOISTURE_MINIMUM,
+    CONF_MOISTURE_MAXIMUM,
     CONF_WATERING_DETECTION_THRESHOLD,
 )
 
 THRESHOLD_SCHEMA = {
     vol.Required(
-        CONF_MOISTURE_MIN, default=DEFAULT_MOISTURE_MIN
+        CONF_MOISTURE_MINIMUM, default=DEFAULT_MOISTURE_MIN
     ): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
         )
     ),
     vol.Required(
-        CONF_MOISTURE_MAX, default=DEFAULT_MOISTURE_MAX
+        CONF_MOISTURE_MAXIMUM, default=DEFAULT_MOISTURE_MAX
     ): selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=0, max=100, mode=selector.NumberSelectorMode.SLIDER
