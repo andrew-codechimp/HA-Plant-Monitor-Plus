@@ -85,10 +85,11 @@ This is a HACS custom integration; if the link does not work, you will have to a
 ## FAQ's
 
 * Why only moisture?
-I used the built in Plant Monitor YAML based integration for a long time and never found the other sensors useful. There are plenty of other plant integrations available if you require more than just moisture.
+I used the default Plant Monitor YAML based integration for a long time and never found the other sensors useful. There are plenty of other plant integrations available if you require more than just moisture.
 
 * Why no dashboard card?
 I primarily created this integration to provide notifications and since they are standard sensor/binary sensor entities there are plenty of cards available that can be used.
+
 
 [commits-shield]: https://img.shields.io/github/commit-activity/y/andrew-codechimp/HA-Plant-Monitor-Plus.svg?style=for-the-badge
 [commits]: https://github.com/andrew-codechimp/HA-Plant-Monitor-Plus/commits/main
