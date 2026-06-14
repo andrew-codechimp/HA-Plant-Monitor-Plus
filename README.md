@@ -5,8 +5,6 @@
 [![Downloads][download-latest-shield]]()
 [![License][license-shield]](LICENSE)
 
-## ⚠️ Early Development
-
 Plant Monitor Plus is an integration to give details of a plant's moisture with a problem sensor when it requires attention and a last watered tracker that you can automatically (or manually) record when the plant was last watered.
 
 When you configure each plant, you provide a physical moisture sensor and set thresholds for minimum, maximum, and amount of moisture increase to detect a plant has been watered.
@@ -83,6 +81,14 @@ mode: single
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=andrew-codechimp&repository=HA-Plant-Monitor-Plus&category=Integration)
 
 This is a HACS custom integration; if the link does not work, you will have to add this repository URL via HACS custom repositories.
+
+## FAQ's
+
+* Why only moisture?
+I used the built in Plant Monitor YAML based integration for a long time and never found the other sensors useful. There are plenty of other plant integrations available if you require more than just moisture.
+
+* Why no dashboard card?
+I primarily created this integration to provide notifications and since they are standard sensor/binary sensor entities there are plenty of cards available that can be used.
 
 [commits-shield]: https://img.shields.io/github/commit-activity/y/andrew-codechimp/HA-Plant-Monitor-Plus.svg?style=for-the-badge
 [commits]: https://github.com/andrew-codechimp/HA-Plant-Monitor-Plus/commits/main
