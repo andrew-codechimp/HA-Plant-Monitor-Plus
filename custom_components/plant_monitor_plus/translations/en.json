@@ -61,6 +61,9 @@
                     "last_watered": {
                         "name": "Last watered"
                     },
+                    "last_watered_days": {
+                        "name": "Last watered days"
+                    },
                     "problem_last_modified": {
                         "name": "Problem last modified"
                     },
@@ -102,6 +105,9 @@
                     },
                     "last_watered": {
                         "name": "Last watered"
+                    },
+                    "last_watered_days": {
+                        "name": "Last watered days"
                     },
                     "problem_last_modified": {
                         "name": "Problem last modified"

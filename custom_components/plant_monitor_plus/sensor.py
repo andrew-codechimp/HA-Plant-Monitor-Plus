@@ -10,6 +10,7 @@ from homeassistant.util import slugify
 from .const import (
     ATTR_CURRENT,
     ATTR_LAST_WATERED,
+    ATTR_LAST_WATERED_DAYS,
     ATTR_MAXIMUM,
     ATTR_MINIMUM,
     ATTR_PROBLEM_LAST_MODIFIED,
@@ -68,6 +69,17 @@ class PlantMoisturePlusSensor(PlantMonitorPlusEntity, SensorEntity):
             )
         )
 
+        self.async_on_remove(
+            self._runtime.register_last_watered_callback(
+                self._async_handle_last_watered_update,
+            )
+        )
+
+        self._refresh_state()
+
+    @callback
+    def _async_handle_last_watered_update(self) -> None:
+        """Refresh attributes when last watered changes."""
         self._refresh_state()
 
     @callback
@@ -87,6 +99,7 @@ class PlantMoisturePlusSensor(PlantMonitorPlusEntity, SensorEntity):
             ATTR_REASON: evaluation.reason,
             ATTR_PROBLEM_LAST_MODIFIED: self._runtime.moisture_problem_last_modified,
             ATTR_LAST_WATERED: self._runtime.last_watered,
+            ATTR_LAST_WATERED_DAYS: self._runtime.last_watered_days,
         }
 
         self.async_write_ha_state()

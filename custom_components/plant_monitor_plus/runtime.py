@@ -126,6 +126,14 @@ class PlantMonitorPlusRuntime:
         return None
 
     @property
+    def last_watered_days(self) -> int | None:
+        """Return the number of days since last watered."""
+        if self.last_watered is None:
+            return None
+        delta = dt_util.utcnow() - self.last_watered
+        return delta.days
+
+    @property
     def moisture_problem_last_modified(self) -> datetime | None:
         """Return the last problem state modification timestamp."""
         entry = self._store.async_get_device(self.entry.entry_id)

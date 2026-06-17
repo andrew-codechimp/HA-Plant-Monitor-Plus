@@ -11,6 +11,7 @@ from homeassistant.core import callback
 from .const import (
     ATTR_CURRENT,
     ATTR_LAST_WATERED,
+    ATTR_LAST_WATERED_DAYS,
     ATTR_MAXIMUM,
     ATTR_MINIMUM,
     ATTR_PROBLEM_LAST_MODIFIED,
@@ -117,6 +118,7 @@ class PlantMoistureProblemBinarySensor(PlantMonitorPlusEntity, BinarySensorEntit
             ATTR_REASON: evaluation.reason,
             ATTR_PROBLEM_LAST_MODIFIED: self._runtime.moisture_problem_last_modified,
             ATTR_LAST_WATERED: self._runtime.last_watered,
+            ATTR_LAST_WATERED_DAYS: self._runtime.last_watered_days,
         }
 
         self.async_write_ha_state()

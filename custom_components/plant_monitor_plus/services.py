@@ -18,12 +18,13 @@ from homeassistant.helpers import config_validation as cv, selector, service
 from homeassistant.util import dt as dt_util
 
 from .const import (
-    ATTR_LAST_WATERED,
     CONF_MOISTURE_MAXIMUM,
     CONF_MOISTURE_MINIMUM,
     DOMAIN,
     REASON_TOO_DRY,
     REASON_TOO_WET,
+    SERVICE_ATTR_LAST_WATERED,
+    SERVICE_ATTR_LAST_WATERED_DAYS,
     SERVICE_ATTR_MOISTURE_CURRENT,
     SERVICE_ATTR_MOISTURE_MAXIMUM,
     SERVICE_ATTR_MOISTURE_MINIMUM,
@@ -108,7 +109,10 @@ def get_plant_summary(
                 if moisture_problem_last_modified
                 else None
             ),
-            ATTR_LAST_WATERED: (last_watered.isoformat() if last_watered else None),
+            SERVICE_ATTR_LAST_WATERED: (
+                last_watered.isoformat() if last_watered else None
+            ),
+            SERVICE_ATTR_LAST_WATERED_DAYS: runtime.last_watered_days,
         })
 
     return cast(
