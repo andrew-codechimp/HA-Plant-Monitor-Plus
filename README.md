@@ -10,6 +10,8 @@ Plant Monitor Plus is an integration to give details of a plant's moisture with 
 When you configure each plant, you provide a physical moisture sensor and set thresholds for minimum, maximum, and amount of moisture increase to detect a plant has been watered.
 You can adjust these at any time via the UI.
 
+The last watered will not immediately change based on the current moisture value, but instead use a sliding window to both detect gradual increases when watered.
+
 ## Entities
 
 ### Moisture status
