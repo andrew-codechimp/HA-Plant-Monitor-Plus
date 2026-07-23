@@ -30,6 +30,7 @@ SERVICE_PARAM_MOISTURE_MINIMUM = "moisture_minimum"
 SERVICE_PARAM_MOISTURE_MAXIMUM = "moisture_maximum"
 
 # Service response attributes
+SERVICE_ATTR_DEVICE_ID = "device_id"
 SERVICE_ATTR_MOISTURE_CURRENT = "moisture_current"
 SERVICE_ATTR_MOISTURE_MAXIMUM = "moisture_maximum"
 SERVICE_ATTR_MOISTURE_MINIMUM = "moisture_minimum"

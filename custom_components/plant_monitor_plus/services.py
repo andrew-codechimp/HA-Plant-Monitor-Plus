@@ -14,7 +14,12 @@ from homeassistant.core import (
     callback,
 )
 from homeassistant.exceptions import ServiceValidationError
-from homeassistant.helpers import config_validation as cv, selector, service
+from homeassistant.helpers import (
+    config_validation as cv,
+    device_registry as dr,
+    selector,
+    service,
+)
 from homeassistant.util import dt as dt_util
 
 from .const import (
@@ -23,6 +28,7 @@ from .const import (
     DOMAIN,
     REASON_TOO_DRY,
     REASON_TOO_WET,
+    SERVICE_ATTR_DEVICE_ID,
     SERVICE_ATTR_LAST_WATERED,
     SERVICE_ATTR_LAST_WATERED_DAYS,
     SERVICE_ATTR_MOISTURE_CURRENT,
@@ -80,11 +86,20 @@ def get_plant_summary(
     too_wet: list[str] = []
     unavailable: list[str] = []
 
+    device_registry = dr.async_get(hass)
+
     for config_entry in hass.config_entries.async_entries(DOMAIN):
         runtime_data = getattr(config_entry, "runtime_data", None)
         if runtime_data is None:
             continue
         runtime = cast("PlantMonitorPlusRuntime", runtime_data)
+
+        # Get the device_id from the device registry
+        device_id: str | None = None
+        for device in device_registry.devices.values():
+            if config_entry.entry_id in device.config_entries:
+                device_id = device.id
+                break
 
         evaluation = runtime.evaluate_moisture(hass)
         if not evaluation.available:
@@ -96,24 +111,27 @@ def get_plant_summary(
 
         moisture_problem_last_modified = runtime.moisture_problem_last_modified
         last_watered = runtime.last_watered
-        plants.append({
-            ATTR_NAME: runtime.name,
-            ATTR_CONFIG_ENTRY_ID: config_entry.entry_id,
-            SERVICE_ATTR_MOISTURE_CURRENT: evaluation.value,
-            SERVICE_ATTR_MOISTURE_MINIMUM: evaluation.minimum_value,
-            SERVICE_ATTR_MOISTURE_MAXIMUM: evaluation.maximum_value,
-            SERVICE_ATTR_MOISTURE_PROBLEM: evaluation.problem,
-            SERVICE_ATTR_MOISTURE_REASON: evaluation.reason,
-            SERVICE_ATTR_MOISTURE_PROBLEM_LAST_MODIFIED: (
-                moisture_problem_last_modified.isoformat()
-                if moisture_problem_last_modified
-                else None
-            ),
-            SERVICE_ATTR_LAST_WATERED: (
-                last_watered.isoformat() if last_watered else None
-            ),
-            SERVICE_ATTR_LAST_WATERED_DAYS: runtime.last_watered_days,
-        })
+        plants.append(
+            {
+                ATTR_NAME: runtime.name,
+                ATTR_CONFIG_ENTRY_ID: config_entry.entry_id,
+                SERVICE_ATTR_DEVICE_ID: device_id,
+                SERVICE_ATTR_MOISTURE_CURRENT: evaluation.value,
+                SERVICE_ATTR_MOISTURE_MINIMUM: evaluation.minimum_value,
+                SERVICE_ATTR_MOISTURE_MAXIMUM: evaluation.maximum_value,
+                SERVICE_ATTR_MOISTURE_PROBLEM: evaluation.problem,
+                SERVICE_ATTR_MOISTURE_REASON: evaluation.reason,
+                SERVICE_ATTR_MOISTURE_PROBLEM_LAST_MODIFIED: (
+                    moisture_problem_last_modified.isoformat()
+                    if moisture_problem_last_modified
+                    else None
+                ),
+                SERVICE_ATTR_LAST_WATERED: (
+                    last_watered.isoformat() if last_watered else None
+                ),
+                SERVICE_ATTR_LAST_WATERED_DAYS: runtime.last_watered_days,
+            }
+        )
 
     return cast(
         "ServiceResponse",

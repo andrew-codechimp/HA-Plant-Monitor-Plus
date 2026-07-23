@@ -102,18 +102,22 @@ class PlantMonitorPlusFlowHandler(ConfigFlow, domain=DOMAIN):
 
     def _user_schema(self) -> vol.Schema:
         """Build user step schema."""
-        return vol.Schema({
-            vol.Required(CONF_NAME): str,
-            **self._entity_selector(),
-            **THRESHOLD_SCHEMA,
-        })
+        return vol.Schema(
+            {
+                vol.Required(CONF_NAME): str,
+                **self._entity_selector(),
+                **THRESHOLD_SCHEMA,
+            }
+        )
 
     def _reconfigure_schema(self, current_entry_id: str) -> vol.Schema:
         """Build reconfigure step schema."""
-        return vol.Schema({
-            vol.Required(CONF_NAME): str,
-            **self._entity_selector(current_entry_id),
-        })
+        return vol.Schema(
+            {
+                vol.Required(CONF_NAME): str,
+                **self._entity_selector(current_entry_id),
+            }
+        )
 
     @staticmethod
     @callback
