@@ -8,13 +8,19 @@ import logging
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+import voluptuous as vol
 from awesomeversion import AwesomeVersion
 
 from homeassistant.const import Platform, __version__ as HA_VERSION  # noqa: N812
-from homeassistant.helpers import issue_registry as ir
+from homeassistant.helpers import entity_registry as er, issue_registry as ir
 from homeassistant.util.hass_dict import HassKey
 
-from .const import DOMAIN, ISSUE_MOISTURE_ENTITY_INVALID, MIN_HA_VERSION
+from .const import (
+    CONF_MOISTURE_ENTITY_ID,
+    DOMAIN,
+    ISSUE_MOISTURE_ENTITY_INVALID,
+    MIN_HA_VERSION,
+)
 from .runtime import PlantMonitorPlusRuntime
 from .services import async_setup_services, async_unload_services
 from .store import PlantMonitorStorage, async_get_registry
@@ -65,6 +71,29 @@ async def async_setup_entry(
         hass.data[DATA_KEY] = PlantMonitorData(store=shared_store)
 
     await async_setup_services(hass)
+
+    entity_registry = er.async_get(hass)
+    configured_entity_id = str(entry.data[CONF_MOISTURE_ENTITY_ID])
+    try:
+        resolved_entity_id = er.async_validate_entity_id(
+            entity_registry,
+            configured_entity_id,
+        )
+    except vol.Invalid:
+        _LOGGER.warning(
+            "Configured moisture source entity %s is not in the registry; "
+            "plant monitor entities will be unavailable until it appears",
+            configured_entity_id,
+        )
+    else:
+        if resolved_entity_id != configured_entity_id:
+            hass.config_entries.async_update_entry(
+                entry,
+                data={
+                    **entry.data,
+                    CONF_MOISTURE_ENTITY_ID: resolved_entity_id,
+                },
+            )
 
     integration_data = hass.data[DATA_KEY]
 

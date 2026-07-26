@@ -8,6 +8,6 @@ echo "Running ruff check..."
 uv run ruff check . --fix
 
 echo "Running mypy type checking..."
-uv run mypy custom_components/plant_monitor_plus/ --check-untyped-defs --explicit-package-bases
+uv run python -m mypy custom_components/plant_monitor_plus/ --check-untyped-defs --explicit-package-bases
 
 echo "Lint completed successfully!"

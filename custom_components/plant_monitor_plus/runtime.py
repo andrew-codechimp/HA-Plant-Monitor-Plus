@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from datetime import timedelta
 from typing import TYPE_CHECKING, Any, Literal, TypedDict, cast
 
-from homeassistant.const import CONF_NAME
+from homeassistant.const import CONF_NAME, STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_registry as er, issue_registry as ir
 from homeassistant.helpers.event import (
@@ -185,7 +185,10 @@ class PlantMonitorPlusRuntime:
         minimum_value, maximum_value = self.moisture_thresholds
 
         source_state = state if state is not None else hass.states.get(entity_id)
-        if source_state is None:
+        if source_state is None or source_state.state in (
+            STATE_UNKNOWN,
+            STATE_UNAVAILABLE,
+        ):
             return MoistureEvaluation(
                 available=False,
                 problem=False,
