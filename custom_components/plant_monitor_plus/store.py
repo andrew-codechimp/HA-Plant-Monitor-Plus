@@ -1,11 +1,15 @@
 """Persistent storage for plant_monitor_plus device data."""
 
+from __future__ import annotations
+
 from collections import OrderedDict
-from collections.abc import MutableMapping
 from datetime import datetime
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import attr
+
+if TYPE_CHECKING:
+    from collections.abc import MutableMapping
 
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.storage import Store
@@ -40,7 +44,7 @@ class MigratableStore(Store):
         old_major_version: int,  # noqa: ARG002
         old_minor_version: int,  # noqa: ARG002
         data: dict,
-    ):
+    ) -> dict:
         # Do nothing for now
         return data
 
@@ -87,13 +91,13 @@ class PlantMonitorStorage:
         return store_data
 
     @callback
-    def async_get_device(self, device_id) -> dict[str, Any] | None:
+    def async_get_device(self, device_id: str) -> dict[str, Any] | None:
         """Get an existing DeviceEntry by id."""
         res = self.devices.get(device_id)
         return attr.asdict(res) if res else None
 
     @callback
-    def async_get_devices(self):
+    def async_get_devices(self) -> dict:
         """Get existing devices."""
         res = {}
         for key, val in self.devices.items():

@@ -22,6 +22,7 @@ from .const import (
     DOMAIN,
     ISSUE_MOISTURE_ENTITY_INVALID,
     LAST_WATERED,
+    MIN_READINGS_FOR_DETECTION,
     MOISTURE_LAST_VALUE,
     MOISTURE_PROBLEM_LAST_MODIFIED,
     MOISTURE_PROBLEM_STATE,
@@ -32,6 +33,7 @@ from .const import (
     REASON_TOO_DRY,
     REASON_TOO_WET,
     REMOVE,
+    THRESHOLD_DISABLED_VALUE,
     WATERING_DETECTION_WINDOW_MINUTES,
 )
 
@@ -80,7 +82,7 @@ class PlantMonitorPlusRuntime:
         self._registry_unsubscribe: Callable[[], None] | None = None
         self._tracked_moisture_entity_id: str | None = None
 
-    def async_update_device(self, device_id: str, data: dict):
+    def async_update_device(self, device_id: str, data: dict) -> None:
         """Conditional create, update or remove device from store."""
 
         if REMOVE in data:
@@ -210,7 +212,7 @@ class PlantMonitorPlusRuntime:
                 reason=REASON_NON_NUMERIC_STATE,
             )
 
-        if minimum_value == 0 or maximum_value == 0:
+        if THRESHOLD_DISABLED_VALUE in (minimum_value, maximum_value):
             return MoistureEvaluation(
                 available=True,
                 problem=False,
@@ -241,7 +243,7 @@ class PlantMonitorPlusRuntime:
             return
 
         threshold = float(self.entry.options[CONF_WATERING_DETECTION_THRESHOLD])
-        if threshold == 0:
+        if threshold == THRESHOLD_DISABLED_VALUE:
             return
 
         now = dt_util.utcnow()
@@ -252,12 +254,12 @@ class PlantMonitorPlusRuntime:
 
         window_start = now - timedelta(minutes=WATERING_DETECTION_WINDOW_MINUTES)
         while (
-            len(self._recent_moisture_readings) > 2
+            len(self._recent_moisture_readings) > MIN_READINGS_FOR_DETECTION
             and self._recent_moisture_readings[0][0] < window_start
         ):
             self._recent_moisture_readings.popleft()
 
-        if len(self._recent_moisture_readings) < 2:
+        if len(self._recent_moisture_readings) < MIN_READINGS_FOR_DETECTION:
             return
 
         lowest_window_value = min(
