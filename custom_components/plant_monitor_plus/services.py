@@ -89,6 +89,9 @@ def get_plant_summary(
     device_registry = dr.async_get(hass)
 
     for config_entry in hass.config_entries.async_entries(DOMAIN):
+        if config_entry.disabled_by is not None:
+            continue
+
         runtime_data = getattr(config_entry, "runtime_data", None)
         if runtime_data is None:
             continue
@@ -103,7 +106,11 @@ def get_plant_summary(
         assert devices is not None, "Devices should not be None"
         assert len(devices) == 1, "There should be only one device for the config entry"
 
-        device_id = devices[0].id
+        device = devices[0]
+        if device.disabled:
+            continue
+
+        device_id = device.id
 
         evaluation = runtime.evaluate_moisture(hass)
         if not evaluation.available:
@@ -115,27 +122,25 @@ def get_plant_summary(
 
         moisture_problem_last_modified = runtime.moisture_problem_last_modified
         last_watered = runtime.last_watered
-        plants.append(
-            {
-                ATTR_NAME: runtime.name,
-                ATTR_CONFIG_ENTRY_ID: config_entry.entry_id,
-                SERVICE_ATTR_DEVICE_ID: device_id,
-                SERVICE_ATTR_MOISTURE_CURRENT: evaluation.value,
-                SERVICE_ATTR_MOISTURE_MINIMUM: evaluation.minimum_value,
-                SERVICE_ATTR_MOISTURE_MAXIMUM: evaluation.maximum_value,
-                SERVICE_ATTR_MOISTURE_PROBLEM: evaluation.problem,
-                SERVICE_ATTR_MOISTURE_REASON: evaluation.reason,
-                SERVICE_ATTR_MOISTURE_PROBLEM_LAST_MODIFIED: (
-                    moisture_problem_last_modified.isoformat()
-                    if moisture_problem_last_modified
-                    else None
-                ),
-                SERVICE_ATTR_LAST_WATERED: (
-                    last_watered.isoformat() if last_watered else None
-                ),
-                SERVICE_ATTR_LAST_WATERED_DAYS: runtime.last_watered_days,
-            }
-        )
+        plants.append({
+            ATTR_NAME: runtime.name,
+            ATTR_CONFIG_ENTRY_ID: config_entry.entry_id,
+            SERVICE_ATTR_DEVICE_ID: device_id,
+            SERVICE_ATTR_MOISTURE_CURRENT: evaluation.value,
+            SERVICE_ATTR_MOISTURE_MINIMUM: evaluation.minimum_value,
+            SERVICE_ATTR_MOISTURE_MAXIMUM: evaluation.maximum_value,
+            SERVICE_ATTR_MOISTURE_PROBLEM: evaluation.problem,
+            SERVICE_ATTR_MOISTURE_REASON: evaluation.reason,
+            SERVICE_ATTR_MOISTURE_PROBLEM_LAST_MODIFIED: (
+                moisture_problem_last_modified.isoformat()
+                if moisture_problem_last_modified
+                else None
+            ),
+            SERVICE_ATTR_LAST_WATERED: (
+                last_watered.isoformat() if last_watered else None
+            ),
+            SERVICE_ATTR_LAST_WATERED_DAYS: runtime.last_watered_days,
+        })
 
     return cast(
         "ServiceResponse",
