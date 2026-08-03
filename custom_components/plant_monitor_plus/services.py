@@ -103,10 +103,7 @@ def get_plant_summary(
         assert devices is not None, "Devices should not be None"
         assert len(devices) == 1, "There should be only one device for the config entry"
 
-        device = devices[0]
-        # TODO: Change to device.config_entry_id in HA 2026.8
-        if config_entry.entry_id in device.config_entries:
-            device_id = device.id
+        device_id = devices[0].id
         assert device_id is not None, "Device ID should not be None"
 
         evaluation = runtime.evaluate_moisture(hass)
