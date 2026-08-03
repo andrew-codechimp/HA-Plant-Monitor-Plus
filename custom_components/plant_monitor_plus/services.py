@@ -122,25 +122,27 @@ def get_plant_summary(
 
         moisture_problem_last_modified = runtime.moisture_problem_last_modified
         last_watered = runtime.last_watered
-        plants.append({
-            ATTR_NAME: runtime.name,
-            ATTR_CONFIG_ENTRY_ID: config_entry.entry_id,
-            SERVICE_ATTR_DEVICE_ID: device_id,
-            SERVICE_ATTR_MOISTURE_CURRENT: evaluation.value,
-            SERVICE_ATTR_MOISTURE_MINIMUM: evaluation.minimum_value,
-            SERVICE_ATTR_MOISTURE_MAXIMUM: evaluation.maximum_value,
-            SERVICE_ATTR_MOISTURE_PROBLEM: evaluation.problem,
-            SERVICE_ATTR_MOISTURE_REASON: evaluation.reason,
-            SERVICE_ATTR_MOISTURE_PROBLEM_LAST_MODIFIED: (
-                moisture_problem_last_modified.isoformat()
-                if moisture_problem_last_modified
-                else None
-            ),
-            SERVICE_ATTR_LAST_WATERED: (
-                last_watered.isoformat() if last_watered else None
-            ),
-            SERVICE_ATTR_LAST_WATERED_DAYS: runtime.last_watered_days,
-        })
+        plants.append(
+            {
+                ATTR_NAME: runtime.name,
+                ATTR_CONFIG_ENTRY_ID: config_entry.entry_id,
+                SERVICE_ATTR_DEVICE_ID: device_id,
+                SERVICE_ATTR_MOISTURE_CURRENT: evaluation.value,
+                SERVICE_ATTR_MOISTURE_MINIMUM: evaluation.minimum_value,
+                SERVICE_ATTR_MOISTURE_MAXIMUM: evaluation.maximum_value,
+                SERVICE_ATTR_MOISTURE_PROBLEM: evaluation.problem,
+                SERVICE_ATTR_MOISTURE_REASON: evaluation.reason,
+                SERVICE_ATTR_MOISTURE_PROBLEM_LAST_MODIFIED: (
+                    moisture_problem_last_modified.isoformat()
+                    if moisture_problem_last_modified
+                    else None
+                ),
+                SERVICE_ATTR_LAST_WATERED: (
+                    last_watered.isoformat() if last_watered else None
+                ),
+                SERVICE_ATTR_LAST_WATERED_DAYS: runtime.last_watered_days,
+            }
+        )
 
     return cast(
         "ServiceResponse",
