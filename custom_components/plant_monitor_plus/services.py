@@ -104,7 +104,6 @@ def get_plant_summary(
         assert len(devices) == 1, "There should be only one device for the config entry"
 
         device_id = devices[0].id
-        assert device_id is not None, "Device ID should not be None"
 
         evaluation = runtime.evaluate_moisture(hass)
         if not evaluation.available:
