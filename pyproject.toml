@@ -112,7 +112,7 @@ ignore = [
   "TC001",   # Move application import into type checking
   "TC006",   # Add quotes to type expression in typing.cast()
   "FIX002",  # TODO
-  "TD002",   # Missing auther in TODO
+  "TD002",   # Missing author in TODO
   "TD003",   # Missing issue link TODO
   "CPY001",  # Copyright notice
 ]
