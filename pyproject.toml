@@ -114,6 +114,7 @@ ignore = [
   "FIX002",  # TODO
   "TD002",   # Missing auther in TODO
   "TD003",   # Missing issue link TODO
+  "CPY001",  # Copyright notice
 ]
 
 
