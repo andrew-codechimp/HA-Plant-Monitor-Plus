@@ -1,8 +1,12 @@
 """Sensors for plant_monitor_plus."""
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
-from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntity,
+    SensorEntityDescription,
+)
 from homeassistant.const import PERCENTAGE
 from homeassistant.core import callback
 from homeassistant.util import slugify
@@ -35,28 +39,55 @@ async def async_setup_entry(
 ) -> None:
     """Set up sensors for a config entry."""
     runtime: PlantMonitorPlusRuntime = entry.runtime_data
-    entities: list[SensorEntity] = [PlantLastWateredSensor(runtime)]
+
+    entities: list[SensorEntity] = []
+    last_watered_entity_description = SensorEntityDescription(
+        key="last_watered",
+        translation_key="last_watered",
+        device_class=SensorDeviceClass.TIMESTAMP,
+    )
+
+    moisture_plus_entity_description = SensorEntityDescription(
+        key="moisture_plus",
+        translation_key="moisture_plus",
+        native_unit_of_measurement=PERCENTAGE,
+        suggested_display_precision=0,
+    )
+
+    entities.append(PlantLastWateredSensor(last_watered_entity_description, runtime))
     if runtime.moisture_entity_id:
-        entities.append(PlantMoisturePlusSensor(runtime))
+        entities.append(
+            PlantMoisturePlusSensor(moisture_plus_entity_description, runtime)
+        )
+
     async_add_entities(entities)
 
 
 class PlantMoisturePlusSensor(PlantMonitorPlusEntity, SensorEntity):
     """Sensor exposing the current moisture value from the watched source entity."""
 
-    _attr_translation_key = "moisture_plus"
-    _attr_name = "Moisture+"
-    _attr_native_unit_of_measurement = PERCENTAGE
-    _attr_suggested_display_precision = 0
     _attr_native_value: float | None = None
 
-    def __init__(self, runtime: PlantMonitorPlusRuntime) -> None:
+    def __init__(
+        self,
+        entity_description: SensorEntityDescription,
+        runtime: PlantMonitorPlusRuntime,
+    ) -> None:
         """Initialize the moisture sensor."""
-        super().__init__(runtime)
-        self._attr_suggested_object_id = f"{slugify(runtime.name)}_moisture_plus"
-        self.entity_id = f"sensor.{slugify(runtime.name)}_moisture_plus"
-        self._attr_unique_id = f"{runtime.entry.entry_id}_moisture_plus"
+        super().__init__(runtime, entity_description.key)
+        self.entity_description = entity_description
         self._attr_available = True
+
+    @property
+    @override
+    def suggested_object_id(self) -> str | None:
+        """Override the suggested object id.
+
+        Makes '+' get converted to 'plus' in the entity id.
+        """
+        if isinstance(self.name, str):
+            return slugify(self.name.replace("+", "_plus"))
+        return self.entity_description.key
 
     async def async_added_to_hass(self) -> None:
         """Register listeners and evaluate initial state."""
@@ -108,15 +139,16 @@ class PlantMoisturePlusSensor(PlantMonitorPlusEntity, SensorEntity):
 class PlantLastWateredSensor(PlantMonitorPlusEntity, SensorEntity):
     """Sensor exposing the last watered timestamp."""
 
-    _attr_translation_key = "last_watered"
-    _attr_name = "Last watered"
-    _attr_device_class = SensorDeviceClass.TIMESTAMP
     _attr_native_value: datetime | None = None
 
-    def __init__(self, runtime: PlantMonitorPlusRuntime) -> None:
+    def __init__(
+        self,
+        entity_description: SensorEntityDescription,
+        runtime: PlantMonitorPlusRuntime,
+    ) -> None:
         """Initialize the last watered sensor."""
-        super().__init__(runtime)
-        self._attr_unique_id = f"{runtime.entry.entry_id}_last_watered"
+        super().__init__(runtime, entity_description.key)
+        self.entity_description = entity_description
         self._attr_available = True
 
     async def async_added_to_hass(self) -> None:
