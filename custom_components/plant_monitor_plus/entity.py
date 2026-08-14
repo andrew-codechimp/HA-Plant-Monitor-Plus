@@ -19,9 +19,11 @@ class PlantMonitorPlusEntity(Entity):
     _attr_has_entity_name = True
     _unrecorded_attributes = frozenset({MATCH_ALL})
 
-    def __init__(self, runtime: PlantMonitorPlusRuntime) -> None:
+    def __init__(self, runtime: PlantMonitorPlusRuntime, key: str) -> None:
         """Initialize the entity."""
+        super().__init__()
         self._runtime = runtime
+        self._attr_unique_id = f"{runtime.entry.entry_id}_{key}"
 
     @property
     def device_info(self) -> DeviceInfo:

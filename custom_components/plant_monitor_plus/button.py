@@ -2,7 +2,7 @@
 
 from typing import TYPE_CHECKING
 
-from homeassistant.components.button import ButtonEntity
+from homeassistant.components.button import ButtonEntity, ButtonEntityDescription
 from homeassistant.util import dt as dt_util
 
 from .entity import PlantMonitorPlusEntity
@@ -21,19 +21,24 @@ async def async_setup_entry(
 ) -> None:
     """Set up buttons for a config entry."""
     runtime: PlantMonitorPlusRuntime = entry.runtime_data
-    async_add_entities([PlantWateredButton(runtime)])
+    entity_description = ButtonEntityDescription(
+        key="watered",
+        translation_key="watered",
+    )
+    async_add_entities([PlantWateredButton(entity_description, runtime)])
 
 
 class PlantWateredButton(PlantMonitorPlusEntity, ButtonEntity):
     """Button to manually mark a plant as watered now."""
 
-    _attr_translation_key = "watered"
-    _attr_name = "Watered"
-
-    def __init__(self, runtime: PlantMonitorPlusRuntime) -> None:
+    def __init__(
+        self,
+        entity_description: ButtonEntityDescription,
+        runtime: PlantMonitorPlusRuntime,
+    ) -> None:
         """Initialize the watered button."""
-        super().__init__(runtime)
-        self._attr_unique_id = f"{runtime.entry.entry_id}_watered"
+        super().__init__(runtime, entity_description.key)
+        self.entity_description = entity_description
 
     async def async_press(self) -> None:
         """Handle button press."""

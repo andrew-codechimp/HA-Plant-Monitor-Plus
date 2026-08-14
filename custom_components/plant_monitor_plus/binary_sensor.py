@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
+    BinarySensorEntityDescription,
 )
 from homeassistant.core import callback
 
@@ -35,27 +36,29 @@ async def async_setup_entry(
 ) -> None:
     """Set up plant moisture problem sensor for a config entry."""
     runtime: PlantMonitorPlusRuntime = entry.runtime_data
-
-    entities = []
-    if runtime.moisture_entity_id:
-        entities.append(PlantMoistureProblemBinarySensor(runtime=runtime))
-    async_add_entities(entities)
+    entity_description = BinarySensorEntityDescription(
+        key="moisture_status",
+        translation_key="moisture_status",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+    )
+    async_add_entities([PlantMoistureProblemBinarySensor(entity_description, runtime)])
 
 
 class PlantMoistureProblemBinarySensor(PlantMonitorPlusEntity, BinarySensorEntity):
     """Binary sensor that reports whether moisture is outside its thresholds."""
 
-    _attr_translation_key = "moisture_status"
-    _attr_name = "Moisture status"
-
-    def __init__(self, runtime: PlantMonitorPlusRuntime) -> None:
+    def __init__(
+        self,
+        entity_description: BinarySensorEntityDescription,
+        runtime: PlantMonitorPlusRuntime,
+    ) -> None:
         """Initialize the moisture problem binary sensor."""
-        super().__init__(runtime)
-        self._attr_unique_id = f"{runtime.entry.entry_id}_moisture_status"
+        super().__init__(runtime, entity_description.key)
+        self.entity_description = entity_description
+
         self._attr_is_on = False
         self._attr_available = True
         self._attr_extra_state_attributes: dict[str, Any] = {}
-        self._attr_device_class = BinarySensorDeviceClass.PROBLEM
 
     async def async_added_to_hass(self) -> None:
         """Register state listener and evaluate the initial state."""
