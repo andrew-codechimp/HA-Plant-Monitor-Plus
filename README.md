@@ -101,4 +101,4 @@ I primarily created this integration to provide notifications and since they are
 [releases-shield]: https://img.shields.io/github/release/andrew-codechimp/HA-Plant-Monitor-Plus.svg?style=for-the-badge
 [releases]: https://github.com/andrew-codechimp/HA-Plant-Monitor-Plus/releases
 [download-latest-shield]: https://img.shields.io/github/downloads/andrew-codechimp/HA-Plant-Monitor-Plus/latest/total?style=for-the-badge
-[hacs-installs-shield]: https://img.shields.io/endpoint.svg?url=https%3A%2F%2Flauwbier.nl%2Fhacs%2Fwasp_in_a_box&style=for-the-badge
+[hacs-installs-shield]: https://img.shields.io/endpoint.svg?url=https%3A%2F%2Flauwbier.nl%2Fhacs%2Fplant_monitor_plus&style=for-the-badge
