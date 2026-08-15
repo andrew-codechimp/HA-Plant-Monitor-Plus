@@ -12,7 +12,11 @@ import voluptuous as vol
 from awesomeversion import AwesomeVersion
 
 from homeassistant.const import Platform, __version__ as HA_VERSION  # noqa: N812
-from homeassistant.helpers import entity_registry as er, issue_registry as ir
+from homeassistant.helpers import (
+    device_registry as dr,
+    entity_registry as er,
+    issue_registry as ir,
+)
 from homeassistant.util.hass_dict import HassKey
 
 from .const import (
@@ -98,6 +102,14 @@ async def async_setup_entry(
     integration_data = hass.data[DATA_KEY]
 
     runtime = PlantMonitorPlusRuntime(entry, integration_data.store)
+
+    device_registry = dr.async_get(hass)
+    device_registry.async_get_or_create(
+        config_entry_id=entry.entry_id,
+        identifiers={(DOMAIN, entry.entry_id)},
+        name=runtime.name,
+    )
+
     runtime.restore_recent_moisture_readings()
     entry.runtime_data = runtime
     entry.async_on_unload(runtime.async_setup_moisture_entity_watcher(hass))

@@ -24,11 +24,6 @@ class PlantMonitorPlusEntity(Entity):
         super().__init__()
         self._runtime = runtime
         self._attr_unique_id = f"{runtime.entry.entry_id}_{key}"
-
-    @property
-    def device_info(self) -> DeviceInfo:
-        """Return device info for this entity."""
-        return DeviceInfo(
-            identifiers={(DOMAIN, self._runtime.entry.entry_id)},
-            name=self._runtime.name,
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, runtime.entry.entry_id)},
         )
