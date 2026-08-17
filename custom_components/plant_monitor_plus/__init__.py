@@ -13,6 +13,7 @@ from awesomeversion import AwesomeVersion
 
 from homeassistant.const import Platform, __version__ as HA_VERSION  # noqa: N812
 from homeassistant.helpers import (
+    config_validation as cv,
     device_registry as dr,
     entity_registry as er,
     issue_registry as ir,
@@ -36,6 +37,8 @@ if TYPE_CHECKING:
     from .runtime import PlantMonitorPlusConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.BUTTON, Platform.SENSOR]
 
