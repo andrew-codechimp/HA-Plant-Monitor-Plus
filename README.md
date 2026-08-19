@@ -86,13 +86,12 @@ This is a HACS custom integration; if the link does not work, you will have to a
 
 ## FAQ's
 
-* How does watering detection work?
-Plant Monitor Plus uses a sliding window method where if the moisture has risen by the watering detection threshold over the last hour it will set the plant as watered, allowing for gradual increases as water permeates your plant container.
-
 * Why only moisture?
+
 I used the default Plant Monitor YAML based integration for a long time and never found the other sensors useful. There are plenty of other plant integrations available if you require more than just moisture.
 
 * Why no dashboard card?
+
 I primarily created this integration to provide notifications and since they are standard sensor/binary sensor entities there are plenty of cards available that can be used.
 
 
