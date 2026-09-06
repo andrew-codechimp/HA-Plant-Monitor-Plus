@@ -121,6 +121,17 @@ async def async_setup_entry(
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
+    # Conditionally hide the source moisture entity
+    entity_registry = er.async_get(hass)
+    entity = entity_registry.async_get(runtime.moisture_entity_id)
+    if entity and runtime.moisture_hide:
+        entity_registry.async_update_entity(
+            runtime.moisture_entity_id,
+            hidden_by=er.RegistryEntryHider.INTEGRATION,
+        )
+    elif entity and entity.hidden_by == er.RegistryEntryHider.INTEGRATION:
+        entity_registry.async_update_entity(runtime.moisture_entity_id, hidden_by=None)
+
     return True
 
 

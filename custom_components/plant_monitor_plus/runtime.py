@@ -16,6 +16,7 @@ from homeassistant.util import dt as dt_util
 
 from .const import (
     CONF_MOISTURE_ENTITY_ID,
+    CONF_MOISTURE_HIDE,
     CONF_MOISTURE_MAXIMUM,
     CONF_MOISTURE_MINIMUM,
     CONF_WATERING_DETECTION_THRESHOLD,
@@ -169,6 +170,11 @@ class PlantMonitorPlusRuntime:
         """Return the configured moisture sensor entity_id."""
         entity_id = self.entry.data[CONF_MOISTURE_ENTITY_ID]
         return str(entity_id)
+
+    @property
+    def moisture_hide(self) -> bool:
+        """Return whether the original moisture sensor should be hidden."""
+        return self.entry.options.get(CONF_MOISTURE_HIDE, False)
 
     @property
     def moisture_thresholds(self) -> tuple[float, float]:

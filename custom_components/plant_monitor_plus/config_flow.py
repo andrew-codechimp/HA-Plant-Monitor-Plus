@@ -17,6 +17,7 @@ from homeassistant.helpers import selector
 
 from .const import (
     CONF_MOISTURE_ENTITY_ID,
+    CONF_MOISTURE_HIDE,
     CONF_MOISTURE_MAXIMUM,
     CONF_MOISTURE_MINIMUM,
     CONF_WATERING_DETECTION_THRESHOLD,
@@ -32,6 +33,7 @@ THRESHOLD_KEYS = (
     CONF_MOISTURE_MINIMUM,
     CONF_MOISTURE_MAXIMUM,
     CONF_WATERING_DETECTION_THRESHOLD,
+    CONF_MOISTURE_HIDE,
 )
 
 THRESHOLD_SCHEMA = {
@@ -66,6 +68,10 @@ THRESHOLD_SCHEMA = {
             unit_of_measurement="%",
         )
     ),
+    vol.Optional(
+        CONF_MOISTURE_HIDE,
+        default=False,
+    ): selector.BooleanSelector(),
 }
 
 OPTIONS_SCHEMA = vol.Schema(THRESHOLD_SCHEMA)
