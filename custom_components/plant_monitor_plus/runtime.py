@@ -94,7 +94,11 @@ class PlantMonitorPlusRuntime:
             self._store.async_create_device(device_id, data)
 
     def restore_recent_moisture_readings(self) -> None:
-        """Pre-populate recent moisture readings with the last known value to enable watering detection on startup."""
+        """Pre-populate recent moisture readings with the last known value to enable watering detection on startup.
+
+        Uses the current time as the timestamp to ensure the restored reading stays within
+        the detection window, allowing watering detection to work correctly after long idle periods.
+        """
         entry = self._store.async_get_device(self.entry.entry_id)
 
         if (
@@ -103,6 +107,8 @@ class PlantMonitorPlusRuntime:
             and entry[MOISTURE_LAST_VALUE] is not None
         ):
             last_value = entry[MOISTURE_LAST_VALUE]
+            # Use current time instead of original recorded time to keep the reading
+            # fresh within the detection window throughout the detection period
             now = dt_util.utcnow()
             self._recent_moisture_readings.append((now, float(last_value)))
 
@@ -259,15 +265,19 @@ class PlantMonitorPlusRuntime:
         self.async_update_device(device_id=self.entry.entry_id, data=device)
 
         window_start = now - timedelta(minutes=WATERING_DETECTION_WINDOW_MINUTES)
+        # Find the minimum reading in the deque to preserve as baseline
+        min_value = min(
+            reading_value for _, reading_value in self._recent_moisture_readings
+        )
+        # Remove old readings but preserve at least the minimum value reading
         while (
             len(self._recent_moisture_readings) > MIN_READINGS_FOR_DETECTION
             and self._recent_moisture_readings[0][0] < window_start
+            and self._recent_moisture_readings[0][1] != min_value
         ):
             self._recent_moisture_readings.popleft()
 
-        if len(self._recent_moisture_readings) < MIN_READINGS_FOR_DETECTION:
-            return
-
+        # Always check for watering detection, comparing against the lowest baseline
         lowest_window_value = min(
             reading_value for _, reading_value in self._recent_moisture_readings
         )
