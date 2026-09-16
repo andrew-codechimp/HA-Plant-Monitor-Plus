@@ -6,6 +6,7 @@ from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
     SensorEntityDescription,
+    SensorStateClass,
 )
 from homeassistant.const import PERCENTAGE
 from homeassistant.core import callback
@@ -51,6 +52,7 @@ async def async_setup_entry(
         key="moisture_plus",
         translation_key="moisture_plus",
         native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=0,
     )
 
