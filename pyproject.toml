@@ -111,7 +111,7 @@ ignore = [
   "S101",    # Use of assert detected
   "TC001",   # Move application import into type checking
   "TC006",   # Add quotes to type expression in typing.cast()
-  "FIX002",  # TODO
+  "FIX002",  # to do
   "TD002",   # Missing author in TODO
   "TD003",   # Missing issue link TODO
   "CPY001",  # Copyright notice
