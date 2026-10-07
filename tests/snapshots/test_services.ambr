@@ -1,0 +1,55 @@
+# serializer version: 1
+# name: test_get_plant_summary
+  dict({
+    'plants': list([
+      dict({
+        'config_entry_id': 'plant-entry',
+        'device_id': 'device-id',
+        'last_watered': '2026-06-29T12:00:00+00:00',
+        'last_watered_days': 2,
+        'moisture_current': 20.0,
+        'moisture_maximum': 70.0,
+        'moisture_minimum': 30.0,
+        'moisture_problem': True,
+        'moisture_problem_last_modified': '2026-07-01T12:00:00+00:00',
+        'moisture_reason': 'too_dry',
+        'name': 'Monstera',
+      }),
+      dict({
+        'config_entry_id': 'fern',
+        'device_id': 'device-id',
+        'last_watered': None,
+        'last_watered_days': None,
+        'moisture_current': 80.0,
+        'moisture_maximum': 70.0,
+        'moisture_minimum': 30.0,
+        'moisture_problem': True,
+        'moisture_problem_last_modified': None,
+        'moisture_reason': 'too_wet',
+        'name': 'Fern',
+      }),
+      dict({
+        'config_entry_id': 'orchid',
+        'device_id': 'device-id',
+        'last_watered': None,
+        'last_watered_days': None,
+        'moisture_current': None,
+        'moisture_maximum': 70.0,
+        'moisture_minimum': 30.0,
+        'moisture_problem': False,
+        'moisture_problem_last_modified': None,
+        'moisture_reason': 'entity_state_missing',
+        'name': 'Orchid',
+      }),
+    ]),
+    'too_dry': list([
+      'Monstera',
+    ]),
+    'too_wet': list([
+      'Fern',
+    ]),
+    'unavailable': list([
+      'Orchid',
+    ]),
+  })
+# ---
