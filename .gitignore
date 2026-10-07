@@ -11,6 +11,8 @@ __pycache__
 # misc
 .coverage
 coverage.xml
+htmlcov/
+.mypy_cache/
 
 
 # Home Assistant configuration

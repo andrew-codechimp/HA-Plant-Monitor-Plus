@@ -1,0 +1,226 @@
+# serializer version: 1
+# name: test_entities[binary-sensor][binary_sensor.monstera_moisture_status-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'binary_sensor',
+    'entity_category': None,
+    'entity_id': 'binary_sensor.monstera_moisture_status',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Moisture status',
+    'options': dict({
+    }),
+    'original_device_class': <BinarySensorDeviceClass.PROBLEM: 'problem'>,
+    'original_icon': None,
+    'original_name': 'Moisture status',
+    'platform': 'plant_monitor_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'moisture_status',
+    'unique_id': 'plant-entry_moisture_status',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[binary-sensor][binary_sensor.monstera_moisture_status-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'current': 50.0,
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'problem',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Monstera Moisture status',
+      'last_watered': None,
+      'last_watered_days': None,
+      'maximum': 70.0,
+      'minimum': 30.0,
+      'problem_last_modified': None,
+      'reason': 'ok',
+      'source_entity_id': 'sensor.monstera_moisture',
+    }),
+    'context': <ANY>,
+    'entity_id': 'binary_sensor.monstera_moisture_status',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
+# name: test_entities[button][button.monstera_watered-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'button',
+    'entity_category': None,
+    'entity_id': 'button.monstera_watered',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Watered',
+    'options': dict({
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'Watered',
+    'platform': 'plant_monitor_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'watered',
+    'unique_id': 'plant-entry_watered',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[button][button.monstera_watered-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Monstera Watered',
+    }),
+    'context': <ANY>,
+    'entity_id': 'button.monstera_watered',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'unknown',
+  })
+# ---
+# name: test_entities[sensor][sensor.monstera_last_watered-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.monstera_last_watered',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Last watered',
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.TIMESTAMP: 'timestamp'>,
+    'original_icon': None,
+    'original_name': 'Last watered',
+    'platform': 'plant_monitor_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'last_watered',
+    'unique_id': 'plant-entry_last_watered',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_entities[sensor][sensor.monstera_last_watered-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'timestamp',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Monstera Last watered',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.monstera_last_watered',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'unknown',
+  })
+# ---
+# name: test_entities[sensor][sensor.monstera_moisture_plus-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.monstera_moisture_plus',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'moisture_plus',
+    'options': dict({
+      'sensor': dict({
+        'suggested_display_precision': 0,
+      }),
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'Moisture+',
+    'platform': 'plant_monitor_plus',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'moisture_plus',
+    'unique_id': 'plant-entry_moisture_plus',
+    'unit_of_measurement': '%',
+  })
+# ---
+# name: test_entities[sensor][sensor.monstera_moisture_plus-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      'current': 50.0,
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Monstera Moisture+',
+      'last_watered': None,
+      'last_watered_days': None,
+      'maximum': 70.0,
+      'minimum': 30.0,
+      'problem_last_modified': None,
+      'reason': 'ok',
+      'source_entity_id': 'sensor.monstera_moisture',
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.MEASUREMENT: 'measurement'>,
+      <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: '%',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.monstera_moisture_plus',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': '50.0',
+  })
+# ---

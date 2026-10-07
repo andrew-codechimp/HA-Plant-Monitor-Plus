@@ -60,6 +60,12 @@ dev = [
 
 [tool.uv]
 default-groups = ["dev"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+
 [tool.ruff]
 target-version = "py314"
 src = ["custom_components/plant_monitor_plus"]
@@ -117,6 +123,15 @@ ignore = [
   "CPY001",  # Copyright notice
 ]
 
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+    "PLR2004", # Test expectations use literal values.
+    "PLR0913", # Pytest injects fixtures as function arguments.
+    "PLR0917",
+    "TC002", # Keep fixture annotation types available at runtime.
+    "TC003",
+]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 25
