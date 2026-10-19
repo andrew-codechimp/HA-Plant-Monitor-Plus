@@ -12,6 +12,7 @@ import voluptuous as vol
 from awesomeversion import AwesomeVersion
 
 from homeassistant.const import Platform, __version__ as HA_VERSION  # noqa: N812
+from homeassistant.core import callback
 from homeassistant.helpers import (
     config_validation as cv,
     device_registry as dr,
@@ -23,6 +24,7 @@ from homeassistant.util.hass_dict import HassKey
 from .const import (
     CONF_MOISTURE_ENTITY_ID,
     DOMAIN,
+    HIDDEN_MOISTURE_ENTITY_ID,
     ISSUE_MOISTURE_ENTITY_INVALID,
     MIN_HA_VERSION,
 )
@@ -121,18 +123,45 @@ async def async_setup_entry(
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
-    # Conditionally hide the source moisture entity
-    entity_registry = er.async_get(hass)
     entity = entity_registry.async_get(runtime.moisture_entity_id)
-    if entity and runtime.moisture_hide:
+    stored_device = integration_data.store.async_get_device(entry.entry_id)
+    if stored_device and (
+        not runtime.moisture_hide
+        or entity is None
+        or stored_device[HIDDEN_MOISTURE_ENTITY_ID] != entity.id
+    ):
+        _async_restore_source_visibility(
+            entity_registry, integration_data.store, entry.entry_id
+        )
+
+    if entity and runtime.moisture_hide and entity.hidden_by is None:
+        # The registry ID survives entity renames without claiming a replacement.
+        runtime.async_update_device(
+            entry.entry_id, {HIDDEN_MOISTURE_ENTITY_ID: entity.id}
+        )
         entity_registry.async_update_entity(
             runtime.moisture_entity_id,
             hidden_by=er.RegistryEntryHider.INTEGRATION,
         )
-    elif entity and entity.hidden_by == er.RegistryEntryHider.INTEGRATION:
-        entity_registry.async_update_entity(runtime.moisture_entity_id, hidden_by=None)
 
     return True
+
+
+@callback
+def _async_restore_source_visibility(
+    entity_registry: er.EntityRegistry,
+    store: PlantMonitorStorage,
+    entry_id: str,
+) -> None:
+    """Restore visibility only for a source hidden by this entry."""
+    device = store.async_get_device(entry_id)
+    if not device or not (hidden_entity_id := device[HIDDEN_MOISTURE_ENTITY_ID]):
+        return
+
+    entity = entity_registry.async_get(hidden_entity_id)
+    if entity and entity.hidden_by == er.RegistryEntryHider.INTEGRATION:
+        entity_registry.async_update_entity(entity.entity_id, hidden_by=None)
+    store.async_update_device(entry_id, {HIDDEN_MOISTURE_ENTITY_ID: None})
 
 
 async def async_unload_entry(
@@ -163,9 +192,9 @@ async def async_remove_entry(
     if DATA_KEY in hass.data:
         store = hass.data[DATA_KEY].store
     else:
-        store = PlantMonitorStorage(hass)
-        await store.async_load()
+        store = await async_get_registry(hass)
 
+    _async_restore_source_visibility(er.async_get(hass), store, entry.entry_id)
     store.async_delete_device(entry.entry_id)
 
     ir.async_delete_issue(

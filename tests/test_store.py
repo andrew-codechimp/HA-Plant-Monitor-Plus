@@ -6,6 +6,7 @@ from typing import Any
 import pytest
 from custom_components.plant_monitor_plus import DATA_KEY
 from custom_components.plant_monitor_plus.const import (
+    HIDDEN_MOISTURE_ENTITY_ID,
     LAST_WATERED,
     MOISTURE_LAST_VALUE,
     MOISTURE_PROBLEM_LAST_MODIFIED,
@@ -34,7 +35,11 @@ from . import LAST_WATERED_ENTITY_ID, SOURCE_ENTITY_ID, setup_integration
 @pytest.mark.usefixtures("moisture_sensor")
 @pytest.mark.parametrize(
     "minor_version",
-    [pytest.param(0, id="migrated"), pytest.param(STORAGE_VERSION_MINOR, id="current")],
+    [
+        pytest.param(0, id="migrated"),
+        pytest.param(1, id="before-visibility-ownership"),
+        pytest.param(STORAGE_VERSION_MINOR, id="current"),
+    ],
 )
 async def test_load_storage(
     hass: HomeAssistant,
@@ -113,6 +118,7 @@ async def test_delayed_save(
     assert hass_storage[STORAGE_KEY]["data"]["devices"] == [
         {
             "device_id": mock_config_entry.entry_id,
+            HIDDEN_MOISTURE_ENTITY_ID: None,
             MOISTURE_LAST_VALUE: 40.0,
             LAST_WATERED: watered_at.isoformat(),
             MOISTURE_PROBLEM_STATE: False,

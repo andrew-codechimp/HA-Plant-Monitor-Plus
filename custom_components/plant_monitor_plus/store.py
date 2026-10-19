@@ -17,7 +17,7 @@ from homeassistant.helpers.storage import Store
 from .const import DOMAIN
 
 STORAGE_VERSION_MAJOR = 1
-STORAGE_VERSION_MINOR = 1
+STORAGE_VERSION_MINOR = 2
 DATA_REGISTRY = f"{DOMAIN}_storage"
 STORAGE_KEY = f"{DOMAIN}.storage"
 
@@ -34,6 +34,7 @@ class DeviceEntry:
     moisture_problem_last_modified = attr.ib(type=datetime, default=None)
     moisture_last_value = attr.ib(type=float, default=None)
     last_watered = attr.ib(type=datetime, default=None)
+    hidden_moisture_entity_id = attr.ib(type=str | None, default=None)
 
 
 class MigratableStore(Store):

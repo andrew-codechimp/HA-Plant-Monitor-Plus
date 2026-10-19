@@ -56,6 +56,7 @@ ATTR_REASON = "reason"
 ATTR_SOURCE_ENTITY_ID = "source_entity_id"
 
 # Storage fields
+HIDDEN_MOISTURE_ENTITY_ID = "hidden_moisture_entity_id"
 REMOVE = "remove"
 MOISTURE_LAST_VALUE = "moisture_last_value"
 MOISTURE_PROBLEM_LAST_MODIFIED = "moisture_problem_last_modified"

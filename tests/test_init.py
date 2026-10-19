@@ -6,12 +6,16 @@ from custom_components.plant_monitor_plus.const import (
     CONF_MOISTURE_ENTITY_ID,
     CONF_MOISTURE_HIDE,
     DOMAIN,
+    HIDDEN_MOISTURE_ENTITY_ID,
     ISSUE_MOISTURE_ENTITY_INVALID,
     SERVICE_GET_PLANT_SUMMARY,
     SERVICE_SET_PLANT_THRESHOLDS,
     SERVICE_SET_PLANT_WATERED,
 )
-from custom_components.plant_monitor_plus.store import async_get_registry
+from custom_components.plant_monitor_plus.store import (
+    DATA_REGISTRY,
+    async_get_registry,
+)
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from homeassistant.config_entries import ConfigEntryState
@@ -102,7 +106,24 @@ async def test_options_reload(
             er.RegistryEntryHider.INTEGRATION,
             id="hide-source",
         ),
-        pytest.param({}, er.RegistryEntryHider.INTEGRATION, None, id="unhide-source"),
+        pytest.param(
+            {},
+            er.RegistryEntryHider.INTEGRATION,
+            er.RegistryEntryHider.INTEGRATION,
+            id="keep-integration-hidden",
+        ),
+        pytest.param(
+            {CONF_MOISTURE_HIDE: True},
+            er.RegistryEntryHider.INTEGRATION,
+            er.RegistryEntryHider.INTEGRATION,
+            id="already-integration-hidden",
+        ),
+        pytest.param(
+            {CONF_MOISTURE_HIDE: True},
+            er.RegistryEntryHider.USER,
+            er.RegistryEntryHider.USER,
+            id="already-user-hidden",
+        ),
         pytest.param(
             {},
             er.RegistryEntryHider.USER,
@@ -120,12 +141,146 @@ async def test_source_visibility(
     initial_hider: er.RegistryEntryHider | None,
     expected_hider: er.RegistryEntryHider | None,
 ) -> None:
-    """Test setup applies source visibility while preserving user hiding."""
+    """Test setup and removal preserve existing source visibility choices."""
     entity_registry.async_update_entity(
         moisture_sensor.entity_id, hidden_by=initial_hider
     )
     await setup_integration(hass, mock_config_entry)
     assert entity_registry.async_get(SOURCE_ENTITY_ID).hidden_by is expected_hider
+    assert await hass.config_entries.async_remove(mock_config_entry.entry_id)
+    await hass.async_block_till_done()
+    assert entity_registry.async_get(SOURCE_ENTITY_ID).hidden_by is initial_hider
+
+
+@pytest.mark.parametrize(
+    "mock_config_entry", [{CONF_MOISTURE_HIDE: True}], indirect=True
+)
+@pytest.mark.parametrize(
+    ("current_hider", "expected_hider"),
+    [
+        pytest.param(er.RegistryEntryHider.INTEGRATION, None, id="restore-visible"),
+        pytest.param(
+            er.RegistryEntryHider.USER,
+            er.RegistryEntryHider.USER,
+            id="preserve-user-hidden",
+        ),
+    ],
+)
+async def test_disable_source_hiding(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    moisture_sensor: er.RegistryEntry,
+    entity_registry: er.EntityRegistry,
+    current_hider: er.RegistryEntryHider,
+    expected_hider: er.RegistryEntryHider | None,
+) -> None:
+    """Test persisted ownership survives reload and is cleared when disabled."""
+    await setup_integration(hass, mock_config_entry)
+    store = hass.data[DATA_KEY].store
+    await store.async_save()
+    await store.async_load()
+    assert await hass.config_entries.async_reload(mock_config_entry.entry_id)
+    await hass.async_block_till_done()
+    assert (
+        entity_registry.async_get(SOURCE_ENTITY_ID).hidden_by
+        is er.RegistryEntryHider.INTEGRATION
+    )
+    assert (
+        store.async_get_device(mock_config_entry.entry_id)[HIDDEN_MOISTURE_ENTITY_ID]
+        == moisture_sensor.id
+    )
+
+    entity_registry.async_update_entity(SOURCE_ENTITY_ID, hidden_by=current_hider)
+    result = await hass.config_entries.options.async_init(mock_config_entry.entry_id)
+    await hass.config_entries.options.async_configure(
+        result["flow_id"], {**mock_config_entry.options, CONF_MOISTURE_HIDE: False}
+    )
+    await hass.async_block_till_done()
+    assert entity_registry.async_get(SOURCE_ENTITY_ID).hidden_by is expected_hider
+    assert (
+        store.async_get_device(mock_config_entry.entry_id)[HIDDEN_MOISTURE_ENTITY_ID]
+        is None
+    )
+
+    # A later owning-integration decision must no longer be attributed to us.
+    entity_registry.async_update_entity(SOURCE_ENTITY_ID, hidden_by=current_hider)
+    assert await hass.config_entries.async_reload(mock_config_entry.entry_id)
+    await hass.async_block_till_done()
+    assert entity_registry.async_get(SOURCE_ENTITY_ID).hidden_by is current_hider
+
+
+@pytest.mark.parametrize(
+    "mock_config_entry", [{CONF_MOISTURE_HIDE: True}], indirect=True
+)
+@pytest.mark.usefixtures("moisture_sensor")
+@pytest.mark.parametrize(
+    ("current_hider", "expected_hider"),
+    [
+        pytest.param(er.RegistryEntryHider.INTEGRATION, None, id="restore-visible"),
+        pytest.param(
+            er.RegistryEntryHider.USER,
+            er.RegistryEntryHider.USER,
+            id="preserve-user-hidden",
+        ),
+    ],
+)
+async def test_remove_entry_hidden_renamed_source(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    entity_registry: er.EntityRegistry,
+    current_hider: er.RegistryEntryHider,
+    expected_hider: er.RegistryEntryHider | None,
+) -> None:
+    """Test removal restores a renamed source from storage without runtime data."""
+    await setup_integration(hass, mock_config_entry)
+    store = hass.data[DATA_KEY].store
+    await store.async_save()
+    assert await hass.config_entries.async_unload(mock_config_entry.entry_id)
+    await hass.async_block_till_done()
+    hass.data.pop(DATA_KEY)
+    hass.data.pop(DATA_REGISTRY)
+    renamed = "sensor.renamed_moisture"
+    entity_registry.async_update_entity(
+        SOURCE_ENTITY_ID, new_entity_id=renamed, hidden_by=current_hider
+    )
+
+    assert await hass.config_entries.async_remove(mock_config_entry.entry_id)
+    await hass.async_block_till_done()
+    assert entity_registry.async_get(renamed).hidden_by is expected_hider
+
+
+@pytest.mark.parametrize(
+    "mock_config_entry", [{CONF_MOISTURE_HIDE: True}], indirect=True
+)
+@pytest.mark.usefixtures("moisture_sensor")
+async def test_replaced_hidden_source(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    entity_registry: er.EntityRegistry,
+) -> None:
+    """Test ownership does not transfer to an entity reusing the source ID."""
+    await setup_integration(hass, mock_config_entry)
+    assert await hass.config_entries.async_unload(mock_config_entry.entry_id)
+    await hass.async_block_till_done()
+    entity_registry.async_remove(SOURCE_ENTITY_ID)
+    hass.states.async_remove(SOURCE_ENTITY_ID)
+    replacement = entity_registry.async_get_or_create(
+        "sensor",
+        "test",
+        "replacement-moisture",
+        suggested_object_id="monstera_moisture",
+        hidden_by=er.RegistryEntryHider.INTEGRATION,
+    )
+    assert replacement.entity_id == SOURCE_ENTITY_ID
+
+    assert await hass.config_entries.async_setup(mock_config_entry.entry_id)
+    await hass.async_block_till_done()
+    assert await hass.config_entries.async_remove(mock_config_entry.entry_id)
+    await hass.async_block_till_done()
+    assert (
+        entity_registry.async_get(SOURCE_ENTITY_ID).hidden_by
+        is er.RegistryEntryHider.INTEGRATION
+    )
 
 
 @pytest.mark.usefixtures("moisture_sensor")
