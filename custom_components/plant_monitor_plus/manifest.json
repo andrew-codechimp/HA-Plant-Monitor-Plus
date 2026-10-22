@@ -1,6 +1,7 @@
 {
   "domain": "plant_monitor_plus",
   "name": "Plant Monitor Plus",
+  "categories": [ "garden_plants" ],
   "codeowners": [
     "@andrew-codechimp"
   ],
