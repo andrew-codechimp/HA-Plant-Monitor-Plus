@@ -40,7 +40,7 @@ Provides a way to set a plant as having been watered, either now or at a specifi
 
 Updates a plant's thresholds, useful for seasonal adjustment automations.
 
-_Please :star: this repo if you find it useful_
+_Please ⭐ this repo on [GitHub][repository] if you find it useful_
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png)](https://www.buymeacoffee.com/codechimp)
 
@@ -94,7 +94,7 @@ I used the default Plant Monitor YAML based integration for a long time and neve
 
 I primarily created this integration to provide notifications and since they are standard sensor/binary sensor entities there are plenty of cards available that can be used.
 
-
+[repository]: https://github.com/andrew-codechimp/HA-Plant-Monitor-Plus
 [commits-shield]: https://img.shields.io/github/commit-activity/y/andrew-codechimp/HA-Plant-Monitor-Plus.svg?style=for-the-badge
 [commits]: https://github.com/andrew-codechimp/HA-Plant-Monitor-Plus/commits/main
 [hacs]: https://github.com/hacs/integration
