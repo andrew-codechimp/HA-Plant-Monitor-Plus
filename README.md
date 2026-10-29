@@ -78,11 +78,11 @@ mode: single
 
 ## Installation
 
-### HACS
+### Marketplace/HACS
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=andrew-codechimp&repository=HA-Plant-Monitor-Plus&category=Integration)
 
-This is a HACS custom integration; if the link does not work, you will have to add this repository URL via HACS custom repositories.
+This is a custom integration; if the link does not work, you will have to add this repository URL via Marketplace/HACS custom repositories.
 
 ## FAQ's
 
