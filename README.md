@@ -81,7 +81,7 @@ mode: single
 <!-- ha-marketplace:exclude-start -->
 ## Installation
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Marketplace.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=andrew-codechimp&repository=HA-Plant-Monitor-Plus&category=Integration)
+[![Open your Home Assistant instance and open a repository in the Marketplace.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=andrew-codechimp&repository=HA-Plant-Monitor-Plus&category=Integration)
 
 If the link does not work for you, search for Plant Monitor Plus within Marketplace.
 
