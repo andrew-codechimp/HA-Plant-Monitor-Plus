@@ -1,7 +1,6 @@
 <!-- ha-marketplace:exclude-start -->
 # Plant Monitor Plus Home Assistant Integration
 
-[![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
 [![Downloads][download-latest-shield]]()
 [![License][license-shield]](LICENSE)
@@ -102,7 +101,5 @@ I primarily created this integration to provide notifications and since they are
 [hacs]: https://github.com/hacs/integration
 [hacsbadge]: https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge
 [license-shield]: https://img.shields.io/github/license/andrew-codechimp/HA-Plant-Monitor-Plus.svg?style=for-the-badge
-[releases-shield]: https://img.shields.io/github/release/andrew-codechimp/HA-Plant-Monitor-Plus.svg?style=for-the-badge
-[releases]: https://github.com/andrew-codechimp/HA-Plant-Monitor-Plus/releases
 [download-latest-shield]: https://img.shields.io/github/downloads/andrew-codechimp/HA-Plant-Monitor-Plus/latest/total?style=for-the-badge
 [hacs-installs-shield]: https://img.shields.io/endpoint.svg?url=https%3A%2F%2Flauwbier.nl%2Fhacs%2Fplant_monitor_plus&style=for-the-badge
