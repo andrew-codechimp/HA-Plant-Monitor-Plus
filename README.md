@@ -3,6 +3,7 @@
 
 [![GitHub Activity][commits-shield]][commits]
 [![Downloads][download-latest-shield]]()
+[![Installs][marketplace-installs-shield]][marketplace-install]
 [![License][license-shield]](LICENSE)
 
 <!-- ha-marketplace:exclude-end -->
@@ -102,4 +103,5 @@ I primarily created this integration to provide notifications and since they are
 [hacsbadge]: https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge
 [license-shield]: https://img.shields.io/github/license/andrew-codechimp/HA-Plant-Monitor-Plus.svg?style=for-the-badge
 [download-latest-shield]: https://img.shields.io/github/downloads/andrew-codechimp/HA-Plant-Monitor-Plus/latest/total?style=for-the-badge
-[hacs-installs-shield]: https://img.shields.io/endpoint.svg?url=https%3A%2F%2Flauwbier.nl%2Fhacs%2Fplant_monitor_plus&style=for-the-badge
+[marketplace-installs-shield]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fanalytics.home-assistant.io%2Fcustom_integrations.json&query=%24.plant_monitor_plus.total&style=for-the-badge&label=Marketplace%20installs
+[marketplace-install]: https://my.home-assistant.io/redirect/marketplace_repository/?owner=andrew-codechimp&repository=plant_monitor_plus&category=integration
